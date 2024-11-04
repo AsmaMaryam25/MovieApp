@@ -139,7 +139,7 @@ fun TitleText(text: String) {
     Text(
         modifier = Modifier.padding(10.dp),
         text = text,
-        fontSize = 30.sp,
+        fontSize = 25.sp,
         fontWeight = FontWeight.Bold
     )
 }
