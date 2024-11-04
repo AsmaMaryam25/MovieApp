@@ -34,7 +34,7 @@ import com.example.movieapp.ui.theme.NavigationInComposeTheme
 import androidx.compose.material.icons.automirrored.filled.List
 
 class MainActivity : ComponentActivity() {
-    val navItemList = listOf(
+    private val navItemList = listOf(
         NavItem("Home", Icons.Default.Home),
         NavItem("Search", Icons.Default.Search),
         NavItem("Favorites", Icons.Default.Favorite),
@@ -54,15 +54,20 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     var canNavigateBack by remember { mutableStateOf(false) }
                     var currentScreenTitle by remember { mutableStateOf("") }
+                    var isNavigationBarAction by remember { mutableStateOf(false) }
+                    var showTopBar by remember { mutableStateOf(false) }
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
-                        canNavigateBack = navController.previousBackStackEntry != null
+                        if (!isNavigationBarAction) {
+                            canNavigateBack = navController.previousBackStackEntry != null
+                        }
+                        isNavigationBarAction = false
                     }
 
                     Scaffold(
                         bottomBar = {
                             NavigationBar {
-                                navItemList.forEachIndexed { index, navItem ->
+                                navItemList.forEach{ navItem ->
                                     NavigationBarItem(
                                         icon = {
                                             Icon(
@@ -75,16 +80,15 @@ class MainActivity : ComponentActivity() {
                                         },
                                         selected = false,
                                         onClick = {
-                                            if(navItem.label == "Home") {
-                                                navController.navigate(Route.HomeScreen)
-                                            } else if(navItem.label == "Favorite") {
-                                                navController.navigate(Route.FavoriteScreen)
-                                            } else if(navItem.label == "Search") {
-                                                navController.navigate(Route.SearchScreen)
-                                            } else if(navItem.label == "Settings") {
-                                                navController.navigate(Route.SettingsScreen)
-                                            } else if(navItem.label == "Watchlist") {
-                                                navController.navigate(Route.WatchlistScreen)
+                                            isNavigationBarAction = true
+                                            canNavigateBack = false
+                                            showTopBar = false
+                                            when (navItem.label) {
+                                                "Home" -> navController.navigate(Route.HomeScreen)
+                                                "Favorites" -> navController.navigate(Route.FavoriteScreen)
+                                                "Search" -> navController.navigate(Route.SearchScreen)
+                                                "Settings" -> navController.navigate(Route.SettingsScreen)
+                                                "Watchlist" -> navController.navigate(Route.WatchlistScreen)
                                             }
                                         }
                                     )
@@ -92,21 +96,23 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         topBar = {
-                            TopAppBar(
-                                title = {
-                                    Text(text = currentScreenTitle)
-                                },
-                                navigationIcon = {
-                                    if (canNavigateBack) {
-                                        IconButton(onClick = { navController.popBackStack() }) {
-                                            Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                contentDescription = null
-                                            )
+                            if (showTopBar){
+                                TopAppBar(
+                                    title = {
+                                        Text(text = currentScreenTitle)
+                                    },
+                                    navigationIcon = {
+                                        if (canNavigateBack) {
+                                            IconButton(onClick = { navController.popBackStack() }) {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                                    contentDescription = null
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     ) {
                         MainNavHost(

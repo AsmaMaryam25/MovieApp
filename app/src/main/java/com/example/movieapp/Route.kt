@@ -6,18 +6,18 @@ import kotlinx.serialization.Serializable
 sealed class Route(val title: String) {
 
     @Serializable
-    data object FavoriteScreen : Route("FavoriteScreen")
+    data object FavoriteScreen : Route("Favorite Screen")
 
     @Serializable
-    data object HomeScreen : Route("HomeScreen")
+    data object HomeScreen : Route("Home Screen")
 
     @Serializable
-    data object SearchScreen : Route("SearchScreen")
+    data object SearchScreen : Route("Search Screen")
 
     @Serializable
-    data object SettingsScreen : Route("SettingsScreen")
+    data object SettingsScreen : Route("Settings Screen")
 
     @Serializable
-    data object WatchlistScreen : Route("WatchlistScreen")
+    data object WatchlistScreen : Route("Watchlist Screen")
 
 }
