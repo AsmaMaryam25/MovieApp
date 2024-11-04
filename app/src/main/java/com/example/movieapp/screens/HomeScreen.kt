@@ -2,6 +2,7 @@ package com.example.movieapp.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -11,6 +12,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,36 +38,47 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(onNavigateToFavoriteScreen: (String) -> Unit) {
     val rowState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = rowState)
 
-    Column(
+    LazyColumn(
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(
-            modifier = Modifier.padding(10.dp),
-            text = "Now Playing",
-            fontSize = 30.sp,
-            fontWeight = FontWeight.Bold
-        )
-        LazyRow(
-            state = rowState,
-            horizontalArrangement = Arrangement.spacedBy(20.dp),
-            flingBehavior = snapBehavior,
-            contentPadding = PaddingValues(start = 60.dp, end = 60.dp)
-        ) {
-            items(6) {
-                CreatePoster()
-            }
+
+        item() {
+            TitleText("Now Playing")
         }
-        LaunchedEffect(Unit) {
-            coroutineScope.launch {
-                rowState.scrollToItem(3) // Assuming 6 items, center is at index 3
-            }
+
+        item() {
+            CreatePosters(snapBehavior)
+        }
+
+        item() {
+            TitleText("Popular")
+        }
+
+        item() {
+            CreatePosters(snapBehavior)
+        }
+
+        item() {
+            TitleText("Top Rated")
+        }
+
+        item() {
+            CreatePosters(snapBehavior)
+        }
+
+        item() {
+            TitleText("Upcoming")
+        }
+
+        item() {
+            CreatePosters(snapBehavior)
         }
     }
 }
+
 @Composable
 private fun CreatePoster(posterWidth: Dp = 300.dp) {
     Column(
@@ -83,11 +97,56 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
                 .padding(start = 35.dp, top = 15.dp, end = 35.dp),
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
             style = TextStyle(
-                fontSize = 30.sp,
+                fontSize = 25.sp,
                 lineHeight = 30.sp,
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold
         )
+        Text(
+            modifier = Modifier
+                .width(posterWidth),
+            text = "Yugi once more must Duel to save the world. Only this time, he must do so " +
+                    "without the Pharoah. Kaiba's obsession with trying to find a way to settle " +
+                    "the score with the Pharoah sets off a chain reaction, drawing in the " +
+                    "mysterious Diva. What does this stranger want with Yugi? And what is " +
+                    "the mysterious cube he carries?",
+            style = TextStyle(
+                textAlign = TextAlign.Center
+            ),
+        )
+    }
+}
+
+@Composable
+fun TitleText(text: String) {
+    Text(
+        modifier = Modifier.padding(10.dp),
+        text = text,
+        fontSize = 30.sp,
+        fontWeight = FontWeight.Bold
+    )
+}
+
+@Composable
+fun CreatePosters(snapBehavior: FlingBehavior) {
+    val coroutineScope = rememberCoroutineScope()
+    val rowState = rememberLazyListState()
+
+    LazyRow(
+        state = rowState,
+        horizontalArrangement = Arrangement.spacedBy(20.dp),
+        flingBehavior = snapBehavior,
+        contentPadding = PaddingValues(start = 60.dp, end = 60.dp)
+    ) {
+        items(6) {
+            CreatePoster()
+        }
+    }
+
+    LaunchedEffect(rowState) {
+        coroutineScope.launch {
+            rowState.scrollToItem(3) // Assuming 6 items, center is at index 3
+        }
     }
 }
