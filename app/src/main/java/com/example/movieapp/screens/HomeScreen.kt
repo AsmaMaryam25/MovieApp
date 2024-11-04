@@ -105,6 +105,22 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
         )
         Text(
             modifier = Modifier
+                .width(posterWidth).padding(vertical = 5.dp),
+            text = "Animation, Adventure, Drama, Fantasy",
+            style = TextStyle(
+                textAlign = TextAlign.Center
+            ),
+        )
+        Text(
+            modifier = Modifier
+                .width(posterWidth),
+            text = "2016",
+            style = TextStyle(
+                textAlign = TextAlign.Center
+            ),
+        )
+        Text(
+            modifier = Modifier
                 .width(posterWidth),
             text = "Yugi once more must Duel to save the world. Only this time, he must do so " +
                     "without the Pharoah. Kaiba's obsession with trying to find a way to settle " +
