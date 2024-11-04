@@ -4,6 +4,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(onNavigateToFavoriteScreen: (String) -> Unit) {
     Text(text = "Home Screen")
 }
