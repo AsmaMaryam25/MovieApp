@@ -36,10 +36,10 @@ import androidx.compose.material.icons.automirrored.filled.List
 class MainActivity : ComponentActivity() {
     val navItemList = listOf(
         NavItem("Home", Icons.Default.Home),
-        NavItem("Favorite", Icons.Default.Favorite),
         NavItem("Search", Icons.Default.Search),
-        NavItem("Settings" , Icons.Default.Settings),
-        NavItem("Watchlist", Icons.AutoMirrored.Filled.List)
+        NavItem("Favorites", Icons.Default.Favorite),
+        NavItem("Watchlist", Icons.AutoMirrored.Filled.List),
+        NavItem("Settings" , Icons.Default.Settings)
     )
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -75,7 +75,17 @@ class MainActivity : ComponentActivity() {
                                         },
                                         selected = false,
                                         onClick = {
-                                            navController.navigate(navItem.label)
+                                            if(navItem.label == "Home") {
+                                                navController.navigate(Route.HomeScreen)
+                                            } else if(navItem.label == "Favorite") {
+                                                navController.navigate(Route.FavoriteScreen)
+                                            } else if(navItem.label == "Search") {
+                                                navController.navigate(Route.SearchScreen)
+                                            } else if(navItem.label == "Settings") {
+                                                navController.navigate(Route.SettingsScreen)
+                                            } else if(navItem.label == "Watchlist") {
+                                                navController.navigate(Route.WatchlistScreen)
+                                            }
                                         }
                                     )
                                 }
