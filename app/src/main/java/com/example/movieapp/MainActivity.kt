@@ -55,6 +55,7 @@ class MainActivity : ComponentActivity() {
                     var canNavigateBack by remember { mutableStateOf(false) }
                     var currentScreenTitle by remember { mutableStateOf("") }
                     var isNavigationBarAction by remember { mutableStateOf(false) }
+                    var showTopBar by remember { mutableStateOf(false) }
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
                         if (!isNavigationBarAction) {
@@ -81,6 +82,7 @@ class MainActivity : ComponentActivity() {
                                         onClick = {
                                             isNavigationBarAction = true
                                             canNavigateBack = false
+                                            showTopBar = false
                                             when (navItem.label) {
                                                 "Home" -> navController.navigate(Route.HomeScreen)
                                                 "Favorites" -> navController.navigate(Route.FavoriteScreen)
@@ -94,21 +96,23 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         topBar = {
-                            TopAppBar(
-                                title = {
-                                    Text(text = currentScreenTitle)
-                                },
-                                navigationIcon = {
-                                    if (canNavigateBack) {
-                                        IconButton(onClick = { navController.popBackStack() }) {
-                                            Icon(
-                                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                contentDescription = null
-                                            )
+                            if (showTopBar){
+                                TopAppBar(
+                                    title = {
+                                        Text(text = currentScreenTitle)
+                                    },
+                                    navigationIcon = {
+                                        if (canNavigateBack) {
+                                            IconButton(onClick = { navController.popBackStack() }) {
+                                                Icon(
+                                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                                    contentDescription = null
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                            )
+                                )
+                            }
                         }
                     ) {
                         MainNavHost(

@@ -38,7 +38,7 @@ fun MainNavHost(
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
 
             HomeScreen(
-                onNavigateToFavoriteScreen = { name ->
+                onNavigateToFavoriteScreen = {
                     navController.navigate(Route.FavoriteScreen)
                 }
             )
