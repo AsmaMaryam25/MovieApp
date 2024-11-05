@@ -20,4 +20,7 @@ sealed class Route(val title: String) {
     @Serializable
     data object WatchlistScreen : Route("Watchlist Screen")
 
+    @Serializable
+    data object AboutScreen : Route("About Screen")
+
 }

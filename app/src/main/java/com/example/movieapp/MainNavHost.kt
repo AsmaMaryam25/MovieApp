@@ -3,6 +3,7 @@ package com.example.movieapp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.example.movieapp.screens.AboutScreen
 import com.example.movieapp.screens.FavoriteScreen
 import com.example.movieapp.screens.HomeScreen
 import com.example.movieapp.screens.SearchScreen
@@ -38,7 +39,7 @@ fun MainNavHost(
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
 
             HomeScreen(
-                onNavigateToFavoriteScreen = {
+                onNavigateToDetailsScreen = {
                     navController.navigate(Route.FavoriteScreen)
                 }
             )
@@ -59,13 +60,23 @@ fun MainNavHost(
         composable<Route.SettingsScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>()) }
 
-            SettingsScreen()
+            SettingsScreen(
+                onNavigateToAboutScreen = {
+                    navController.navigate(Route.AboutScreen)
+                }
+            )
         }
 
         composable<Route.WatchlistScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
             WatchlistScreen()
+        }
+
+        composable<Route.AboutScreen> { backStackEntry ->
+            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
+
+            AboutScreen()
         }
 
     }
