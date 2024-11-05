@@ -120,7 +120,8 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
         )
         Text(
             modifier = Modifier
-                .width(posterWidth),
+                .width(posterWidth)
+                .padding(bottom = 10.dp),
             text = "Yugi once more must Duel to save the world. Only this time, he must do so " +
                     "without the Pharoah. Kaiba's obsession with trying to find a way to settle " +
                     "the score with the Pharoah sets off a chain reaction, drawing in the " +
