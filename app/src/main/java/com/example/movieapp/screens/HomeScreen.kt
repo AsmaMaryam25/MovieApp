@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
+import androidx.compose.foundation.gestures.snapping.snapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,8 +38,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(onNavigateToFavoriteScreen: (String) -> Unit) {
-    val rowState = rememberLazyListState()
-    val snapBehavior = rememberSnapFlingBehavior(lazyListState = rowState)
 
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -50,7 +49,7 @@ fun HomeScreen(onNavigateToFavoriteScreen: (String) -> Unit) {
         }
 
         item() {
-            CreatePosters(snapBehavior)
+            CreatePosters()
         }
 
         item() {
@@ -58,7 +57,7 @@ fun HomeScreen(onNavigateToFavoriteScreen: (String) -> Unit) {
         }
 
         item() {
-            CreatePosters(snapBehavior)
+            CreatePosters()
         }
 
         item() {
@@ -66,7 +65,7 @@ fun HomeScreen(onNavigateToFavoriteScreen: (String) -> Unit) {
         }
 
         item() {
-            CreatePosters(snapBehavior)
+            CreatePosters()
         }
 
         item() {
@@ -74,7 +73,7 @@ fun HomeScreen(onNavigateToFavoriteScreen: (String) -> Unit) {
         }
 
         item() {
-            CreatePosters(snapBehavior)
+            CreatePosters()
         }
     }
 }
@@ -145,9 +144,10 @@ fun TitleText(text: String) {
 }
 
 @Composable
-fun CreatePosters(snapBehavior: FlingBehavior) {
+fun CreatePosters() {
     val coroutineScope = rememberCoroutineScope()
     val rowState = rememberLazyListState()
+    val snapBehavior = rememberSnapFlingBehavior(lazyListState = rowState)
 
     LazyRow(
         state = rowState,
