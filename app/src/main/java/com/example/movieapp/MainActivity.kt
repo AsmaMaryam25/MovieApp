@@ -7,11 +7,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -31,15 +32,19 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.ui.theme.NavigationInComposeTheme
-import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.FormatListBulleted
 
 class MainActivity : ComponentActivity() {
-    private val navItemList = listOf(
-        NavItem("Home", Icons.Default.Home),
-        NavItem("Search", Icons.Default.Search),
-        NavItem("Favorites", Icons.Default.Favorite),
-        NavItem("Watchlist", Icons.AutoMirrored.Filled.List),
-        NavItem("Settings" , Icons.Default.Settings)
+    private var navItemList = mutableListOf(
+        NavItem("Home", Icons.Filled.Home),
+        NavItem("Search", Icons.Outlined.Search),
+        NavItem("Favorites", Icons.Outlined.FavoriteBorder),
+        NavItem("Watchlist", Icons.AutoMirrored.Outlined.FormatListBulleted),
+        NavItem("Settings" , Icons.Outlined.Settings)
     )
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +61,7 @@ class MainActivity : ComponentActivity() {
                     var currentScreenTitle by remember { mutableStateOf("") }
                     var isNavigationBarAction by remember { mutableStateOf(false) }
                     var showTopBar by remember { mutableStateOf(false) }
+                    var selectedItem by remember { mutableStateOf(navItemList[0].label) }
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
                         if (!isNavigationBarAction) {
@@ -78,17 +84,43 @@ class MainActivity : ComponentActivity() {
                                         label = {
                                             Text(navItem.label)
                                         },
-                                        selected = false,
+                                        selected = selectedItem == navItem.label,
                                         onClick = {
                                             isNavigationBarAction = true
                                             canNavigateBack = false
                                             showTopBar = false
+                                            selectedItem = navItem.label
+                                            navItemList.clear()
+                                            navItemList.addAll(
+                                                listOf(
+                                                    NavItem("Home", Icons.Outlined.Home),
+                                                    NavItem("Search", Icons.Outlined.Search),
+                                                    NavItem("Favorites", Icons.Outlined.FavoriteBorder),
+                                                    NavItem("Watchlist", Icons.AutoMirrored.Outlined.FormatListBulleted),
+                                                    NavItem("Settings", Icons.Outlined.Settings)
+                                                )
+                                            )
                                             when (navItem.label) {
-                                                "Home" -> navController.navigate(Route.HomeScreen)
-                                                "Favorites" -> navController.navigate(Route.FavoriteScreen)
-                                                "Search" -> navController.navigate(Route.SearchScreen)
-                                                "Settings" -> navController.navigate(Route.SettingsScreen)
-                                                "Watchlist" -> navController.navigate(Route.WatchlistScreen)
+                                                "Home" -> {
+                                                    navController.navigate(Route.HomeScreen)
+                                                    navItemList[0] = NavItem("Home", Icons.Filled.Home)
+                                                }
+                                                "Favorites" -> {
+                                                    navController.navigate(Route.FavoriteScreen)
+                                                    navItemList[2] = NavItem("Favorites", Icons.Filled.Favorite)
+                                                }
+                                                "Search" -> {
+                                                    navController.navigate(Route.SearchScreen)
+                                                    navItemList[1] = NavItem("Search", Icons.Filled.Search)
+                                                }
+                                                "Settings" -> {
+                                                    navController.navigate(Route.SettingsScreen)
+                                                    navItemList[4] = NavItem("Settings", Icons.Filled.Settings)
+                                                }
+                                                "Watchlist" -> {
+                                                    navController.navigate(Route.WatchlistScreen)
+                                                    navItemList[3] = NavItem("Watchlist", Icons.Filled.FormatListBulleted)
+                                                }
                                             }
                                         }
                                     )
