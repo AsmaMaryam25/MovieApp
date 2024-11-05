@@ -28,7 +28,8 @@ import com.example.movieapp.screens.WatchlistScreen
 fun MainNavHost(
     navController: androidx.navigation.NavHostController,
     onRouteChanged: (Route) -> Unit,
-    modifier: androidx.compose.ui.Modifier
+    modifier: androidx.compose.ui.Modifier,
+    showTopBar: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -76,7 +77,7 @@ fun MainNavHost(
         composable<Route.AboutScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
 
-            AboutScreen()
+            AboutScreen(showTopBar = showTopBar)
         }
 
     }

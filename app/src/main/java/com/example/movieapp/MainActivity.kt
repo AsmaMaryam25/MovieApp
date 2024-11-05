@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -37,6 +38,8 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.FormatListBulleted
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 
 class MainActivity : ComponentActivity() {
     private var navItemList = mutableListOf(
@@ -60,7 +63,7 @@ class MainActivity : ComponentActivity() {
                     var canNavigateBack by remember { mutableStateOf(false) }
                     var currentScreenTitle by remember { mutableStateOf("") }
                     var isNavigationBarAction by remember { mutableStateOf(false) }
-                    var showTopBar by remember { mutableStateOf(false) }
+                    var TopBarShown by remember { mutableStateOf(false) }
                     var selectedItem by remember { mutableStateOf(navItemList[0].label) }
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
@@ -88,7 +91,7 @@ class MainActivity : ComponentActivity() {
                                         onClick = {
                                             isNavigationBarAction = true
                                             canNavigateBack = false
-                                            showTopBar = false
+                                            TopBarShown = false
                                             selectedItem = navItem.label
                                             navItemList.clear()
                                             navItemList.addAll(
@@ -108,6 +111,8 @@ class MainActivity : ComponentActivity() {
                                                 "Favorites" -> {
                                                     navController.navigate(Route.FavoriteScreen)
                                                     navItemList[2] = NavItem("Favorites", Icons.Filled.Favorite)
+                                                    TopBarShown = true
+
                                                 }
                                                 "Search" -> {
                                                     navController.navigate(Route.SearchScreen)
@@ -120,6 +125,7 @@ class MainActivity : ComponentActivity() {
                                                 "Watchlist" -> {
                                                     navController.navigate(Route.WatchlistScreen)
                                                     navItemList[3] = NavItem("Watchlist", Icons.Filled.FormatListBulleted)
+                                                    TopBarShown = true
                                                 }
                                             }
                                         }
@@ -128,14 +134,19 @@ class MainActivity : ComponentActivity() {
                             }
                         },
                         topBar = {
-                            if (showTopBar){
+                            if (TopBarShown){
                                 TopAppBar(
                                     title = {
-                                        Text(text = currentScreenTitle)
+                                        Text( text = currentScreenTitle,
+                                            style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold),
+                                            modifier = Modifier.fillMaxWidth(),
+                                        )
                                     },
                                     navigationIcon = {
                                         if (canNavigateBack) {
-                                            IconButton(onClick = { navController.popBackStack() }) {
+                                            IconButton(onClick = { navController.popBackStack()
+                                                TopBarShown = false
+                                            }) {
                                                 Icon(
                                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                                                     contentDescription = null
@@ -150,7 +161,8 @@ class MainActivity : ComponentActivity() {
                         MainNavHost(
                             navController = navController,
                             onRouteChanged = { route -> currentScreenTitle = route.title },
-                            modifier = Modifier.padding(it)
+                            modifier = Modifier.padding(it),
+                            showTopBar = { TopBarShown = true }
                         )
                     }
                 }
