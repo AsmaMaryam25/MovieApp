@@ -49,6 +49,7 @@ android {
 }
 
 dependencies {
+    implementation("androidx.compose.material:material-icons-extended:1.0.0-alpha08")
     implementation("com.google.accompanist:accompanist-pager:0.24.13-rc")
 
     implementation("androidx.core:core-ktx:1.13.1")
