@@ -52,7 +52,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            NavigationInComposeTheme {
+            var isDarkTheme by remember { mutableStateOf(false) }
+            NavigationInComposeTheme (
+                darkTheme = isDarkTheme
+            ){
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -160,7 +163,8 @@ class MainActivity : ComponentActivity() {
                             navController = navController,
                             onRouteChanged = { route -> currentScreenTitle = route.title },
                             modifier = Modifier.padding(it),
-                            showTopBar = { topBarShown = true }
+                            showTopBar = { topBarShown = true },
+                            toggleDarkTheme = { isDarkTheme = !isDarkTheme }
                         )
                     }
                 }

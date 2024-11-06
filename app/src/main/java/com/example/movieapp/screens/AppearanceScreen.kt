@@ -1,6 +1,5 @@
 package com.example.movieapp.screens
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun AppearanceScreen(showTopBar: () -> Unit) {
+fun AppearanceScreen(showTopBar: () -> Unit, toggleDarkTheme: () -> Unit) {
     showTopBar()
 
     var switchIsOn = remember { mutableStateOf(false) }
@@ -33,13 +32,12 @@ fun AppearanceScreen(showTopBar: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(LocalConfiguration.current.screenWidthDp.dp / 2),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            if(isSystemInDarkTheme()){
-                Text(text = "Light theme", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            } else {
-                Text(text = "Dark theme", fontSize = 25.sp, fontWeight = FontWeight.Bold)
-            }
+            Text(text = "Dark theme", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             Switch(checked = switchIsOn.value,
-                onCheckedChange = { switchIsOn.value = !switchIsOn.value })
+                onCheckedChange = {
+                    switchIsOn.value = !switchIsOn.value
+                        toggleDarkTheme()
+                })
         }
     }
 }
