@@ -10,7 +10,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FormatListBulleted
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -38,6 +37,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.ui.theme.NavigationInComposeTheme
+import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 
 class MainActivity : ComponentActivity() {
     private var navItemList = mutableListOf(
@@ -141,7 +141,7 @@ class MainActivity : ComponentActivity() {
                                                     navController.navigate(Route.WatchlistScreen)
                                                     navItemList[3] = NavItem(
                                                         "Watchlist",
-                                                        Icons.Filled.FormatListBulleted
+                                                        Icons.AutoMirrored.Filled.FormatListBulleted
                                                     )
                                                     topBarShown = true
                                                 }
