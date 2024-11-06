@@ -36,7 +36,7 @@ fun AppearanceScreen(showTopBar: () -> Unit, toggleDarkTheme: () -> Unit) {
             Switch(checked = switchIsOn.value,
                 onCheckedChange = {
                     switchIsOn.value = !switchIsOn.value
-                        toggleDarkTheme()
+                    toggleDarkTheme()
                 })
         }
     }

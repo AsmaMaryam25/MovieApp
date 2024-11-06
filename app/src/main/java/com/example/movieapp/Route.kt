@@ -2,7 +2,7 @@ package com.example.movieapp
 
 import kotlinx.serialization.Serializable
 
-@kotlinx.serialization.Serializable
+@Serializable
 sealed class Route(val title: String) {
 
     @Serializable
