@@ -25,6 +25,7 @@ import dk.shape.dtu.navigation.R
 @Composable
 fun SearchScreen() {
     val posterWidth = 170.dp
+    //TODO add search bar
     LazyColumn (
         modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
