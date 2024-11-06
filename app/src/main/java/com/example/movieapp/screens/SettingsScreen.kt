@@ -23,6 +23,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Visibility
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 
 @Composable
 fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceScreen: () -> Unit) {
@@ -35,7 +37,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                 ),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = Color(0xffc6c6c6)
+                    color = MaterialTheme.colorScheme.background
                 ),
                 shape = RectangleShape
             ) {
@@ -43,7 +45,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxSize().padding(10.dp)
                 ) {
-                    Image(
+                    Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Account Circle",
                         modifier = Modifier.size(70.dp)
@@ -66,7 +68,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                 ),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = Color(0xffc6c6c6)
+                    color = MaterialTheme.colorScheme.background
                 ),
                 shape = RectangleShape,
                 onClick = onNavigateToAppearanceScreen
@@ -76,7 +78,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.fillMaxSize().padding(10.dp)
                 ) {
-                    Image(
+                    Icon(
                         imageVector = Icons.Outlined.Visibility,
                         contentDescription = "Visibility",
                         modifier = Modifier.size(70.dp)
@@ -105,7 +107,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                 ),
                 border = BorderStroke(
                     width = 1.dp,
-                    color = Color(0xffc6c6c6)
+                    color = MaterialTheme.colorScheme.background
                 ),
                 shape = RectangleShape
             ) {
@@ -114,7 +116,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = Modifier.fillMaxSize().padding(10.dp)
                 ) {
-                    Image(
+                    Icon(
                         imageVector = Icons.Outlined.Info,
                         contentDescription = "Info",
                         modifier = Modifier.size(70.dp)

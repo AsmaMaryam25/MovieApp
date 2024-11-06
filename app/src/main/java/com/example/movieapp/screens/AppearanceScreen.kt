@@ -32,7 +32,7 @@ fun AppearanceScreen(showTopBar: () -> Unit) {
             horizontalArrangement = Arrangement.spacedBy(LocalConfiguration.current.screenWidthDp.dp / 2),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Dark mode", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            Text(text = "Dark theme", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             Switch(checked = isDarkMode.value,
                 onCheckedChange = { isDarkMode.value = !isDarkMode.value })
         }
