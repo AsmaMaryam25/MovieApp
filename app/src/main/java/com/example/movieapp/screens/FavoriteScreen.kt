@@ -34,7 +34,9 @@ fun FavoriteScreen() {
         items(20) {
             CreateFavCard(posterWidth)
             HorizontalDivider(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp)
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 20.dp)
             )
         }
     }

@@ -38,35 +38,35 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        item() {
+        item {
             TitleText("Now Playing")
         }
 
-        item() {
+        item {
             CreatePosters()
         }
 
-        item() {
+        item {
             TitleText("Popular")
         }
 
-        item() {
+        item {
             CreatePosters()
         }
 
-        item() {
+        item {
             TitleText("Top Rated")
         }
 
-        item() {
+        item {
             CreatePosters()
         }
 
-        item() {
+        item {
             TitleText("Upcoming")
         }
 
-        item() {
+        item {
             CreatePosters()
         }
     }
@@ -98,7 +98,8 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
         )
         Text(
             modifier = Modifier
-                .width(posterWidth).padding(vertical = 5.dp),
+                .width(posterWidth)
+                .padding(vertical = 5.dp),
             text = "Animation, Adventure, Drama, Fantasy",
             style = TextStyle(
                 textAlign = TextAlign.Center

@@ -30,7 +30,8 @@ fun MainNavHost(
     navController: androidx.navigation.NavHostController,
     onRouteChanged: (Route) -> Unit,
     modifier: androidx.compose.ui.Modifier,
-    showTopBar: () -> Unit
+    showTopBar: () -> Unit,
+    toggleDarkTheme: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -87,7 +88,7 @@ fun MainNavHost(
         composable<Route.AppearanceScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
 
-            AppearanceScreen(showTopBar = showTopBar)
+            AppearanceScreen(showTopBar = showTopBar, toggleDarkTheme = toggleDarkTheme)
         }
 
     }

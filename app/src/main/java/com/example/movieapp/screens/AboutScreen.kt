@@ -12,7 +12,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun AboutScreen(showTopBar: () -> Unit) {
     showTopBar()
-    Column (
+    Column(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
