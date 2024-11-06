@@ -25,7 +25,7 @@ import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Visibility
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceScreen: () -> Unit) {
     LazyColumn {
         item {
             Card (
@@ -68,7 +68,8 @@ fun SettingsScreen() {
                     width = 1.dp,
                     color = Color(0xffc6c6c6)
                 ),
-                shape = RectangleShape
+                shape = RectangleShape,
+                onClick = onNavigateToAppearanceScreen
             ) {
                 Row (
                     verticalAlignment = Alignment.CenterVertically,
@@ -97,6 +98,7 @@ fun SettingsScreen() {
 
         item {
             Card (
+                onClick = onNavigateToAboutScreen,
                 modifier = Modifier.size(
                     width = LocalConfiguration.current.screenWidthDp.dp,
                     height = LocalConfiguration.current.screenHeightDp.dp/8

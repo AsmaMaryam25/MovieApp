@@ -3,6 +3,8 @@ package com.example.movieapp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.example.movieapp.screens.AboutScreen
+import com.example.movieapp.screens.AppearanceScreen
 import com.example.movieapp.screens.FavoriteScreen
 import com.example.movieapp.screens.HomeScreen
 import com.example.movieapp.screens.SearchScreen
@@ -27,7 +29,8 @@ import com.example.movieapp.screens.WatchlistScreen
 fun MainNavHost(
     navController: androidx.navigation.NavHostController,
     onRouteChanged: (Route) -> Unit,
-    modifier: androidx.compose.ui.Modifier
+    modifier: androidx.compose.ui.Modifier,
+    showTopBar: () -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -38,7 +41,7 @@ fun MainNavHost(
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
 
             HomeScreen(
-                onNavigateToFavoriteScreen = {
+                onNavigateToDetailsScreen = {
                     navController.navigate(Route.FavoriteScreen)
                 }
             )
@@ -59,13 +62,32 @@ fun MainNavHost(
         composable<Route.SettingsScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>()) }
 
-            SettingsScreen()
+            SettingsScreen(
+                onNavigateToAboutScreen = {
+                    navController.navigate(Route.AboutScreen)
+                },
+                onNavigateToAppearanceScreen = {
+                    navController.navigate(Route.AppearanceScreen)
+                }
+            )
         }
 
         composable<Route.WatchlistScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
             WatchlistScreen()
+        }
+
+        composable<Route.AboutScreen> { backStackEntry ->
+            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
+
+            AboutScreen(showTopBar = showTopBar)
+        }
+
+        composable<Route.AppearanceScreen> { backStackEntry ->
+            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
+
+            AppearanceScreen(showTopBar = showTopBar)
         }
 
     }
