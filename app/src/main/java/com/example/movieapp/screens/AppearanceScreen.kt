@@ -1,6 +1,5 @@
 package com.example.movieapp.screens
 
-import android.R.attr.checked
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -16,7 +15,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -26,11 +24,17 @@ fun AppearanceScreen(showTopBar: () -> Unit) {
 
     var isDarkMode = remember { mutableStateOf(false) }
 
-    Column (modifier = Modifier.fillMaxSize()) {
-        Row (modifier = Modifier.fillMaxWidth().padding(30.dp), horizontalArrangement = Arrangement.spacedBy(LocalConfiguration.current.screenWidthDp.dp/2), verticalAlignment = Alignment.CenterVertically) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(30.dp),
+            horizontalArrangement = Arrangement.spacedBy(LocalConfiguration.current.screenWidthDp.dp / 2),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(text = "Dark mode", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             Switch(checked = isDarkMode.value,
-                onCheckedChange = { checkedState -> isDarkMode.value = checkedState })
+                onCheckedChange = { isDarkMode.value = !isDarkMode.value })
         }
     }
 }
