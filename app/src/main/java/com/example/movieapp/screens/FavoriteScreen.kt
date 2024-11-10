@@ -28,13 +28,13 @@ import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
 
 @Composable
-fun FavoriteScreen() {
+fun FavoriteScreen(modifier: Modifier = Modifier) {
     val posterWidth = 140.dp
     LazyColumn {
         items(20) {
             CreateFavCard(posterWidth)
             HorizontalDivider(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = 20.dp)
             )
@@ -43,7 +43,7 @@ fun FavoriteScreen() {
 }
 
 @Composable
-fun CreateFavCard(posterWidth: Dp) {
+fun CreateFavCard(posterWidth: Dp, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -51,7 +51,7 @@ fun CreateFavCard(posterWidth: Dp) {
         Image(
             painter = painterResource(id = R.drawable.ygo),
             contentDescription = "Movie Poster 1",
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(20.dp))
         )
@@ -63,14 +63,14 @@ fun CreateFavCard(posterWidth: Dp) {
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
+            modifier = modifier
                 .padding(vertical = 40.dp, horizontal = 10.dp)
                 .weight(2f)
         )
         Icon(
             imageVector = Icons.Default.Reorder,
             contentDescription = "Reorder",
-            modifier = Modifier
+            modifier = modifier
                 .size(24.dp)
                 .weight(0.5f)
         )

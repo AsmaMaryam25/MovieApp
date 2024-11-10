@@ -26,11 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceScreen: () -> Unit) {
+fun SettingsScreen(
+    onNavigateToAboutScreen: () -> Unit,
+    onNavigateToAppearanceScreen: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     LazyColumn {
         item {
             Card(
-                modifier = Modifier.size(
+                modifier = modifier.size(
                     width = LocalConfiguration.current.screenWidthDp.dp,
                     height = LocalConfiguration.current.screenHeightDp.dp / 8
                 ),
@@ -42,20 +46,20 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
+                    modifier = modifier
                         .fillMaxSize()
                         .padding(10.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.AccountCircle,
                         contentDescription = "Account Circle",
-                        modifier = Modifier.size(70.dp)
+                        modifier = modifier.size(70.dp)
                     )
                     Text(
                         text = "UltraYugiohFan123",
                         fontSize = 20.sp,
                         fontWeight = Bold,
-                        modifier = Modifier.padding(10.dp)
+                        modifier = modifier.padding(10.dp)
                     )
                 }
             }
@@ -63,7 +67,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
 
         item {
             Card(
-                modifier = Modifier.size(
+                modifier = modifier.size(
                     width = LocalConfiguration.current.screenWidthDp.dp,
                     height = LocalConfiguration.current.screenHeightDp.dp / 8
                 ),
@@ -77,14 +81,14 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier
+                    modifier = modifier
                         .fillMaxSize()
                         .padding(10.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Visibility,
                         contentDescription = "Visibility",
-                        modifier = Modifier.size(70.dp)
+                        modifier = modifier.size(70.dp)
                     )
                     Column {
                         Text(
@@ -104,7 +108,7 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
         item {
             Card(
                 onClick = onNavigateToAboutScreen,
-                modifier = Modifier.size(
+                modifier = modifier.size(
                     width = LocalConfiguration.current.screenWidthDp.dp,
                     height = LocalConfiguration.current.screenHeightDp.dp / 8
                 ),
@@ -117,14 +121,14 @@ fun SettingsScreen(onNavigateToAboutScreen: () -> Unit, onNavigateToAppearanceSc
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = Modifier
+                    modifier = modifier
                         .fillMaxSize()
                         .padding(10.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Info,
                         contentDescription = "Info",
-                        modifier = Modifier.size(70.dp)
+                        modifier = modifier.size(70.dp)
                     )
                     Column {
                         Text(

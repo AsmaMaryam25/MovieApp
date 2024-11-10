@@ -31,10 +31,10 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit) {
+fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier = Modifier) {
 
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -73,19 +73,19 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit) {
 }
 
 @Composable
-private fun CreatePoster(posterWidth: Dp = 300.dp) {
+private fun CreatePoster(posterWidth: Dp = 300.dp, modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
             painter = painterResource(id = R.drawable.ygo),
             contentDescription = "Movie Poster 1",
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(30.dp))
         )
         Text(
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth)
                 .padding(start = 35.dp, top = 15.dp, end = 35.dp),
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
@@ -97,7 +97,7 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
             fontWeight = FontWeight.Bold
         )
         Text(
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth)
                 .padding(vertical = 5.dp),
             text = "Animation, Adventure, Drama, Fantasy",
@@ -106,7 +106,7 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
             ),
         )
         Text(
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth),
             text = "2016",
             style = TextStyle(
@@ -114,7 +114,7 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
             ),
         )
         Text(
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth)
                 .padding(bottom = 10.dp),
             text = "Yugi once more must Duel to save the world. Only this time, he must do so " +
@@ -130,9 +130,9 @@ private fun CreatePoster(posterWidth: Dp = 300.dp) {
 }
 
 @Composable
-fun TitleText(text: String) {
+fun TitleText(text: String, modifier: Modifier = Modifier) {
     Text(
-        modifier = Modifier.padding(10.dp),
+        modifier = modifier.padding(10.dp),
         text = text,
         fontSize = 25.sp,
         fontWeight = FontWeight.Bold
@@ -140,7 +140,7 @@ fun TitleText(text: String) {
 }
 
 @Composable
-fun CreatePosters() {
+fun CreatePosters(modifier: Modifier = Modifier) {
     val coroutineScope = rememberCoroutineScope()
     val rowState = rememberLazyListState()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = rowState)
