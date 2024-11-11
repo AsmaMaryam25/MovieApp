@@ -25,15 +25,15 @@ import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
 
 @Composable
-fun WatchlistScreen() {
+fun WatchlistScreen(modifier: Modifier = Modifier) {
     val posterWidth = 140.dp
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
     ) {
         items(20) {
             CreateWatchlistCard(posterWidth)
             HorizontalDivider(
-                modifier = Modifier
+                modifier = modifier
                     .fillMaxWidth()
                     .padding(vertical = 20.dp)
             )
@@ -42,7 +42,7 @@ fun WatchlistScreen() {
 }
 
 @Composable
-fun CreateWatchlistCard(posterWidth: Dp) {
+fun CreateWatchlistCard(posterWidth: Dp, modifier: Modifier = Modifier) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -50,7 +50,7 @@ fun CreateWatchlistCard(posterWidth: Dp) {
         Image(
             painter = painterResource(id = R.drawable.ygo),
             contentDescription = "Movie Poster 1",
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(20.dp))
         )
@@ -62,7 +62,7 @@ fun CreateWatchlistCard(posterWidth: Dp) {
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold,
-            modifier = Modifier
+            modifier = modifier
                 .padding(top = 40.dp, start = 10.dp, end = 64.dp, bottom = 40.dp)
                 .weight(2f)
         )

@@ -19,14 +19,18 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun AppearanceScreen(showTopBar: () -> Unit, toggleDarkTheme: () -> Unit) {
+fun AppearanceScreen(
+    showTopBar: () -> Unit,
+    toggleDarkTheme: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     showTopBar()
 
     var switchIsOn = remember { mutableStateOf(false) }
 
-    Column(modifier = Modifier.fillMaxSize()) {
+    Column(modifier = modifier.fillMaxSize()) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(30.dp),
             horizontalArrangement = Arrangement.spacedBy(LocalConfiguration.current.screenWidthDp.dp / 2),

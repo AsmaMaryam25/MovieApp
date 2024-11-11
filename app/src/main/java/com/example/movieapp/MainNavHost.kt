@@ -1,5 +1,6 @@
 package com.example.movieapp
 
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -11,25 +12,11 @@ import com.example.movieapp.screens.SearchScreen
 import com.example.movieapp.screens.SettingsScreen
 import com.example.movieapp.screens.WatchlistScreen
 
-// Step1: define routes ✅
-
-// Step2: get nav controller ✅
-
-// Step3: call NavHost ✅
-
-// Step4: add screens to nav graph ✅
-
-// Step5: add navigation actions ✅
-
-// Step6: add navigation arguments ✅
-
-// Step7: add top app bar with back arrow and screen title ✅
-
 @androidx.compose.runtime.Composable
 fun MainNavHost(
     navController: androidx.navigation.NavHostController,
     onRouteChanged: (Route) -> Unit,
-    modifier: androidx.compose.ui.Modifier,
+    modifier: Modifier,
     showTopBar: () -> Unit,
     toggleDarkTheme: () -> Unit
 ) {
@@ -44,20 +31,21 @@ fun MainNavHost(
             HomeScreen(
                 onNavigateToDetailsScreen = {
                     navController.navigate(Route.FavoriteScreen)
-                }
+                },
+                modifier = Modifier
             )
         }
 
         composable<Route.FavoriteScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
-            FavoriteScreen()
+            FavoriteScreen(modifier = Modifier)
         }
 
         composable<Route.SearchScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchScreen>()) }
 
-            SearchScreen()
+            SearchScreen(modifier = Modifier)
         }
 
         composable<Route.SettingsScreen> { backStackEntry ->
@@ -69,26 +57,31 @@ fun MainNavHost(
                 },
                 onNavigateToAppearanceScreen = {
                     navController.navigate(Route.AppearanceScreen)
-                }
+                },
+                modifier = Modifier
             )
         }
 
         composable<Route.WatchlistScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
-            WatchlistScreen()
+            WatchlistScreen(modifier = Modifier)
         }
 
         composable<Route.AboutScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
 
-            AboutScreen(showTopBar = showTopBar)
+            AboutScreen(showTopBar = showTopBar, modifier = Modifier)
         }
 
         composable<Route.AppearanceScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
 
-            AppearanceScreen(showTopBar = showTopBar, toggleDarkTheme = toggleDarkTheme)
+            AppearanceScreen(
+                showTopBar = showTopBar,
+                toggleDarkTheme = toggleDarkTheme,
+                modifier = Modifier
+            )
         }
 
     }

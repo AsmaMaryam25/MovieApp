@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-fun AboutScreen(showTopBar: () -> Unit) {
+fun AboutScreen(showTopBar: () -> Unit, modifier: Modifier = Modifier) {
     showTopBar()
     Column(
         verticalArrangement = Arrangement.Center,

@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
 
 @Composable
-fun SearchScreen() {
+fun SearchScreen(modifier: Modifier = Modifier) {
     val posterWidth = 170.dp
     //TODO add search bar
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     )
     {
@@ -40,19 +40,19 @@ fun SearchScreen() {
 }
 
 @Composable
-private fun CreateSearchPoster(posterWidth: Dp) {
+private fun CreateSearchPoster(posterWidth: Dp, modifier: Modifier = Modifier) {
     Column(
-        modifier = Modifier.padding(10.dp)
+        modifier = modifier.padding(10.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.ygo),
             contentDescription = "Movie Poster 1",
-            modifier = Modifier
+            modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(20.dp))
         )
         Text(
-            modifier = Modifier.width(posterWidth),
+            modifier = modifier.width(posterWidth),
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
