@@ -44,31 +44,7 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String) {
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
                     Row {
-                        Icon(
-                            imageVector = Icons.Outlined.StarOutline,
-                            contentDescription = "Star Rating 1",
-                            modifier = modifier.size(30.dp)
-                        )
-                        Icon(
-                            imageVector = Icons.Outlined.StarOutline,
-                            contentDescription = "Star Rating 2",
-                            modifier = modifier.size(30.dp)
-                        )
-                        Icon(
-                            imageVector = Icons.Outlined.StarOutline,
-                            contentDescription = "Star Rating 3",
-                            modifier = modifier.size(30.dp)
-                        )
-                        Icon(
-                            imageVector = Icons.Outlined.StarOutline,
-                            contentDescription = "Star Rating 4",
-                            modifier = modifier.size(30.dp)
-                        )
-                        Icon(
-                            imageVector = Icons.Outlined.StarOutline,
-                            contentDescription = "Star Rating 5",
-                            modifier = modifier.size(30.dp)
-                        )
+                        CreateStars(modifier)
                     }
                 }
                 Column (horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = modifier.padding(10.dp)) {
@@ -143,7 +119,6 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String) {
             fontWeight = FontWeight.Bold
         )
         }
-
         item{
         LazyRow (horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(5){
@@ -151,6 +126,17 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String) {
             }
         }}
     }
+}
+
+@Composable
+private fun CreateStars(modifier: Modifier) {
+   for (i in 1..5) {
+       Icon(
+           imageVector = Icons.Outlined.StarOutline,
+           contentDescription = "Star Rating $i",
+           modifier = modifier.size(30.dp)
+       )
+   }
 }
 
 @Composable
