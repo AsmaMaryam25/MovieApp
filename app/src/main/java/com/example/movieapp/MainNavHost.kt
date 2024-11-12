@@ -26,7 +26,7 @@ fun MainNavHost(
     NavHost(
         navController = navController,
         startDestination = Route.HomeScreen,
-        modifier = modifier.fillMaxSize() // Ensure NavHost fills the entire screen
+        modifier = modifier.fillMaxSize()
     ) {
         composable<Route.HomeScreen> {
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
@@ -35,14 +35,14 @@ fun MainNavHost(
                 onNavigateToDetailsScreen = {
                     navController.navigate(Route.DetailsScreen(it))
                 },
-                modifier = Modifier.fillMaxSize() // Ensure HomeScreen fills the entire screen
+                modifier = Modifier.fillMaxSize()
             )
         }
 
         composable<Route.FavoriteScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
-            FavoriteScreen(modifier = Modifier.fillMaxSize()) // Ensure FavoriteScreen fills the entire screen
+            FavoriteScreen(modifier = Modifier.fillMaxSize())
         }
 
         composable<Route.SearchScreen> { backStackEntry ->
@@ -50,7 +50,7 @@ fun MainNavHost(
 
             SearchScreen(onNavigateToAdvancedSearchScreen = {
                 navController.navigate(Route.AdvancedSearchScreen(it))
-            }, modifier = Modifier.fillMaxSize()) // Ensure SearchScreen fills the entire screen
+            }, modifier = Modifier.fillMaxSize())
         }
 
         composable<Route.SettingsScreen> { backStackEntry ->
@@ -63,19 +63,19 @@ fun MainNavHost(
                 onNavigateToAppearanceScreen = {
                     navController.navigate(Route.AppearanceScreen)
                 },
-                modifier = Modifier.fillMaxSize() // Ensure SettingsScreen fills the entire screen
+                modifier = Modifier.fillMaxSize()
             )
         }
 
         composable<Route.WatchlistScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
-            WatchlistScreen(modifier = Modifier.fillMaxSize()) // Ensure WatchlistScreen fills the entire screen
+            WatchlistScreen(modifier = Modifier.fillMaxSize())
         }
 
         composable<Route.AboutScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
-            AboutScreen(showTopBar = showTopBar, modifier = Modifier.fillMaxSize()) // Ensure AboutScreen fills the entire screen
+            AboutScreen(showTopBar = showTopBar, modifier = Modifier.fillMaxSize())
         }
 
         composable<Route.AppearanceScreen> { backStackEntry ->
@@ -84,7 +84,7 @@ fun MainNavHost(
             AppearanceScreen(
                 showTopBar = showTopBar,
                 toggleDarkTheme = toggleDarkTheme,
-                modifier = Modifier.fillMaxSize() // Ensure AppearanceScreen fills the entire screen
+                modifier = Modifier.fillMaxSize()
             )
         }
 
@@ -94,14 +94,14 @@ fun MainNavHost(
             DetailsScreen(
                 movieId = backStackEntry.arguments?.getString("movieId")!!,
                 showTopBar = showTopBar,
-                modifier = Modifier.fillMaxSize() // Ensure DetailsScreen fills the entire screen
+                modifier = Modifier.fillMaxSize()
             )
         }
 
         composable<Route.AdvancedSearchScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
 
-            AdvancedSearchScreen(query = backStackEntry.arguments?.getString("query")!!, modifier = Modifier.fillMaxSize()) // Ensure AdvancedSearchScreen fills the entire screen
+            AdvancedSearchScreen(query = backStackEntry.arguments?.getString("query")!!, modifier = Modifier.fillMaxSize())
         }
     }
 }

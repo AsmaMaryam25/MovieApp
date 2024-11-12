@@ -48,13 +48,12 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = modifier
-                        .fillMaxSize()
                         .padding(10.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Visibility,
                         contentDescription = "Visibility",
-                        modifier = modifier.size(70.dp)
+                        modifier = Modifier.size(70.dp)
                     )
                     Column {
                         Text(
@@ -88,13 +87,12 @@ fun SettingsScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                     modifier = modifier
-                        .fillMaxSize()
                         .padding(10.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Info,
                         contentDescription = "Info",
-                        modifier = modifier.size(70.dp)
+                        modifier = Modifier.size(70.dp)
                     )
                     Column {
                         Text(

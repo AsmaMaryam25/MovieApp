@@ -28,13 +28,11 @@ fun AppearanceScreen(
 
     var switchIsOn = remember { mutableStateOf(false) }
 
-    Column(modifier = modifier.fillMaxSize()) {
+    Column(modifier = modifier) {
         Row(
             modifier = modifier
-                .fillMaxWidth()
                 .padding(30.dp),
             horizontalArrangement = Arrangement.spacedBy(LocalConfiguration.current.screenWidthDp.dp / 2),
-            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(text = "Dark theme", fontSize = 25.sp, fontWeight = FontWeight.Bold)
             Switch(checked = switchIsOn.value,
