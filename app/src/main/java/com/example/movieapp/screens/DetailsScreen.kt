@@ -1,8 +1,5 @@
 package com.example.movieapp.screens
 
-import android.R.attr.contentDescription
-import android.R.attr.text
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +13,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
@@ -31,15 +30,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.key.Key.Companion.I
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
-import kotlin.collections.get
-import kotlin.text.set
 
 @Composable
 fun DetailsScreen(modifier: Modifier = Modifier, movieId: String) {
@@ -76,15 +72,31 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String) {
                         textAlign = TextAlign.Center,
                     )
                     Row {
+                        var favoriteIcon by remember{mutableStateOf(Icons.Outlined.FavoriteBorder)}
+                        var watchlistIcon by remember{mutableStateOf(Icons.Outlined.BookmarkBorder)}
                         Icon(
-                            imageVector = Icons.Outlined.FavoriteBorder,
+                            imageVector = favoriteIcon,
                             contentDescription = "Favorite",
-                            modifier = modifier.padding(5.dp).size(40.dp)
+                            modifier = modifier.padding(5.dp).size(40.dp).clickable(onClick = {
+                                //TODO Add to favorites
+                                favoriteIcon = if (favoriteIcon == Icons.Outlined.FavoriteBorder) {
+                                    Icons.Filled.Favorite
+                                } else {
+                                    Icons.Outlined.FavoriteBorder
+                                }
+                            })
                         )
                         Icon(
-                            imageVector = Icons.Outlined.BookmarkBorder,
+                            imageVector = watchlistIcon,
                             contentDescription = "Watchlist",
-                            modifier = modifier.padding(5.dp).size(40.dp)
+                            modifier = modifier.padding(5.dp).size(40.dp).clickable(onClick = {
+                                //TODO Add to watchlist
+                                watchlistIcon = if (watchlistIcon == Icons.Outlined.BookmarkBorder) {
+                                    Icons.Filled.Bookmark
+                                } else {
+                                    Icons.Outlined.BookmarkBorder
+                                }
+                            })
                         )
                     }
                 }
