@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.movieapp.screens.AboutScreen
 import com.example.movieapp.screens.AppearanceScreen
+import com.example.movieapp.screens.DetailsScreen
 import com.example.movieapp.screens.FavoriteScreen
 import com.example.movieapp.screens.HomeScreen
 import com.example.movieapp.screens.SearchScreen
@@ -30,7 +31,7 @@ fun MainNavHost(
 
             HomeScreen(
                 onNavigateToDetailsScreen = {
-                    navController.navigate(Route.FavoriteScreen)
+                    navController.navigate(Route.DetailsScreen(it))
                 },
                 modifier = Modifier
             )
@@ -82,6 +83,12 @@ fun MainNavHost(
                 toggleDarkTheme = toggleDarkTheme,
                 modifier = Modifier
             )
+        }
+
+        composable<Route.DetailsScreen> { backStackEntry ->
+            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>()) }
+
+            DetailsScreen(movieId = backStackEntry.arguments?.getString("movieId")!!)
         }
 
     }
