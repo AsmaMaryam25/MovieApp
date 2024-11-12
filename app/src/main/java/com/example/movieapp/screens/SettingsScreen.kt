@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material.icons.outlined.Visibility
 import androidx.compose.material3.Card
@@ -32,39 +31,6 @@ fun SettingsScreen(
     modifier: Modifier = Modifier
 ) {
     LazyColumn {
-        item {
-            Card(
-                modifier = modifier.size(
-                    width = LocalConfiguration.current.screenWidthDp.dp,
-                    height = LocalConfiguration.current.screenHeightDp.dp / 8
-                ),
-                border = BorderStroke(
-                    width = 1.dp,
-                    color = MaterialTheme.colorScheme.background
-                ),
-                shape = RectangleShape
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = modifier
-                        .fillMaxSize()
-                        .padding(10.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountCircle,
-                        contentDescription = "Account Circle",
-                        modifier = modifier.size(70.dp)
-                    )
-                    Text(
-                        text = "UltraYugiohFan123",
-                        fontSize = 20.sp,
-                        fontWeight = Bold,
-                        modifier = modifier.padding(10.dp)
-                    )
-                }
-            }
-        }
-
         item {
             Card(
                 modifier = modifier.size(

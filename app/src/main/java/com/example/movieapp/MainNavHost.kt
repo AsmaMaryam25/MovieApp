@@ -71,7 +71,6 @@ fun MainNavHost(
 
         composable<Route.AboutScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
-
             AboutScreen(showTopBar = showTopBar, modifier = Modifier)
         }
 
@@ -88,7 +87,10 @@ fun MainNavHost(
         composable<Route.DetailsScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>()) }
 
-            DetailsScreen(movieId = backStackEntry.arguments?.getString("movieId")!!)
+            DetailsScreen(
+                movieId = backStackEntry.arguments?.getString("movieId")!!,
+                showTopBar = showTopBar
+            )
         }
 
     }

@@ -1,6 +1,5 @@
 package com.example.movieapp.screens
 
-import android.R.attr.onClick
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
@@ -28,7 +27,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.movieapp.screens.CreatePosters
 import dk.shape.dtu.navigation.R
 import kotlinx.coroutines.launch
 
@@ -76,7 +74,11 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier =
 }
 
 @Composable
-private fun CreatePoster(onNavigateToDetailsScreen: (String) -> Unit, posterWidth: Dp = 300.dp, modifier: Modifier = Modifier) {
+private fun CreatePoster(
+    onNavigateToDetailsScreen: (String) -> Unit,
+    posterWidth: Dp = 300.dp,
+    modifier: Modifier = Modifier
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -86,7 +88,7 @@ private fun CreatePoster(onNavigateToDetailsScreen: (String) -> Unit, posterWidt
             modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(30.dp))
-                .clickable(onClick = {onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions")})
+                .clickable(onClick = { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") })
         )
         Text(
             modifier = modifier
