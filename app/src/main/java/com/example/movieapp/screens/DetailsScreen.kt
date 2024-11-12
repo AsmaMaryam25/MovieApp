@@ -2,7 +2,9 @@ package com.example.movieapp.screens
 
 import android.R.attr.contentDescription
 import android.R.attr.text
+import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,21 +16,30 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.key.Key.Companion.I
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
+import kotlin.collections.get
+import kotlin.text.set
 
 @Composable
 fun DetailsScreen(modifier: Modifier = Modifier, movieId: String) {
@@ -130,13 +141,32 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String) {
 
 @Composable
 private fun CreateStars(modifier: Modifier) {
-   for (i in 1..5) {
-       Icon(
-           imageVector = Icons.Outlined.StarOutline,
-           contentDescription = "Star Rating $i",
-           modifier = modifier.size(30.dp)
-       )
-   }
+    val iconList = remember {
+        mutableStateListOf(
+            Icons.Outlined.StarOutline,
+            Icons.Outlined.StarOutline,
+            Icons.Outlined.StarOutline,
+            Icons.Outlined.StarOutline,
+            Icons.Outlined.StarOutline
+        )
+    }
+    Row {
+        for (i in 0 until 5) {
+            Icon(
+                imageVector = iconList[i],
+                contentDescription = "Star Rating ${i + 1}",
+                modifier = modifier.size(30.dp).clickable(onClick = {
+                    for (j in 0 until 5){
+                        if (iconList[i] == Icons.Outlined.StarOutline) {
+                            iconList[j] = Icons.Filled.Star
+                        } else if (j > i) {
+                            iconList[j] = Icons.Outlined.StarOutline
+                        }
+                    }
+                })
+            )
+        }
+    }
 }
 
 @Composable
