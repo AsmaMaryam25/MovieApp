@@ -93,7 +93,8 @@ private fun CreatePoster(
         Text(
             modifier = modifier
                 .width(posterWidth)
-                .padding(start = 35.dp, top = 15.dp, end = 35.dp),
+                .padding(start = 35.dp, top = 15.dp, end = 35.dp)
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") },
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
             style = TextStyle(
                 fontSize = 25.sp,

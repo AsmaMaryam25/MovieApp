@@ -1,6 +1,7 @@
 package com.example.movieapp.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -28,11 +29,11 @@ import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
 
 @Composable
-fun FavoriteScreen(modifier: Modifier = Modifier) {
+fun FavoriteScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String) -> Unit) {
     val posterWidth = 140.dp
     LazyColumn {
         items(20) {
-            CreateFavCard(posterWidth)
+            CreateFavCard(posterWidth, onNavigateToDetailsScreen = onNavigateToDetailsScreen)
             HorizontalDivider(
                 modifier = modifier
                     .fillMaxWidth()
@@ -43,7 +44,11 @@ fun FavoriteScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CreateFavCard(posterWidth: Dp, modifier: Modifier = Modifier) {
+fun CreateFavCard(
+    posterWidth: Dp,
+    modifier: Modifier = Modifier,
+    onNavigateToDetailsScreen: (String) -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -54,6 +59,7 @@ fun CreateFavCard(posterWidth: Dp, modifier: Modifier = Modifier) {
             modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(20.dp))
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") }
         )
         Text(
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
@@ -66,6 +72,7 @@ fun CreateFavCard(posterWidth: Dp, modifier: Modifier = Modifier) {
             modifier = modifier
                 .padding(vertical = 40.dp, horizontal = 10.dp)
                 .weight(2f)
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") }
         )
         Icon(
             imageVector = Icons.Default.Reorder,

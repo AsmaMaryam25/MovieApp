@@ -1,6 +1,7 @@
 package com.example.movieapp.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +26,8 @@ import dk.shape.dtu.navigation.R
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAdvancedSearchScreen: (String) -> Unit
+    onNavigateToAdvancedSearchScreen: (String) -> Unit,
+    onNavigateToDetailsScreen: (String) -> Unit
 ) {
     val posterWidth = 170.dp
     //TODO add search bar
@@ -43,15 +45,25 @@ fun SearchScreen(
         }
         items(10) {
             Row {
-                CreateSearchPoster(posterWidth)
-                CreateSearchPoster(posterWidth)
+                CreateSearchPoster(
+                    posterWidth,
+                    onNavigateToDetailsScreen = onNavigateToDetailsScreen
+                )
+                CreateSearchPoster(
+                    posterWidth,
+                    onNavigateToDetailsScreen = onNavigateToDetailsScreen
+                )
             }
         }
     }
 }
 
 @Composable
-private fun CreateSearchPoster(posterWidth: Dp, modifier: Modifier = Modifier) {
+private fun CreateSearchPoster(
+    posterWidth: Dp,
+    modifier: Modifier = Modifier,
+    onNavigateToDetailsScreen: (String) -> Unit
+) {
     Column(
         modifier = modifier.padding(10.dp)
     ) {
@@ -61,9 +73,12 @@ private fun CreateSearchPoster(posterWidth: Dp, modifier: Modifier = Modifier) {
             modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(20.dp))
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") }
         )
         Text(
-            modifier = modifier.width(posterWidth),
+            modifier = modifier
+                .width(posterWidth)
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") },
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,

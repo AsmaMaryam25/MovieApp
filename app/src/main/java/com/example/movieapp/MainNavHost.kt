@@ -42,7 +42,9 @@ fun MainNavHost(
         composable<Route.FavoriteScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
-            FavoriteScreen(modifier = Modifier.fillMaxSize())
+            FavoriteScreen(modifier = Modifier.fillMaxSize(), onNavigateToDetailsScreen = {
+                navController.navigate(Route.DetailsScreen(it))
+            })
         }
 
         composable<Route.SearchScreen> { backStackEntry ->
@@ -50,7 +52,9 @@ fun MainNavHost(
 
             SearchScreen(onNavigateToAdvancedSearchScreen = {
                 navController.navigate(Route.AdvancedSearchScreen(it))
-            }, modifier = Modifier.fillMaxSize())
+            }, modifier = Modifier.fillMaxSize(), onNavigateToDetailsScreen = {
+                navController.navigate(Route.DetailsScreen(it))
+            })
         }
 
         composable<Route.SettingsScreen> { backStackEntry ->
@@ -70,7 +74,9 @@ fun MainNavHost(
         composable<Route.WatchlistScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
-            WatchlistScreen(modifier = Modifier.fillMaxSize())
+            WatchlistScreen(modifier = Modifier.fillMaxSize(), onNavigateToDetailsScreen = {
+                navController.navigate(Route.DetailsScreen(it))
+            })
         }
 
         composable<Route.AboutScreen> { backStackEntry ->

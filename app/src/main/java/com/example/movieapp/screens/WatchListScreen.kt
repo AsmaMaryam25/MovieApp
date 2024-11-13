@@ -1,6 +1,7 @@
 package com.example.movieapp.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,13 +26,13 @@ import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
 
 @Composable
-fun WatchlistScreen(modifier: Modifier = Modifier) {
+fun WatchlistScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String) -> Unit) {
     val posterWidth = 140.dp
     LazyColumn(
         modifier = modifier.fillMaxSize(),
     ) {
         items(20) {
-            CreateWatchlistCard(posterWidth)
+            CreateWatchlistCard(posterWidth, onNavigateToDetailsScreen = onNavigateToDetailsScreen)
             HorizontalDivider(
                 modifier = modifier
                     .fillMaxWidth()
@@ -42,7 +43,11 @@ fun WatchlistScreen(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CreateWatchlistCard(posterWidth: Dp, modifier: Modifier = Modifier) {
+fun CreateWatchlistCard(
+    posterWidth: Dp,
+    modifier: Modifier = Modifier,
+    onNavigateToDetailsScreen: (String) -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -53,6 +58,7 @@ fun CreateWatchlistCard(posterWidth: Dp, modifier: Modifier = Modifier) {
             modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(20.dp))
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") }
         )
         Text(
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
@@ -65,6 +71,7 @@ fun CreateWatchlistCard(posterWidth: Dp, modifier: Modifier = Modifier) {
             modifier = modifier
                 .padding(top = 40.dp, start = 10.dp, end = 64.dp, bottom = 40.dp)
                 .weight(2f)
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") }
         )
     }
 }
