@@ -23,7 +23,8 @@ import androidx.compose.ui.unit.dp
 fun SearchBar(
     searchQuery: MutableState<String>,
     onSearchQueryChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClickMenu: (String) -> Unit = {}
 ) {
     OutlinedTextField(
         value = searchQuery.value,
@@ -41,7 +42,7 @@ fun SearchBar(
             )
         },
         leadingIcon = {
-            IconButton(onClick = { /* Handle menu click */ }) {
+            IconButton(onClick = { onClickMenu("Advanced Search") }) {
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = "Menu",

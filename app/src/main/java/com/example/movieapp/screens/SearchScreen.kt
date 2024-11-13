@@ -2,9 +2,11 @@ package com.example.movieapp.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -42,17 +44,21 @@ fun SearchScreen(
         SearchBar(
             searchQuery = searchQuery,
             onSearchQueryChange = { query ->
-                // Handle search
-            }
+                //TODO Handle search
+            },
+            onClickMenu = { onNavigateToAdvancedSearchScreen("Advanced Search") }
         )
 
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             items(10) {
-                Row {
-                    CreateSearchPoster(posterWidth)
-                    CreateSearchPoster(posterWidth)
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    CreateSearchPoster(posterWidth, onNavigateToDetailsScreen = onNavigateToDetailsScreen)
+                    CreateSearchPoster(posterWidth, onNavigateToDetailsScreen = onNavigateToDetailsScreen)
                 }
             }
         }
