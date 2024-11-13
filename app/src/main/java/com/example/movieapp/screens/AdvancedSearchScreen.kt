@@ -26,9 +26,10 @@ fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column(
-            verticalArrangement = Arrangement.spacedBy(30.dp)
+            verticalArrangement = Arrangement.spacedBy(70.dp)
         ) {
             TextField(
+
                 value = "",
                 onValueChange = {},
                 label = { Text("Title") }
@@ -46,22 +47,12 @@ fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier) {
             TextField(
                 value = "",
                 onValueChange = {},
-                label = { Text("Director") }
+                label = { Text("Cast") }
             )
             TextField(
                 value = "",
                 onValueChange = {},
-                label = { Text("Director") }
-            )
-            TextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Director") }
-            )
-            TextField(
-                value = "",
-                onValueChange = {},
-                label = { Text("Director") }
+                label = { Text("Genre") }
             )
         }
 
@@ -70,13 +61,15 @@ fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier) {
             modifier = Modifier.fillMaxWidth()
         ) {
             Button(
-                onClick = {}
+                onClick = {},
+                modifier = Modifier.width(95.dp)
             ) {
                 Text("Search")
             }
             Spacer(modifier = Modifier.width(60.dp))
             Button(
-                onClick = {}
+                onClick = {},
+                modifier = Modifier.width(95.dp)
             ) {
                 Text("Clear")
             }
