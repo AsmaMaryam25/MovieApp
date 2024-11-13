@@ -76,78 +76,91 @@ class MainActivity : ComponentActivity() {
 
                     Scaffold(
                         bottomBar = {
-                            NavigationBar {
-                                navItemList.forEach { navItem ->
-                                    NavigationBarItem(
-                                        icon = {
-                                            Icon(
-                                                imageVector = navItem.icon,
-                                                contentDescription = null
-                                            )
-                                        },
-                                        label = {
-                                            Text(navItem.label)
-                                        },
-                                        selected = selectedItem == navItem.label,
-                                        onClick = {
-                                            isNavigationBarAction = true
-                                            canNavigateBack = false
-                                            topBarShown = false
-                                            selectedItem = navItem.label
-                                            navItemList.clear()
-                                            navItemList.addAll(
-                                                listOf(
-                                                    NavItem("Home", Icons.Outlined.Home),
-                                                    NavItem("Search", Icons.Outlined.Search),
-                                                    NavItem(
-                                                        "Favorites",
-                                                        Icons.Outlined.FavoriteBorder
-                                                    ),
-                                                    NavItem(
-                                                        "Watchlist",
-                                                        Icons.AutoMirrored.Outlined.FormatListBulleted
-                                                    ),
-                                                    NavItem("Settings", Icons.Outlined.Settings)
+                            if (!canNavigateBack) {
+                                NavigationBar {
+                                    navItemList.forEach { navItem ->
+                                        NavigationBarItem(
+                                            icon = {
+                                                Icon(
+                                                    imageVector = navItem.icon,
+                                                    contentDescription = null
                                                 )
-                                            )
-                                            when (navItem.label) {
-                                                "Home" -> {
-                                                    navController.navigate(Route.HomeScreen)
-                                                    navItemList[0] =
-                                                        NavItem("Home", Icons.Filled.Home)
-                                                }
-
-                                                "Favorites" -> {
-                                                    navController.navigate(Route.FavoriteScreen)
-                                                    navItemList[2] =
-                                                        NavItem("Favorites", Icons.Filled.Favorite)
-                                                    topBarShown = true
-
-                                                }
-
-                                                "Search" -> {
-                                                    navController.navigate(Route.SearchScreen)
-                                                    navItemList[1] =
-                                                        NavItem("Search", Icons.Filled.Search)
-                                                }
-
-                                                "Settings" -> {
-                                                    navController.navigate(Route.SettingsScreen)
-                                                    navItemList[4] =
-                                                        NavItem("Settings", Icons.Filled.Settings)
-                                                }
-
-                                                "Watchlist" -> {
-                                                    navController.navigate(Route.WatchlistScreen)
-                                                    navItemList[3] = NavItem(
-                                                        "Watchlist",
-                                                        Icons.AutoMirrored.Filled.FormatListBulleted
+                                            },
+                                            label = {
+                                                Text(navItem.label)
+                                            },
+                                            selected = selectedItem == navItem.label,
+                                            onClick = {
+                                                isNavigationBarAction = true
+                                                canNavigateBack = false
+                                                topBarShown = false
+                                                selectedItem = navItem.label
+                                                navItemList.clear()
+                                                navItemList.addAll(
+                                                    listOf(
+                                                        NavItem("Home", Icons.Outlined.Home),
+                                                        NavItem("Search", Icons.Outlined.Search),
+                                                        NavItem(
+                                                            "Favorites",
+                                                            Icons.Outlined.FavoriteBorder
+                                                        ),
+                                                        NavItem(
+                                                            "Watchlist",
+                                                            Icons.AutoMirrored.Outlined.FormatListBulleted
+                                                        ),
+                                                        NavItem("Settings", Icons.Outlined.Settings)
                                                     )
-                                                    topBarShown = true
+                                                )
+                                                when (navItem.label) {
+                                                    "Home" -> {
+                                                        navController.popBackStack()
+                                                        navController.navigate(Route.HomeScreen)
+                                                        navItemList[0] =
+                                                            NavItem("Home", Icons.Filled.Home)
+                                                    }
+
+                                                    "Favorites" -> {
+                                                        navController.popBackStack()
+                                                        navController.navigate(Route.FavoriteScreen)
+                                                        navItemList[2] =
+                                                            NavItem(
+                                                                "Favorites",
+                                                                Icons.Filled.Favorite
+                                                            )
+                                                        topBarShown = true
+
+                                                    }
+
+                                                    "Search" -> {
+                                                        navController.popBackStack()
+                                                        navController.navigate(Route.SearchScreen)
+                                                        navItemList[1] =
+                                                            NavItem("Search", Icons.Filled.Search)
+                                                    }
+
+                                                    "Settings" -> {
+                                                        navController.popBackStack()
+                                                        navController.navigate(Route.SettingsScreen)
+                                                        navItemList[4] =
+                                                            NavItem(
+                                                                "Settings",
+                                                                Icons.Filled.Settings
+                                                            )
+                                                    }
+
+                                                    "Watchlist" -> {
+                                                        navController.popBackStack()
+                                                        navController.navigate(Route.WatchlistScreen)
+                                                        navItemList[3] = NavItem(
+                                                            "Watchlist",
+                                                            Icons.AutoMirrored.Filled.FormatListBulleted
+                                                        )
+                                                        topBarShown = true
+                                                    }
                                                 }
                                             }
-                                        }
-                                    )
+                                        )
+                                    }
                                 }
                             }
                         },

@@ -23,7 +23,10 @@ import androidx.compose.ui.unit.sp
 import dk.shape.dtu.navigation.R
 
 @Composable
-fun SearchScreen(modifier: Modifier = Modifier, onNavigateToAdvancedSearchScreen: (String) -> Unit) {
+fun SearchScreen(
+    modifier: Modifier = Modifier,
+    onNavigateToAdvancedSearchScreen: (String) -> Unit
+) {
     val posterWidth = 170.dp
     //TODO add search bar
     LazyColumn(

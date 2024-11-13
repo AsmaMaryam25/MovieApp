@@ -17,7 +17,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier) {
+fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier, showTopBar: () -> Unit) {
+    showTopBar()
     Column(
         modifier = modifier
             .fillMaxSize()

@@ -101,7 +101,11 @@ fun MainNavHost(
         composable<Route.AdvancedSearchScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
 
-            AdvancedSearchScreen(query = backStackEntry.arguments?.getString("query")!!, modifier = Modifier.fillMaxSize())
+            AdvancedSearchScreen(
+                query = backStackEntry.arguments?.getString("query")!!,
+                modifier = Modifier.fillMaxSize(),
+                showTopBar = showTopBar
+            )
         }
     }
 }

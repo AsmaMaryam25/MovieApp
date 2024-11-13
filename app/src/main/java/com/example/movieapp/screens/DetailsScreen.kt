@@ -52,18 +52,18 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: ()
                     Image(
                         painter = painterResource(id = R.drawable.ygo),
                         contentDescription = "Movie Poster 1",
-                        modifier = modifier
+                        modifier = Modifier
                             .width(180.dp)
                             .clip(shape = RoundedCornerShape(20.dp))
                     )
                     Row {
-                        CreateStars(modifier)
+                        CreateStars(Modifier)
                     }
                 }
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
-                    modifier = modifier.padding(10.dp)
+                    modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
                         text = movieId,
@@ -87,7 +87,7 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: ()
                         Icon(
                             imageVector = favoriteIcon,
                             contentDescription = "Favorite",
-                            modifier = modifier
+                            modifier = Modifier
                                 .padding(5.dp)
                                 .size(40.dp)
                                 .clickable(onClick = {
@@ -103,7 +103,7 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: ()
                         Icon(
                             imageVector = watchlistIcon,
                             contentDescription = "Watchlist",
-                            modifier = modifier
+                            modifier = Modifier
                                 .padding(5.dp)
                                 .size(40.dp)
                                 .clickable(onClick = {
@@ -169,7 +169,7 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: ()
         item {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(5) {
-                    CreateActor(modifier)
+                    CreateActor(Modifier)
                 }
             }
         }
