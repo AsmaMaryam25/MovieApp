@@ -1,6 +1,7 @@
 package com.example.movieapp.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +44,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier =
         }
 
         item {
-            CreatePosters()
+            CreatePosters(onNavigateToDetailsScreen)
         }
 
         item {
@@ -51,7 +52,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier =
         }
 
         item {
-            CreatePosters()
+            CreatePosters(onNavigateToDetailsScreen)
         }
 
         item {
@@ -59,7 +60,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier =
         }
 
         item {
-            CreatePosters()
+            CreatePosters(onNavigateToDetailsScreen)
         }
 
         item {
@@ -67,13 +68,17 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier =
         }
 
         item {
-            CreatePosters()
+            CreatePosters(onNavigateToDetailsScreen)
         }
     }
 }
 
 @Composable
-private fun CreatePoster(posterWidth: Dp = 300.dp, modifier: Modifier = Modifier) {
+private fun CreatePoster(
+    onNavigateToDetailsScreen: (String) -> Unit,
+    posterWidth: Dp = 300.dp,
+    modifier: Modifier = Modifier
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -83,11 +88,13 @@ private fun CreatePoster(posterWidth: Dp = 300.dp, modifier: Modifier = Modifier
             modifier = modifier
                 .width(posterWidth)
                 .clip(shape = RoundedCornerShape(30.dp))
+                .clickable(onClick = { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") })
         )
         Text(
             modifier = modifier
                 .width(posterWidth)
-                .padding(start = 35.dp, top = 15.dp, end = 35.dp),
+                .padding(start = 35.dp, top = 15.dp, end = 35.dp)
+                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") },
             text = "Yu-Gi-Oh!: The Dark Side of Dimensions",
             style = TextStyle(
                 fontSize = 25.sp,
@@ -140,7 +147,7 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CreatePosters(modifier: Modifier = Modifier) {
+fun CreatePosters(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier = Modifier) {
     val coroutineScope = rememberCoroutineScope()
     val rowState = rememberLazyListState()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = rowState)
@@ -152,7 +159,7 @@ fun CreatePosters(modifier: Modifier = Modifier) {
         contentPadding = PaddingValues(start = 60.dp, end = 60.dp)
     ) {
         items(6) {
-            CreatePoster()
+            CreatePoster(onNavigateToDetailsScreen)
         }
     }
 
