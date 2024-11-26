@@ -18,11 +18,8 @@ import com.example.movieapp.models.SpokenLanguage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
-import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Date
-import java.util.Locale
 
 class MovieRepository(
     private val remoteMovieDataSource: RemoteMovieDataSource,
@@ -70,8 +67,8 @@ class MovieRepository(
             .map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) })
     }
 
-    fun getMovie(externalId: String): Flow<Movie> = flow {
-        emit(remoteMovieDataSource.getMovie(externalId).mapToMovie(MovieCategory.SPECIFIC))
+    fun getMovie(externalId: Int): Flow<Movie> = flow {
+        emit(remoteMovieDataSource.getMovie(externalId.toString()).mapToMovie(MovieCategory.SPECIFIC))
     }
 
     fun getFavourites() = localMovieDataSource.getFavourites()

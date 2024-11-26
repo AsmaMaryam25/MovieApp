@@ -39,7 +39,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier = Modifier) {
+fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modifier = Modifier) {
 
     val homeViewModel: HomeViewModel = viewModel()
     val homeUIModel = homeViewModel.homeUIState.collectAsState().value
@@ -55,7 +55,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier =
 private fun HomeContent(
     modifier: Modifier,
     homeUIModel: HomeUIModel,
-    onNavigateToDetailsScreen: (String) -> Unit
+    onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -107,7 +107,7 @@ private fun HomeContent(
 
 @Composable
 private fun CreatePoster(
-    onNavigateToDetailsScreen: (String) -> Unit,
+    onNavigateToDetailsScreen: (String, Int) -> Unit,
     posterWidth: Dp = 300.dp,
     collectionMovie: CollectionMovie
 ) {
@@ -128,7 +128,7 @@ private fun CreatePoster(
                     .width(posterWidth)
                     .height(450.dp)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") }),
+                    .clickable(onClick = { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id)}),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
@@ -136,7 +136,7 @@ private fun CreatePoster(
             modifier = Modifier
                 .width(posterWidth)
                 .padding(start = 35.dp, top = 15.dp, end = 35.dp)
-                .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") },
+                .clickable { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id)},
             text = collectionMovie.title,
             style = TextStyle(
                 fontSize = 25.sp,
@@ -185,7 +185,7 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 
 @Composable
 fun CreatePosters(
-    onNavigateToDetailsScreen: (String) -> Unit,
+    onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<CollectionMovie>
 ) {
     val coroutineScope = rememberCoroutineScope()

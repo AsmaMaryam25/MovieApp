@@ -1,11 +1,14 @@
-package com.example.movieapp.screens
+package com.example.movieapp.screens.details
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -22,6 +25,7 @@ import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -30,16 +34,37 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import com.example.movieapp.R
+import com.example.movieapp.models.Movie
 
 @Composable
-fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: () -> Unit) {
+fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit) {
     showTopBar()
+
+    val detailsViewModel = viewModel<DetailsViewModel>(factory = DetailsViewModelFactory(movieId))
+    val detailsUIModel = detailsViewModel.detailsUIState.collectAsState().value
+
+    when (detailsUIModel) {
+        DetailsViewModel.DetailsUIModel.Empty -> Text("Empty")
+        DetailsViewModel.DetailsUIModel.Loading -> Text("Loading")
+        is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
+            modifier = modifier,
+            movie = detailsUIModel.movie
+        )
+    }
+}
+
+@Composable
+private fun DetailsContent(modifier: Modifier, movie: Movie) {
     LazyColumn(
         modifier = modifier
             .padding(10.dp)
@@ -49,13 +74,23 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: ()
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Image(
-                        painter = painterResource(id = R.drawable.ygo),
-                        contentDescription = "Movie Poster 1",
+                    Box(
                         modifier = Modifier
-                            .width(180.dp)
-                            .clip(shape = RoundedCornerShape(20.dp))
-                    )
+                            .width(300.dp)
+                            .height(450.dp)
+                            .clip(shape = RoundedCornerShape(30.dp))
+                            .background(Color.Gray)
+                    ) {
+                        AsyncImage(
+                            model = movie.posterPath,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .width(300.dp)
+                                .height(450.dp)
+                                .clip(shape = RoundedCornerShape(30.dp)),
+                            placeholder = ColorPainter(Color.Gray)
+                        )
+                    }
                     Row {
                         CreateStars(Modifier)
                     }
@@ -66,18 +101,18 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: ()
                     modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
-                        text = movieId,
+                        text = movie.id.toString(),
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
                     )
                     Text(
-                        text = "Animation, Adventure, Drama, Fantasy",
+                        text = movie.genres.map { it.name }.joinToString(),
                         fontSize = 15.sp,
                         textAlign = TextAlign.Center,
                     )
                     Text(
-                        text = "2016",
+                        text = movie.releaseDate.year.toString(),
                         fontSize = 15.sp,
                         textAlign = TextAlign.Center,
                     )
@@ -122,46 +157,42 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: String, showTopBar: ()
         }
         item {
             Text(
-                text = "Yugi once more must Duel to save the world. Only this time, he must do so " +
-                        "without the Pharoah. Kaiba's obsession with trying to find a way to settle " +
-                        "the score with the Pharoah sets off a chain reaction, drawing in the " +
-                        "mysterious Diva. What does this stranger want with Yugi? And what is " +
-                        "the mysterious cube he carries?"
+                text = movie.overview ?: "No overview available",
             )
         }
         item {
             Text(
-                text = "Release date: April 23, 2016",
+                text = "Release date: ${movie.releaseDate}",
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Director: Satoshi Kuwabara",
+                text = "Directed by: ${movie.productionCompanies.joinToString { it.name }}",
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Distributed by: Toei Company",
+                text = "Produced in: ${movie.productionCountries.joinToString { it.name }}",
                 fontSize = 15.sp,
             )
         }
         item {
             Text(
-                text = "Box office: $1.5 million",
+                text = "Revenue generated: ${movie.revenue}",
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Cinematography: Hiroaki Edamitsu",
+                text = "Runtime: ${movie.runtime} minutes",
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Actors",
+                text = "Spoken languages: ${movie.spokenLanguages.joinToString { it.name }}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
