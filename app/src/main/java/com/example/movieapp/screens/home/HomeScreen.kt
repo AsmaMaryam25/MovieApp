@@ -1,11 +1,14 @@
 package com.example.movieapp.screens.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,6 +23,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -109,14 +114,24 @@ private fun CreatePoster(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        AsyncImage(
-            model = collectionMovie.posterPath,
-            contentDescription = null,
+        Box(
             modifier = Modifier
                 .width(posterWidth)
+                .height(450.dp)
                 .clip(shape = RoundedCornerShape(30.dp))
-                .clickable(onClick = { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") })
-        )
+                .background(Color.Gray)
+        ) {
+            AsyncImage(
+                model = collectionMovie.posterPath,
+                contentDescription = null,
+                modifier = Modifier
+                    .width(posterWidth)
+                    .height(450.dp)
+                    .clip(shape = RoundedCornerShape(30.dp))
+                    .clickable(onClick = { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") }),
+                placeholder = ColorPainter(Color.Gray)
+            )
+        }
         Text(
             modifier = Modifier
                 .width(posterWidth)
