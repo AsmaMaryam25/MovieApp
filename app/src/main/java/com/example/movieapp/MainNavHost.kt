@@ -10,10 +10,10 @@ import com.example.movieapp.screens.AdvancedSearchScreen
 import com.example.movieapp.screens.AppearanceScreen
 import com.example.movieapp.screens.DetailsScreen
 import com.example.movieapp.screens.FavoriteScreen
-import com.example.movieapp.screens.home.HomeScreen
 import com.example.movieapp.screens.SearchScreen
 import com.example.movieapp.screens.SettingsScreen
 import com.example.movieapp.screens.WatchlistScreen
+import com.example.movieapp.screens.home.HomeScreen
 
 @androidx.compose.runtime.Composable
 fun MainNavHost(

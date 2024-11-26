@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import com.example.movieapp.models.Movie
 import com.example.movieapp.screens.home.HomeViewModel.HomeUIModel
 import kotlinx.coroutines.launch
-import coil3.compose.AsyncImage
 
 
 @Composable
@@ -39,7 +39,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String) -> Unit, modifier: Modifier =
     val homeViewModel: HomeViewModel = viewModel()
     val homeUIModel = homeViewModel.homeUIState.collectAsState().value
 
-    when(homeUIModel) {
+    when (homeUIModel) {
         HomeUIModel.Empty -> Text("Empty")
         HomeUIModel.Loading -> Text("Loading")
         is HomeUIModel.Data -> HomeContent(modifier, homeUIModel, onNavigateToDetailsScreen)
@@ -191,7 +191,7 @@ fun CreatePosters(
 
     LaunchedEffect(rowState) {
         coroutineScope.launch {
-            rowState.scrollToItem(movies.size/2) // Assuming 6 items, center is at index 3
+            rowState.scrollToItem(movies.size / 2) // Assuming 6 items, center is at index 3
         }
     }
 }

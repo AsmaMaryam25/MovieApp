@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.SearchBar
-import com.example.movieapp.components.SearchBar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -27,6 +25,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.movieapp.R
+import com.example.movieapp.components.SearchBar
 
 @Composable
 fun SearchScreen(
@@ -57,8 +56,14 @@ fun SearchScreen(
                     horizontalArrangement = Arrangement.Center,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    CreateSearchPoster(posterWidth, onNavigateToDetailsScreen = onNavigateToDetailsScreen)
-                    CreateSearchPoster(posterWidth, onNavigateToDetailsScreen = onNavigateToDetailsScreen)
+                    CreateSearchPoster(
+                        posterWidth,
+                        onNavigateToDetailsScreen = onNavigateToDetailsScreen
+                    )
+                    CreateSearchPoster(
+                        posterWidth,
+                        onNavigateToDetailsScreen = onNavigateToDetailsScreen
+                    )
                 }
             }
         }

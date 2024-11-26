@@ -6,9 +6,9 @@ import com.example.movieapp.data.local.FavoriteMovieDataSource
 import com.example.movieapp.data.remote.RemoteMovieDataSource
 import com.example.movieapp.domain.MovieRepository
 import kotlinx.serialization.json.Json
+import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
-import okhttp3.MediaType.Companion.toMediaType
 
 object DataModule {
     const val BASE_URL = "https://api.themoviedb.org/3/"

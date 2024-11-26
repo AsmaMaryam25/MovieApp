@@ -1,19 +1,13 @@
 package com.example.movieapp.domain
 
-import android.util.Log.i
 import com.example.movieapp.data.local.FavoriteMovieDataSource
 import com.example.movieapp.data.model.MovieDao
 import com.example.movieapp.data.remote.RemoteMovieDataSource
 import com.example.movieapp.models.Movie
+import com.example.movieapp.models.MovieCategory
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.map
-import com.example.movieapp.di.DataModule
-import com.example.movieapp.models.Movie.Genre
-import com.example.movieapp.models.Movie.ProductionCompany
-import com.example.movieapp.models.Movie.ProductionCountry
-import com.example.movieapp.models.Movie.SpokenLanguage
-import com.example.movieapp.models.MovieCategory
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

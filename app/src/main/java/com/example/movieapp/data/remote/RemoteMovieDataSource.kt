@@ -1,7 +1,7 @@
 package com.example.movieapp.data.remote
 
-import retrofit2.Retrofit
 import com.example.movieapp.BuildConfig
+import retrofit2.Retrofit
 
 class RemoteMovieDataSource(private val retrofit: Retrofit) {
 

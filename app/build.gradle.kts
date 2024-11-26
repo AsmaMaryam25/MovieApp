@@ -60,30 +60,28 @@ android {
 }
 
 dependencies {
-    dependencies {
-        implementation(libs.materialIconsExtended)
-        implementation(libs.accompanistPager)
-        implementation(libs.lifecycleViewModelCompose)
-        implementation(libs.coreKtx)
-        implementation(libs.lifecycleRuntimeKtx)
-        implementation(libs.activityCompose)
-        implementation(libs.datastorePreferences)
+    implementation(libs.materialIconsExtended)
+    implementation(libs.accompanistPager)
+    implementation(libs.lifecycleViewModelCompose)
+    implementation(libs.coreKtx)
+    implementation(libs.lifecycleRuntimeKtx)
+    implementation(libs.activityCompose)
+    implementation(libs.datastorePreferences)
 
-        implementation(platform(libs.composeBom))
-        implementation(libs.composeUi)
-        implementation(libs.composeUiGraphics)
-        implementation(libs.composeUiToolingPreview)
-        implementation(libs.material3)
+    implementation(platform(libs.composeBom))
+    implementation(libs.composeUi)
+    implementation(libs.composeUiGraphics)
+    implementation(libs.composeUiToolingPreview)
+    implementation(libs.material3)
 
-        implementation(libs.kotlinxSerializationJson)
-        implementation(libs.retrofitConverterKotlinxSerialization)
-        implementation(libs.navigationCompose)
-        implementation(libs.navigationRuntimeKtx)
-        implementation(libs.retrofit)
-        implementation(libs.coilCompose)
-        implementation(libs.coilNetworkOkhttp)
+    implementation(libs.kotlinxSerializationJson)
+    implementation(libs.retrofitConverterKotlinxSerialization)
+    implementation(libs.navigationCompose)
+    implementation(libs.navigationRuntimeKtx)
+    implementation(libs.retrofit)
+    implementation(libs.coilCompose)
+    implementation(libs.coilNetworkOkhttp)
 
-        debugImplementation(libs.composeUiTooling)
-        debugImplementation(libs.composeUiTestManifest)
-    }
+    debugImplementation(libs.composeUiTooling)
+    debugImplementation(libs.composeUiTestManifest)
 }
