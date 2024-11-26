@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.example.movieapp.models.Movie
+import com.example.movieapp.models.CollectionMovie
 import com.example.movieapp.screens.home.HomeViewModel.HomeUIModel
 import kotlinx.coroutines.launch
 
@@ -64,7 +64,7 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.nowPlayingMovies)
+                CreatePosters(onNavigateToDetailsScreen, homeUIModel.nowPlayingCollectionMovies)
             }
         }
 
@@ -74,7 +74,7 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.popularMovies)
+                CreatePosters(onNavigateToDetailsScreen, homeUIModel.popularCollectionMovies)
             }
         }
 
@@ -84,7 +84,7 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.topRatedMovies)
+                CreatePosters(onNavigateToDetailsScreen, homeUIModel.topRatedCollectionMovies)
             }
         }
 
@@ -94,7 +94,7 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.upcomingMovies)
+                CreatePosters(onNavigateToDetailsScreen, homeUIModel.upcomingCollectionMovies)
             }
         }
     }
@@ -104,13 +104,13 @@ private fun HomeContent(
 private fun CreatePoster(
     onNavigateToDetailsScreen: (String) -> Unit,
     posterWidth: Dp = 300.dp,
-    movie: Movie
+    collectionMovie: CollectionMovie
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
-            model = movie.posterPath,
+            model = collectionMovie.posterPath,
             contentDescription = null,
             modifier = Modifier
                 .width(posterWidth)
@@ -122,7 +122,7 @@ private fun CreatePoster(
                 .width(posterWidth)
                 .padding(start = 35.dp, top = 15.dp, end = 35.dp)
                 .clickable { onNavigateToDetailsScreen("Yu-Gi-Oh!: The Dark Side of Dimensions") },
-            text = movie.title,
+            text = collectionMovie.title,
             style = TextStyle(
                 fontSize = 25.sp,
                 lineHeight = 30.sp,
@@ -132,9 +132,8 @@ private fun CreatePoster(
         )
         Text(
             modifier = Modifier
-                .width(posterWidth)
-                .padding(vertical = 5.dp),
-            text = movie.genres.joinToString(", ") { it.name },
+                .width(posterWidth),
+            text = collectionMovie.genres.joinToString { it.name },
             style = TextStyle(
                 textAlign = TextAlign.Center
             ),
@@ -142,7 +141,7 @@ private fun CreatePoster(
         Text(
             modifier = Modifier
                 .width(posterWidth),
-            text = movie.releaseDate.year.toString(),
+            text = collectionMovie.releaseDate.year.toString(),
             style = TextStyle(
                 textAlign = TextAlign.Center
             ),
@@ -151,7 +150,7 @@ private fun CreatePoster(
             modifier = Modifier
                 .width(posterWidth)
                 .padding(bottom = 10.dp),
-            text = movie.overview ?: "No overview available",
+            text = collectionMovie.overview ?: "No overview available",
             style = TextStyle(
                 textAlign = TextAlign.Center
             ),
@@ -172,7 +171,7 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun CreatePosters(
     onNavigateToDetailsScreen: (String) -> Unit,
-    movies: List<Movie>
+    collectionMovies: List<CollectionMovie>
 ) {
     val coroutineScope = rememberCoroutineScope()
     val rowState = rememberLazyListState()
@@ -184,14 +183,14 @@ fun CreatePosters(
         flingBehavior = snapBehavior,
         contentPadding = PaddingValues(start = 60.dp, end = 60.dp)
     ) {
-        items(movies.size) { index ->
-            CreatePoster(onNavigateToDetailsScreen, 300.dp, movies[index])
+        items(collectionMovies.size) { index ->
+            CreatePoster(onNavigateToDetailsScreen, 300.dp, collectionMovies[index])
         }
     }
 
     LaunchedEffect(rowState) {
         coroutineScope.launch {
-            rowState.scrollToItem(movies.size / 2) // Assuming 6 items, center is at index 3
+            rowState.scrollToItem(collectionMovies.size / 2) // Assuming 6 items, center is at index 3
         }
     }
 }

@@ -3,7 +3,7 @@ package com.example.movieapp.screens.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.di.DataModule
-import com.example.movieapp.models.Movie
+import com.example.movieapp.models.CollectionMovie
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -24,10 +24,10 @@ class HomeViewModel : ViewModel() {
                 movieRepository.getUpcomingMovies()
             ) { nowPlaying, popular, topRated, upcoming ->
                 HomeUIModel.Data(
-                    nowPlayingMovies = nowPlaying,
-                    popularMovies = popular,
-                    topRatedMovies = topRated,
-                    upcomingMovies = upcoming
+                    nowPlayingCollectionMovies = nowPlaying,
+                    popularCollectionMovies = popular,
+                    topRatedCollectionMovies = topRated,
+                    upcomingCollectionMovies = upcoming
                 )
             }.collect { homeUIModel ->
                 mutableHomeUIState.value = homeUIModel
@@ -39,10 +39,10 @@ class HomeViewModel : ViewModel() {
         data object Empty : HomeUIModel()
         data object Loading : HomeUIModel()
         data class Data(
-            val nowPlayingMovies: List<Movie>,
-            val popularMovies: List<Movie>,
-            val topRatedMovies: List<Movie>,
-            val upcomingMovies: List<Movie>
+            val nowPlayingCollectionMovies: List<CollectionMovie>,
+            val popularCollectionMovies: List<CollectionMovie>,
+            val topRatedCollectionMovies: List<CollectionMovie>,
+            val upcomingCollectionMovies: List<CollectionMovie>
         ) : HomeUIModel()
     }
 }
