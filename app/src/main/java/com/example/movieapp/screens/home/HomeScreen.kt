@@ -191,7 +191,7 @@ fun CreatePosters(
 
     LaunchedEffect(rowState) {
         coroutineScope.launch {
-            rowState.scrollToItem(3) // Assuming 6 items, center is at index 3
+            rowState.scrollToItem(movies.size/2) // Assuming 6 items, center is at index 3
         }
     }
 }
