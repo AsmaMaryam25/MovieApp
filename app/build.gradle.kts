@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -6,11 +8,18 @@ plugins {
 }
 
 android {
-    namespace = "dk.shape.dtu.navigation"
+    namespace = "com.example.movieapp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "dk.shape.dtu.navigation"
+        // Load the local.properties file
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
+        // Set the TMDB_API key in BuildConfig
+        buildConfigField("String", "TMDB_API", "\"${properties["TMDB_API"]}\"")
+
+        applicationId = "com.example.movieapp"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
@@ -24,6 +33,7 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "TMDB_API", "\"${properties["TMDB_API"]}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -39,6 +49,7 @@ android {
         jvmTarget = "1.8"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     packaging {
@@ -55,6 +66,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
     implementation("androidx.activity:activity-compose:1.9.3")
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     implementation(platform("androidx.compose:compose-bom:2024.10.00"))
     implementation("androidx.compose.ui:ui")
@@ -63,8 +75,12 @@ dependencies {
     implementation("androidx.compose.material3:material3")
 
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("com.squareup.retrofit2:converter-kotlinx-serialization:2.11.0")
     implementation("androidx.navigation:navigation-compose:2.8.3")
     implementation("androidx.navigation:navigation-runtime-ktx:2.8.3")
+    implementation("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.0.1")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.0.1")
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")

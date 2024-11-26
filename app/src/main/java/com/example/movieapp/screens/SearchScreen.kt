@@ -26,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import dk.shape.dtu.navigation.R
+import com.example.movieapp.R
 
 @Composable
 fun SearchScreen(

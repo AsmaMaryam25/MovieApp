@@ -37,6 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.movieapp.di.DataModule
 import com.example.movieapp.ui.theme.NavigationInComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +52,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        DataModule.initialize(this)
         setContent {
             var isDarkTheme by remember { mutableStateOf(false) }
             NavigationInComposeTheme(
