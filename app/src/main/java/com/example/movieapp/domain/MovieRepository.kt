@@ -5,8 +5,10 @@ import com.example.movieapp.data.model.MovieDao
 import com.example.movieapp.data.remote.RemoteMovieDataSource
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.MovieCategory
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -17,28 +19,25 @@ class MovieRepository(
     private val localMovieDataSource: FavoriteMovieDataSource
 ) {
 
-    private val mutableMoviesFlow = MutableSharedFlow<List<Movie>>()
-    val moviesFlow = mutableMoviesFlow.asSharedFlow()
+    fun getNowPlayingMovies(): Flow<List<Movie>> = flow {
+        emit(remoteMovieDataSource.getNowPlayingMovies().results
+            .map { it.mapToMovie(MovieCategory.NOW_PLAYING) })
+    }
 
-    suspend fun getNowPlayingMovies() = mutableMoviesFlow.emit(
-        remoteMovieDataSource.getNowPlayingMovies().results
-            .map { it.mapToMovie(MovieCategory.NOW_PLAYING) }
-    )
+    fun getPopularMovies(): Flow<List<Movie>> = flow {
+        emit(remoteMovieDataSource.getPopularMovies().results
+            .map { it.mapToMovie(MovieCategory.POPULAR) })
+    }
 
-    suspend fun getPopularMovies() = mutableMoviesFlow.emit(
-        remoteMovieDataSource.getPopularMovies().results
-            .map { it.mapToMovie(MovieCategory.POPULAR) }
-    )
+    fun getTopRatedMovies(): Flow<List<Movie>> = flow {
+        emit(remoteMovieDataSource.getTopRatedMovies().results
+            .map { it.mapToMovie(MovieCategory.TOP_RATED) })
+    }
 
-    suspend fun getTopRatedMovies() = mutableMoviesFlow.emit(
-        remoteMovieDataSource.getTopRatedMovies().results
-            .map { it.mapToMovie(MovieCategory.TOP_RATED) }
-    )
-
-    suspend fun getUpcomingMovies() = mutableMoviesFlow.emit(
-        remoteMovieDataSource.getUpcomingMovies().results
-            .map { it.mapToMovie(MovieCategory.UPCOMING) }
-    )
+    fun getUpcomingMovies(): Flow<List<Movie>> = flow {
+        emit(remoteMovieDataSource.getUpcomingMovies().results
+            .map { it.mapToMovie(MovieCategory.UPCOMING) })
+    }
 
     /*
     TODO: Implement getMovie

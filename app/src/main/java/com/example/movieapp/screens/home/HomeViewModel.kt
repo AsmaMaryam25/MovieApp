@@ -7,6 +7,7 @@ import com.example.movieapp.models.Movie
 import com.example.movieapp.models.MovieCategory.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class HomeViewModel : ViewModel() {
@@ -17,25 +18,22 @@ class HomeViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            movieRepository.moviesFlow
-                .collect { movies ->
-                    mutableHomeUIState.value = HomeUIModel.Data(
-                        nowPlayingMovies = movies.filter { it.category == NOW_PLAYING },
-                        popularMovies = movies.filter { it.category == POPULAR },
-                        topRatedMovies = movies.filter { it.category == TOP_RATED },
-                        upcomingMovies = movies.filter { it.category == UPCOMING }
-                    )
-                }
+            combine(
+                movieRepository.getNowPlayingMovies(),
+                movieRepository.getPopularMovies(),
+                movieRepository.getTopRatedMovies(),
+                movieRepository.getUpcomingMovies()
+            ) { nowPlaying, popular, topRated, upcoming ->
+                HomeUIModel.Data(
+                    nowPlayingMovies = nowPlaying,
+                    popularMovies = popular,
+                    topRatedMovies = topRated,
+                    upcomingMovies = upcoming
+                )
+            }.collect { homeUIModel ->
+                mutableHomeUIState.value = homeUIModel
+            }
         }
-
-        getNowPlayingMovies()
-
-        getPopularMovies()
-
-        getTopRatedMovies()
-
-        getUpcomingMovies()
-
     }
 
     private fun getNowPlayingMovies() {
