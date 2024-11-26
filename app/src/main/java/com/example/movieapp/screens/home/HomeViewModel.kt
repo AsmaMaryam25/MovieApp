@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.di.DataModule
 import com.example.movieapp.models.Movie
-import com.example.movieapp.models.MovieCategory.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -34,31 +33,6 @@ class HomeViewModel : ViewModel() {
                 mutableHomeUIState.value = homeUIModel
             }
         }
-    }
-
-    private fun getNowPlayingMovies() {
-        viewModelScope.launch {
-            movieRepository.getNowPlayingMovies()
-        }
-    }
-
-    private fun getPopularMovies() {
-        viewModelScope.launch {
-            movieRepository.getPopularMovies()
-        }
-    }
-
-    private fun getTopRatedMovies() {
-        viewModelScope.launch {
-            movieRepository.getTopRatedMovies()
-        }
-    }
-
-    private fun getUpcomingMovies() {
-        viewModelScope.launch {
-            movieRepository.getUpcomingMovies()
-        }
-
     }
 
     sealed class HomeUIModel {

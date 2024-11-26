@@ -6,8 +6,6 @@ import com.example.movieapp.data.remote.RemoteMovieDataSource
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.MovieCategory
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import java.text.SimpleDateFormat
