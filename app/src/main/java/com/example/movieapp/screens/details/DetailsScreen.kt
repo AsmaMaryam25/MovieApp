@@ -76,8 +76,7 @@ private fun DetailsContent(modifier: Modifier, movie: Movie) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Box(
                         modifier = Modifier
-                            .width(300.dp)
-                            .height(450.dp)
+                            .width(180.dp)
                             .clip(shape = RoundedCornerShape(30.dp))
                             .background(Color.Gray)
                     ) {
@@ -85,8 +84,7 @@ private fun DetailsContent(modifier: Modifier, movie: Movie) {
                             model = movie.posterPath,
                             contentDescription = null,
                             modifier = Modifier
-                                .width(300.dp)
-                                .height(450.dp)
+                                .fillMaxSize()
                                 .clip(shape = RoundedCornerShape(30.dp)),
                             placeholder = ColorPainter(Color.Gray)
                         )
@@ -101,7 +99,7 @@ private fun DetailsContent(modifier: Modifier, movie: Movie) {
                     modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
-                        text = movie.id.toString(),
+                        text = movie.title,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
@@ -168,7 +166,7 @@ private fun DetailsContent(modifier: Modifier, movie: Movie) {
         }
         item {
             Text(
-                text = "Directed by: ${movie.productionCompanies.joinToString { it.name }}",
+                text = "Produced by: ${movie.productionCompanies.joinToString { it.name }}",
                 fontSize = 15.sp
             )
         }

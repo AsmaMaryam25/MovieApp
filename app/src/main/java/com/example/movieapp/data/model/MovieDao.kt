@@ -13,7 +13,7 @@ data class MovieDao(
     val backdropPath: String = "",
 
     @SerialName("belongs_to_collection")
-    val belongsToCollection: String?,
+    val belongsToCollection: CollectionDao?,
 
     @SerialName("budget")
     val budget: Int = 0,
