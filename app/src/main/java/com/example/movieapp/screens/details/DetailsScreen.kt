@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,14 +39,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.R
 import com.example.movieapp.models.Movie
+import kotlin.toString
 
 @Composable
 fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit) {
@@ -157,42 +162,78 @@ private fun DetailsContent(modifier: Modifier, movie: Movie) {
         }
         item {
             Text(
-                text = movie.overview ?: "No overview available",
+                text = movie.overview ?: "No overview available"
             )
         }
         item {
             Text(
-                text = "Release date: ${movie.releaseDate}",
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Release date: ")
+                    }
+                    append(movie.releaseDate.toString())
+                },
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Produced by: ${movie.productionCompanies.joinToString { it.name }}",
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Produced by: ")
+                    }
+                    append(movie.productionCompanies.joinToString { it.name })
+                },
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Produced in: ${movie.productionCountries.joinToString { it.name }}",
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Produced in: ")
+                    }
+                    append(movie.productionCountries.joinToString { it.name })
+                },
                 fontSize = 15.sp,
             )
         }
         item {
             Text(
-                text = "Revenue generated: ${movie.revenue}",
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Revenue generated: ")
+                    }
+                    append(movie.revenue.toString())
+                },
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Runtime: ${movie.runtime} minutes",
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Runtime: ")
+                    }
+                    append("${movie.runtime} minutes")
+                },
                 fontSize = 15.sp
             )
         }
         item {
             Text(
-                text = "Spoken languages: ${movie.spokenLanguages.joinToString { it.name }}",
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Spoken languages: ")
+                    }
+                    append(movie.spokenLanguages.joinToString { it.name })
+                },
+                fontSize = 15.sp,
+            )
+        }
+        item {
+            Text(
+                text = "Actors",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
