@@ -1,6 +1,5 @@
 package com.example.movieapp.screens.details
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -48,9 +45,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.example.movieapp.R
 import com.example.movieapp.models.Cast
 import com.example.movieapp.models.Credits
+import com.example.movieapp.models.Crew
 import com.example.movieapp.models.Movie
 
 @Composable
@@ -236,7 +233,7 @@ private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits) {
         }
         item {
             Text(
-                text = "Actors",
+                text = "Cast",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Bold
             )
@@ -244,7 +241,21 @@ private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits) {
         item {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(5) {
-                    CreateActor(Modifier, credits.cast[it])
+                    CreateCast(Modifier, credits.cast[it])
+                }
+            }
+        }
+        item {
+            Text(
+                text = "Crew",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        item {
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(5) {
+                    CreateCrew(Modifier, credits.crew[it])
                 }
             }
         }
@@ -284,11 +295,11 @@ private fun CreateStars(modifier: Modifier) {
 }
 
 @Composable
-private fun CreateActor(modifier: Modifier, cast: Cast) {
+private fun CreateCast(modifier: Modifier, cast: Cast) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
-                .width(180.dp)
+                .width(130.dp)
                 .aspectRatio(2 / 3f)
                 .clip(shape = RoundedCornerShape(30.dp))
                 .background(Color.Gray)
@@ -311,6 +322,41 @@ private fun CreateActor(modifier: Modifier, cast: Cast) {
         )
         Text(
             text = cast.character,
+            fontSize = 15.sp,
+            textAlign = TextAlign.Center,
+            modifier = modifier.width(100.dp),
+        )
+    }
+}
+
+@Composable
+private fun CreateCrew(modifier: Modifier, crew: Crew) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .width(130.dp)
+                .aspectRatio(2 / 3f)
+                .clip(shape = RoundedCornerShape(30.dp))
+                .background(Color.Gray)
+        ) {
+            AsyncImage(
+                model = crew.profilePath,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(30.dp)),
+                placeholder = ColorPainter(Color.Gray)
+            )
+        }
+        Text(
+            text = crew.name,
+            fontSize = 15.sp,
+            textAlign = TextAlign.Center,
+            modifier = modifier.width(100.dp),
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = crew.job,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
             modifier = modifier.width(100.dp),
