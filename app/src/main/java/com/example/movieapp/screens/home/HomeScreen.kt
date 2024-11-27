@@ -118,7 +118,6 @@ private fun CreatePoster(
         Box(
             modifier = Modifier
                 .width(posterWidth)
-                .height(450.dp)
                 .aspectRatio(2 / 3f)
                 .clip(shape = RoundedCornerShape(30.dp))
                 .background(Color.Gray)
@@ -128,7 +127,7 @@ private fun CreatePoster(
                 contentDescription = null,
                 modifier = Modifier
                     .width(posterWidth)
-                    .height(450.dp)
+                    .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
                     .clickable(onClick = { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id)}),
                 placeholder = ColorPainter(Color.Gray)

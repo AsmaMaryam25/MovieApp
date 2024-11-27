@@ -9,11 +9,11 @@ import com.example.movieapp.screens.AboutScreen
 import com.example.movieapp.screens.AdvancedSearchScreen
 import com.example.movieapp.screens.AppearanceScreen
 import com.example.movieapp.screens.FavoriteScreen
-import com.example.movieapp.screens.SearchScreen
 import com.example.movieapp.screens.SettingsScreen
 import com.example.movieapp.screens.WatchlistScreen
 import com.example.movieapp.screens.details.DetailsScreen
 import com.example.movieapp.screens.home.HomeScreen
+import com.example.movieapp.screens.search.SearchScreen
 
 @androidx.compose.runtime.Composable
 fun MainNavHost(
@@ -50,10 +50,12 @@ fun MainNavHost(
         composable<Route.SearchScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchScreen>()) }
 
-            SearchScreen(onNavigateToAdvancedSearchScreen = {
-                navController.navigate(Route.AdvancedSearchScreen(it))
-            }, modifier = Modifier.fillMaxSize(), onNavigateToDetailsScreen = {
-                navController.navigate(Route.AdvancedSearchScreen(it)) //TODO change to details screen
+            SearchScreen(
+                onNavigateToAdvancedSearchScreen = {
+                navController.navigate(Route.AdvancedSearchScreen(it)) },
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToDetailsScreen = { name, movieId ->
+                navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
             })
         }
 
