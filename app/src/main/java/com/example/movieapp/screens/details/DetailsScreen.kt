@@ -162,6 +162,13 @@ private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits) {
         }
         item {
             Text(
+                text = "Overview",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        item {
+            Text(
                 text = movie.overview ?: "No overview available"
             )
         }
@@ -288,7 +295,7 @@ private fun CreateStars(modifier: Modifier) {
                                 iconList[j] = Icons.Outlined.StarOutline
                             }
                         }
-                    })
+                    }),
             )
         }
     }
