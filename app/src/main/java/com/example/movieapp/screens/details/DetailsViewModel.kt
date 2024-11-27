@@ -3,9 +3,11 @@ package com.example.movieapp.screens.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.di.DataModule
+import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Movie
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(val movieId: Int) : ViewModel() {
@@ -16,8 +18,15 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
 
     init {
         viewModelScope.launch {
-            movieRepository.getMovie(movieId).collect { movie ->
-                mutableDetailsUIState.value = DetailsUIModel.Data(movie)
+            mutableDetailsUIState.value = DetailsUIModel.Loading
+            
+            combine(
+                movieRepository.getMovie(movieId),
+                movieRepository.getCredits(movieId)
+            ) { movie, credits ->
+                DetailsUIModel.Data(movie, credits)
+            }.collect { detailsUIModel ->
+                mutableDetailsUIState.value = detailsUIModel
             }
         }
     }
@@ -26,7 +35,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         data object Empty : DetailsUIModel()
         data object Loading : DetailsUIModel()
         data class Data(
-            val movie: Movie
+            val movie: Movie,
+            val credits: Credits
         ) : DetailsUIModel()
     }
 }

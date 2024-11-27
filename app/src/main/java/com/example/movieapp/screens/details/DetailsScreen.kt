@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,7 +24,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,8 +49,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.R
+import com.example.movieapp.models.Cast
+import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Movie
-import kotlin.toString
 
 @Composable
 fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit) {
@@ -64,13 +65,14 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
         DetailsViewModel.DetailsUIModel.Loading -> Text("Loading")
         is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
             modifier = modifier,
-            movie = detailsUIModel.movie
+            movie = detailsUIModel.movie,
+            credits = detailsUIModel.credits
         )
     }
 }
 
 @Composable
-private fun DetailsContent(modifier: Modifier, movie: Movie) {
+private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits) {
     LazyColumn(
         modifier = modifier
             .padding(10.dp)
@@ -83,6 +85,7 @@ private fun DetailsContent(modifier: Modifier, movie: Movie) {
                     Box(
                         modifier = Modifier
                             .width(180.dp)
+                            .aspectRatio(2 / 3f)
                             .clip(shape = RoundedCornerShape(30.dp))
                             .background(Color.Gray)
                     ) {
@@ -241,7 +244,7 @@ private fun DetailsContent(modifier: Modifier, movie: Movie) {
         item {
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(5) {
-                    CreateActor(Modifier)
+                    CreateActor(Modifier, credits.cast[it])
                 }
             }
         }
@@ -281,24 +284,33 @@ private fun CreateStars(modifier: Modifier) {
 }
 
 @Composable
-private fun CreateActor(modifier: Modifier) {
+private fun CreateActor(modifier: Modifier, cast: Cast) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Image(
-            painter = painterResource(id = R.drawable.shunsukekazama),
-            contentDescription = "Shunsuke Kazama image",
-            modifier = modifier
-                .width(100.dp)
-                .clip(shape = RoundedCornerShape(20.dp))
-        )
+        Box(
+            modifier = Modifier
+                .width(180.dp)
+                .aspectRatio(2 / 3f)
+                .clip(shape = RoundedCornerShape(30.dp))
+                .background(Color.Gray)
+        ) {
+            AsyncImage(
+                model = cast.profilePath,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(30.dp)),
+                placeholder = ColorPainter(Color.Gray)
+            )
+        }
         Text(
-            text = "Shunsuke Kazama",
+            text = cast.name,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
             modifier = modifier.width(100.dp),
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Yugi Muto(voice)",
+            text = cast.character,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
             modifier = modifier.width(100.dp),

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -118,6 +119,7 @@ private fun CreatePoster(
             modifier = Modifier
                 .width(posterWidth)
                 .height(450.dp)
+                .aspectRatio(2 / 3f)
                 .clip(shape = RoundedCornerShape(30.dp))
                 .background(Color.Gray)
         ) {

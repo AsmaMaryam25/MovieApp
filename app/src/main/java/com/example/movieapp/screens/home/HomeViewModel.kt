@@ -17,6 +17,9 @@ class HomeViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
+
+            mutableHomeUIState.value = HomeUIModel.Loading
+
             combine(
                 movieRepository.getNowPlayingMovies(),
                 movieRepository.getPopularMovies(),

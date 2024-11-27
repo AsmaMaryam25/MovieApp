@@ -11,6 +11,8 @@ class RemoteMovieDataSource(private val retrofit: Retrofit) {
 
     suspend fun getMovie(externalId: String) = movieApi.getMovie(externalId, apiKey)
 
+    suspend fun getCredits(externalId: String) = movieApi.getCredits(externalId, apiKey)
+
     suspend fun getNowPlayingMovies() = movieApi.getNowPlayingMovies(apiKey)
 
     suspend fun getPopularMovies() = movieApi.getPopularMovies(apiKey)

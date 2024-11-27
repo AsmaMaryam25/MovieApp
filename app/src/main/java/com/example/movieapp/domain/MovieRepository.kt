@@ -1,14 +1,21 @@
 package com.example.movieapp.domain
 
+import android.R.attr.category
 import com.example.movieapp.data.local.FavoriteMovieDataSource
+import com.example.movieapp.data.model.CastDao
 import com.example.movieapp.data.model.CollectionMovieDao
+import com.example.movieapp.data.model.CreditsDao
+import com.example.movieapp.data.model.CrewDao
 import com.example.movieapp.data.model.GenreDao
 import com.example.movieapp.data.model.MovieDao
 import com.example.movieapp.data.model.ProductionCompanyDao
 import com.example.movieapp.data.model.ProductionCountryDao
 import com.example.movieapp.data.model.SpokenLanguageDao
 import com.example.movieapp.data.remote.RemoteMovieDataSource
+import com.example.movieapp.models.Cast
 import com.example.movieapp.models.CollectionMovie
+import com.example.movieapp.models.Credits
+import com.example.movieapp.models.Crew
 import com.example.movieapp.models.Genre
 import com.example.movieapp.models.Movie
 import com.example.movieapp.models.MovieCategory
@@ -69,6 +76,10 @@ class MovieRepository(
 
     fun getMovie(externalId: Int): Flow<Movie> = flow {
         emit(remoteMovieDataSource.getMovie(externalId.toString()).mapToMovie(MovieCategory.SPECIFIC))
+    }
+
+    fun getCredits(externalId: Int): Flow<Credits> = flow {
+        emit(remoteMovieDataSource.getCredits(externalId.toString()).mapToCredits())
     }
 
     fun getFavourites() = localMovieDataSource.getFavourites()
@@ -140,4 +151,29 @@ fun ProductionCountryDao.mapToProductionCountry() = ProductionCountry(
 fun SpokenLanguageDao.mapToSpokenLanguage() = SpokenLanguage(
     iso6391 = iso6391,
     name = name
+)
+
+fun CreditsDao.mapToCredits() = Credits(
+    id = id,
+    cast = cast.map { it.mapToCast() },
+    crew = crew.map { it.mapToCrew() },
+)
+
+fun CastDao.mapToCast() = Cast(
+    id = id,
+    name = name,
+    originalName = originalName,
+    popularity = popularity,
+    profilePath = "https://image.tmdb.org/t/p/original/$profilePath",
+    character = character,
+    order = order
+)
+
+fun CrewDao.mapToCrew() = Crew(
+    id = id,
+    name = name,
+    popularity = popularity,
+    profilePath = "https://image.tmdb.org/t/p/original/$profilePath",
+    department = department,
+    job = job
 )
