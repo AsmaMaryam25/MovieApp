@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -155,6 +157,24 @@ private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits) {
                                             Icons.Outlined.BookmarkBorder
                                         }
                                 })
+                        )
+                    }
+                    Spacer(
+                        modifier = Modifier
+                            .height(30.dp)
+                            .fillMaxWidth()
+                    )
+                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(
+                            imageVector = Icons.Filled.Star,
+                            contentDescription = "Favorite",
+                            modifier = Modifier
+                                .size(50.dp)
+                        )
+                        Text(
+                            text = "1.5",
+                            fontSize = 15.sp,
+                            textAlign = TextAlign.Center,
                         )
                     }
                 }
