@@ -258,31 +258,35 @@ private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits) {
                 fontSize = 15.sp,
             )
         }
-        item {
-            Text(
-                text = "Cast",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        item {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(5) {
-                    CreateCast(Modifier, credits.cast[it])
+        if(credits.cast.isNotEmpty()) {
+            item {
+                Text(
+                    text = "Cast",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            item {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(5) {
+                        CreateCast(Modifier, credits.cast[it])
+                    }
                 }
             }
         }
-        item {
-            Text(
-                text = "Crew",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        item {
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(5) {
-                    CreateCrew(Modifier, credits.crew[it])
+        if(credits.crew.isNotEmpty()) {
+            item {
+                Text(
+                    text = "Crew",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+            item {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(5) {
+                        CreateCrew(Modifier, credits.crew[it])
+                    }
                 }
             }
         }
