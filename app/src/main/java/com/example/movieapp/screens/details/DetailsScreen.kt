@@ -53,11 +53,12 @@ import com.example.movieapp.models.Crew
 import com.example.movieapp.models.Movie
 
 @Composable
-fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit) {
+fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit, setVideoLink: (String) -> Unit) {
     showTopBar()
 
     val detailsViewModel = viewModel<DetailsViewModel>(factory = DetailsViewModelFactory(movieId))
     val detailsUIModel = detailsViewModel.detailsUIState.collectAsState().value
+
 
     when (detailsUIModel) {
         DetailsViewModel.DetailsUIModel.Empty -> Text("Empty")
@@ -65,13 +66,17 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
         is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
             modifier = modifier,
             movie = detailsUIModel.movie,
-            credits = detailsUIModel.credits
+            credits = detailsUIModel.credits,
+            setVideoLink = setVideoLink
         )
     }
 }
 
 @Composable
-private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits) {
+private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits, setVideoLink: (String) -> Unit) {
+
+    //setVideoLink(movie.)
+
     LazyColumn(
         modifier = modifier
             .padding(10.dp)

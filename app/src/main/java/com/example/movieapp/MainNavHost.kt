@@ -21,7 +21,8 @@ fun MainNavHost(
     onRouteChanged: (Route) -> Unit,
     modifier: Modifier = Modifier,
     showTopBar: () -> Unit,
-    toggleDarkTheme: () -> Unit
+    toggleDarkTheme: () -> Unit,
+    setVideoLink: (String) -> Unit
 ) {
     NavHost(
         navController = navController,
@@ -103,6 +104,7 @@ fun MainNavHost(
                 movieId = backStackEntry.arguments?.getInt("movieId")!!,
                 showTopBar = showTopBar,
                 modifier = Modifier.fillMaxSize(),
+                setVideoLink = setVideoLink
             )
         }
 
