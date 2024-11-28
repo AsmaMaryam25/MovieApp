@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -73,6 +74,8 @@ dependencies {
     implementation(libs.composeUiGraphics)
     implementation(libs.composeUiToolingPreview)
     implementation(libs.material3)
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAnalytics)
 
     implementation(libs.kotlinxSerializationJson)
     implementation(libs.retrofitConverterKotlinxSerialization)
