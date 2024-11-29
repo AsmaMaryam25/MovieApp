@@ -210,6 +210,7 @@ class MainActivity : ComponentActivity() {
                                             IconButton(onClick = {
                                                 navController.popBackStack()
                                                 topBarShown = false
+                                                videoLink = null
                                             }) {
                                                 Icon(
                                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
