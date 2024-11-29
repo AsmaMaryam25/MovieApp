@@ -83,7 +83,7 @@ class MovieRepository(
     }
 
     fun getVideoLink(externalId: Int): Flow<String?> = flow {
-        emit(remoteMovieDataSource.getVideos(externalId.toString()).results.filter { it.official == true && it.type == "Trailer" }
+        emit(remoteMovieDataSource.getVideos(externalId.toString()).results.filter { it.official == true && it.type == "Trailer" &&  it.site == "YouTube" }
             .firstOrNull()?.key)
     }
 
