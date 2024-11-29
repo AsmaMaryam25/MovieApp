@@ -3,6 +3,7 @@ package com.example.movieapp.data.remote
 import com.example.movieapp.data.model.CollectionDao
 import com.example.movieapp.data.model.CreditsDao
 import com.example.movieapp.data.model.MovieDao
+import com.example.movieapp.data.model.VideosDao
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -20,6 +21,12 @@ interface MovieApiService {
         @Path("external_id") externalId: String,
         @Query("api_key") apiKey: String,
     ): CreditsDao
+
+    @GET("movie/{external_id}/videos")
+    suspend fun getVideos(
+        @Path("external_id") externalId: String,
+        @Query("api_key") apiKey: String,
+    ): VideosDao
 
     @GET("movie/now_playing")
     suspend fun getNowPlayingMovies(

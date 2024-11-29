@@ -53,7 +53,7 @@ import com.example.movieapp.models.Crew
 import com.example.movieapp.models.Movie
 
 @Composable
-fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit, setVideoLink: (String) -> Unit) {
+fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit, setVideoLink: (String?) -> Unit) {
     showTopBar()
 
     val detailsViewModel = viewModel<DetailsViewModel>(factory = DetailsViewModelFactory(movieId))
@@ -67,15 +67,16 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
             modifier = modifier,
             movie = detailsUIModel.movie,
             credits = detailsUIModel.credits,
-            setVideoLink = setVideoLink
+            setVideoLink = setVideoLink,
+            videoLink = detailsUIModel.videoLink
         )
     }
 }
 
 @Composable
-private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits, setVideoLink: (String) -> Unit) {
+private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits, setVideoLink: (String?) -> Unit, videoLink: String? = null) {
 
-    //setVideoLink(movie.)
+    setVideoLink(videoLink)
 
     LazyColumn(
         modifier = modifier

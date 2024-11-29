@@ -22,9 +22,10 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             
             combine(
                 movieRepository.getMovie(movieId),
-                movieRepository.getCredits(movieId)
-            ) { movie, credits ->
-                DetailsUIModel.Data(movie, credits)
+                movieRepository.getCredits(movieId),
+                movieRepository.getVideoLink(movieId)
+            ) { movie, credits, videoLink ->
+                DetailsUIModel.Data(movie, credits, videoLink)
             }.collect { detailsUIModel ->
                 mutableDetailsUIState.value = detailsUIModel
             }
@@ -36,7 +37,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         data object Loading : DetailsUIModel()
         data class Data(
             val movie: Movie,
-            val credits: Credits
+            val credits: Credits,
+            val videoLink: String? = null
         ) : DetailsUIModel()
     }
 }

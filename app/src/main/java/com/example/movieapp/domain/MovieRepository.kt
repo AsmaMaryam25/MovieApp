@@ -82,6 +82,11 @@ class MovieRepository(
         emit(remoteMovieDataSource.getCredits(externalId.toString()).mapToCredits())
     }
 
+    fun getVideoLink(externalId: Int): Flow<String?> = flow {
+        emit(remoteMovieDataSource.getVideos(externalId.toString()).results.filter { it.official == true && it.type == "Trailer" }
+            .firstOrNull()?.key)
+    }
+
     fun getFavourites() = localMovieDataSource.getFavourites()
         .map { movies ->
             movies.map {

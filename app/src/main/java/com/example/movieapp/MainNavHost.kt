@@ -22,7 +22,7 @@ fun MainNavHost(
     modifier: Modifier = Modifier,
     showTopBar: () -> Unit,
     toggleDarkTheme: () -> Unit,
-    setVideoLink: (String) -> Unit
+    setVideoLink: (String?) -> Unit
 ) {
     NavHost(
         navController = navController,

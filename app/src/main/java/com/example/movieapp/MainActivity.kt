@@ -1,5 +1,6 @@
 package com.example.movieapp
 
+import android.R.attr.navigationIcon
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -73,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     var isNavigationBarAction by remember { mutableStateOf(false) }
                     var topBarShown by remember { mutableStateOf(false) }
                     var selectedItem by remember { mutableStateOf(navItemList[0].label) }
-                    var videoLink by remember { mutableStateOf("") }
+                    var videoLink by remember { mutableStateOf<String?>(null) }
                     val context = LocalContext.current
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
@@ -177,15 +178,22 @@ class MainActivity : ComponentActivity() {
                             if (topBarShown) {
                                 TopAppBar(
                                     actions = {
-                                        IconButton(onClick = {
-                                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.youtube.com/watch?v=YOUR_TRAILER_ID"))
-                                            context.startActivity(intent)
-                                        }) {
-                                            Icon(
-                                                imageVector = Icons.Outlined.PlayCircle,
-                                                contentDescription = "Open video trailer",
-                                                modifier = Modifier.fillMaxSize()
-                                            )
+                                        if(videoLink != null) {
+                                            IconButton(onClick = {
+                                                val intent = Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse("https://www.youtube.com/watch?v=$videoLink")
+                                                ).apply {
+                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                }
+                                                context.startActivity(intent)
+                                            }) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.PlayCircle,
+                                                    contentDescription = "Open video trailer",
+                                                    modifier = Modifier.fillMaxSize()
+                                                )
+                                            }
                                         }
                                     },
                                     title = {
@@ -220,7 +228,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier.padding(it),
                             showTopBar = { topBarShown = true },
                             toggleDarkTheme = { isDarkTheme = !isDarkTheme },
-                            setVideoLink = { link: String -> videoLink = link }
+                            setVideoLink = { link: String? -> videoLink = link }
                         )
                     }
                 }
