@@ -27,6 +27,7 @@ import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -54,7 +55,10 @@ import com.example.movieapp.models.Movie
 
 @Composable
 fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit, setVideoLink: (String?) -> Unit) {
-    showTopBar()
+
+    LaunchedEffect(Unit) {
+        showTopBar()
+    }
 
     val detailsViewModel = viewModel<DetailsViewModel>(factory = DetailsViewModelFactory(movieId))
     val detailsUIModel = detailsViewModel.detailsUIState.collectAsState().value
@@ -68,15 +72,27 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
             movie = detailsUIModel.movie,
             credits = detailsUIModel.credits,
             setVideoLink = setVideoLink,
-            videoLink = detailsUIModel.videoLink
+            videoLink = detailsUIModel.videoLink,
+            toggleFavorite = detailsViewModel.toggleFavorite(detailsUIModel.movie),
+            isFavorite = detailsUIModel.isFavorite,
         )
     }
 }
 
 @Composable
-private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits, setVideoLink: (String?) -> Unit, videoLink: String? = null) {
+private fun DetailsContent(
+    modifier: Modifier,
+    movie: Movie,
+    credits: Credits,
+    setVideoLink: (String?) -> Unit,
+    videoLink: String? = null,
+    toggleFavorite: Unit,
+    isFavorite: Boolean,
+) {
 
+    LaunchedEffect(Unit){
     setVideoLink(videoLink)
+    }
 
     LazyColumn(
         modifier = modifier
@@ -130,7 +146,8 @@ private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits, s
                         textAlign = TextAlign.Center,
                     )
                     Row {
-                        var favoriteIcon by remember { mutableStateOf(Icons.Outlined.FavoriteBorder) }
+                        val favIcon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
+                        var favoriteIcon by remember { mutableStateOf(favIcon) }
                         var watchlistIcon by remember { mutableStateOf(Icons.Outlined.BookmarkBorder) }
                         Icon(
                             imageVector = favoriteIcon,
@@ -139,13 +156,13 @@ private fun DetailsContent(modifier: Modifier, movie: Movie, credits: Credits, s
                                 .padding(5.dp)
                                 .size(40.dp)
                                 .clickable(onClick = {
-                                    //TODO Add to favorites
                                     favoriteIcon =
                                         if (favoriteIcon == Icons.Outlined.FavoriteBorder) {
                                             Icons.Filled.Favorite
                                         } else {
                                             Icons.Outlined.FavoriteBorder
                                         }
+                                    toggleFavorite
                                 })
                         )
                         Icon(

@@ -8,7 +8,7 @@ import androidx.navigation.toRoute
 import com.example.movieapp.screens.AboutScreen
 import com.example.movieapp.screens.AdvancedSearchScreen
 import com.example.movieapp.screens.AppearanceScreen
-import com.example.movieapp.screens.FavoriteScreen
+import com.example.movieapp.screens.favorite.FavoriteScreen
 import com.example.movieapp.screens.SettingsScreen
 import com.example.movieapp.screens.WatchlistScreen
 import com.example.movieapp.screens.details.DetailsScreen
@@ -43,8 +43,8 @@ fun MainNavHost(
         composable<Route.FavoriteScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
-            FavoriteScreen(modifier = Modifier.fillMaxSize(), onNavigateToDetailsScreen = {
-                navController.navigate(Route.AdvancedSearchScreen(it)) //TODO change to details screen
+            FavoriteScreen(modifier = Modifier.fillMaxSize(), onNavigateToDetailsScreen = { name, movieId ->
+                navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
             })
         }
 

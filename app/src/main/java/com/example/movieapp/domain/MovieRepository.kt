@@ -1,6 +1,5 @@
 package com.example.movieapp.domain
 
-import android.R.attr.category
 import com.example.movieapp.data.local.FavoriteMovieDataSource
 import com.example.movieapp.data.model.CastDao
 import com.example.movieapp.data.model.CollectionMovieDao
@@ -24,7 +23,6 @@ import com.example.movieapp.models.ProductionCountry
 import com.example.movieapp.models.SpokenLanguage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -87,14 +85,9 @@ class MovieRepository(
             .firstOrNull()?.key)
     }
 
-    fun getFavourites() = localMovieDataSource.getFavourites()
-        .map { movies ->
-            movies.map {
-                //Movie()
-            }
-        }
+    fun getFavorites() = localMovieDataSource.getFavorites()
 
-    suspend fun toggleFavourite(url: String) = localMovieDataSource.toggleFavorite(url)
+    suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) = localMovieDataSource.toggleFavorite(id, title, posterPath, rating)
 }
 
 fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int, String>) = CollectionMovie(

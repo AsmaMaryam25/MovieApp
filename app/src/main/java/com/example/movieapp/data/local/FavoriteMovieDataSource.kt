@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.example.movieapp.data.model.FavoriteMovie
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -15,7 +16,7 @@ class FavoriteMovieDataSource(private val context: Context) {
     private val Context.dataStore by preferencesDataStore("favourites")
     private val favoritesKey = stringPreferencesKey("FAVORITE_MOVIES")
 
-    fun getFavourites(): Flow<List<String>> =
+    fun getFavorites(): Flow<List<FavoriteMovie>> =
         context.dataStore.data.map {
             val jsonString = it[favoritesKey].orEmpty()
             try {
@@ -26,19 +27,19 @@ class FavoriteMovieDataSource(private val context: Context) {
         }
 
 
-    suspend fun toggleFavorite(url: String) {
+    suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) {
         val currentJsonString = context.dataStore.data.first()[favoritesKey].orEmpty()
-        val currentFavorites: List<String> = try {
+        val currentFavorites: List<FavoriteMovie> = try {
             Json.decodeFromString(currentJsonString)
         } catch (error: Throwable) {
             emptyList()
         }
 
-        val isFavorite = currentFavorites.contains(url)
+        val isFavorite = currentFavorites.any() { it.id == id }
         val updatedFavorites = if (isFavorite) {
-            currentFavorites - url
+            currentFavorites.filterNot { it.id == id }
         } else {
-            currentFavorites + url
+            currentFavorites + FavoriteMovie(id ?: "", title, posterPath ?: "", rating)
         }
 
         val updatedJsonString = Json.encodeToString(updatedFavorites)

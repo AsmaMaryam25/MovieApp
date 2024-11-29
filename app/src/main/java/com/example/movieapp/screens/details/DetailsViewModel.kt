@@ -2,6 +2,7 @@ package com.example.movieapp.screens.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.movieapp.data.model.FavoriteMovie
 import com.example.movieapp.di.DataModule
 import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Movie
@@ -19,16 +20,23 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
     init {
         viewModelScope.launch {
             mutableDetailsUIState.value = DetailsUIModel.Loading
-            
+
             combine(
                 movieRepository.getMovie(movieId),
                 movieRepository.getCredits(movieId),
-                movieRepository.getVideoLink(movieId)
-            ) { movie, credits, videoLink ->
-                DetailsUIModel.Data(movie, credits, videoLink)
+                movieRepository.getVideoLink(movieId),
+                movieRepository.getFavorites()
+            ) { movie, credits, videoLink, favorites->
+                DetailsUIModel.Data(movie, credits, videoLink, favorites.any{ it.id == movie.id.toString() })
             }.collect { detailsUIModel ->
                 mutableDetailsUIState.value = detailsUIModel
             }
+        }
+    }
+
+    fun toggleFavorite(movie: Movie) {
+        viewModelScope.launch {
+            movieRepository.toggleFavorite(movie.id.toString(), movie.title, movie.posterPath, rating = 1.5)
         }
     }
 
@@ -38,7 +46,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         data class Data(
             val movie: Movie,
             val credits: Credits,
-            val videoLink: String? = null
+            val videoLink: String? = null,
+            val isFavorite: Boolean
         ) : DetailsUIModel()
     }
 }
