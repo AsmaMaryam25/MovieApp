@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.di.DataModule
 import com.example.movieapp.models.Credits
-import com.example.movieapp.models.Movie
+import com.example.movieapp.models.LocalMovie
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -44,24 +44,24 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         }
     }
 
-    fun toggleFavorite(movie: Movie) {
+    fun toggleFavorite(localMovie: LocalMovie) {
         viewModelScope.launch {
             movieRepository.toggleFavorite(
-                movie.id.toString(),
-                movie.title,
-                movie.posterPath,
-                movie.avgRating
+                localMovie.id.toString(),
+                localMovie.title,
+                localMovie.posterPath,
+                localMovie.avgRating
             )
         }
     }
 
-    fun toggleWatchlist(movie: Movie) {
+    fun toggleWatchlist(localMovie: LocalMovie) {
         viewModelScope.launch {
             movieRepository.toggleWatchlist(
-                movie.id.toString(),
-                movie.title,
-                movie.posterPath,
-                movie.avgRating
+                localMovie.id.toString(),
+                localMovie.title,
+                localMovie.posterPath,
+                localMovie.avgRating
             )
         }
     }
@@ -115,7 +115,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         data object Empty : DetailsUIModel()
         data object Loading : DetailsUIModel()
         data class Data(
-            val movie: Movie,
+            val localMovie: LocalMovie,
             val credits: Credits,
             val videoLink: String? = null,
             val isFavorite: Boolean,

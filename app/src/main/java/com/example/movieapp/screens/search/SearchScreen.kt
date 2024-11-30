@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.components.SearchBar
-import com.example.movieapp.models.CollectionMovie
+import com.example.movieapp.models.Movie
 import com.example.movieapp.screens.search.SearchViewModel.SearchUIModel
 
 @Composable
@@ -45,14 +45,22 @@ fun SearchScreen(
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
 
-    val SearchViewModel = viewModel<SearchViewModel>()
-    val searchUIModel = SearchViewModel.searchUIState.collectAsState().value
+    val searchViewModel = viewModel<SearchViewModel>()
+    val searchUIModel = searchViewModel.searchUIState.collectAsState().value
 
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
 
     when (searchUIModel) {
-        SearchUIModel.Empty -> Text("Empty")
+        SearchUIModel.Empty -> SearchContent(
+            modifier,
+            searchQuery,
+            onNavigateToAdvancedSearchScreen,
+            posterWidth,
+            onNavigateToDetailsScreen,
+            emptyList(),
+            searchViewModel
+        )
         SearchUIModel.Loading -> Box(
             contentAlignment = Alignment.Center,
             modifier = Modifier.size(50.dp)
@@ -67,7 +75,8 @@ fun SearchScreen(
                 onNavigateToAdvancedSearchScreen,
                 posterWidth,
                 onNavigateToDetailsScreen,
-                searchUIModel.popularCollectionMovies
+                searchUIModel.collectionMovies,
+                searchViewModel
             )
         }
     }
@@ -81,7 +90,9 @@ private fun SearchContent(
     onNavigateToAdvancedSearchScreen: (String) -> Unit,
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    popularCollectionMovies: List<CollectionMovie>
+    collectionMovies: List<Movie>,
+    searchViewModel: SearchViewModel
+
 ) {
     Column(
         modifier = modifier.fillMaxSize()
@@ -89,7 +100,7 @@ private fun SearchContent(
         SearchBar(
             searchQuery = searchQuery,
             onSearchQueryChange = { query ->
-                //TODO Handle search
+                searchViewModel.searchMovies(query)
             },
             onClickMenu = { onNavigateToAdvancedSearchScreen("Advanced Search") }
         )
@@ -98,11 +109,17 @@ private fun SearchContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
+                if(collectionMovies.isEmpty()) {
+                    Text(
+                        text = "No results found",
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    popularCollectionMovies.forEach { movie ->
+                    collectionMovies.forEach { movie ->
                         CreateSearchPoster(
                             posterWidth = posterWidth,
                             onNavigateToDetailsScreen = onNavigateToDetailsScreen,
@@ -120,7 +137,7 @@ private fun CreateSearchPoster(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    movie: CollectionMovie
+    movie: Movie
 ) {
     Column(
         modifier = modifier.padding(10.dp),

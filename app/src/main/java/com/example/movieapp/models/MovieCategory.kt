@@ -5,5 +5,6 @@ enum class MovieCategory {
     POPULAR,
     TOP_RATED,
     UPCOMING,
-    SPECIFIC
+    SPECIFIC,
+    SEARCH
 }
