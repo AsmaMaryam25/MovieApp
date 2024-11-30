@@ -9,13 +9,14 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,7 +48,13 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
 
     when (homeUIModel) {
         HomeUIModel.Empty -> Text("Empty")
-        HomeUIModel.Loading -> Text("Loading")
+        HomeUIModel.Loading -> Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(50.dp)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(50.dp))
+        }
+
         is HomeUIModel.Data -> HomeContent(modifier, homeUIModel, onNavigateToDetailsScreen)
     }
 }
@@ -129,7 +136,12 @@ private fun CreatePoster(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id)}),
+                    .clickable(onClick = {
+                        onNavigateToDetailsScreen(
+                            collectionMovie.title,
+                            collectionMovie.id
+                        )
+                    }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
@@ -137,7 +149,7 @@ private fun CreatePoster(
             modifier = Modifier
                 .width(posterWidth)
                 .padding(start = 35.dp, top = 15.dp, end = 35.dp)
-                .clickable { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id)},
+                .clickable { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id) },
             text = collectionMovie.title,
             style = TextStyle(
                 fontSize = 25.sp,

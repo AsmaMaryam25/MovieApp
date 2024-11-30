@@ -1,6 +1,6 @@
 package com.example.movieapp.models
 
-data class Cast (
+data class Cast(
     val id: Int,
     val name: String,
     val originalName: String,

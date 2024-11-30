@@ -8,12 +8,12 @@ import androidx.navigation.toRoute
 import com.example.movieapp.screens.AboutScreen
 import com.example.movieapp.screens.AdvancedSearchScreen
 import com.example.movieapp.screens.AppearanceScreen
-import com.example.movieapp.screens.favorite.FavoriteScreen
 import com.example.movieapp.screens.SettingsScreen
-import com.example.movieapp.screens.watchlist.WatchlistScreen
 import com.example.movieapp.screens.details.DetailsScreen
+import com.example.movieapp.screens.favorite.FavoriteScreen
 import com.example.movieapp.screens.home.HomeScreen
 import com.example.movieapp.screens.search.SearchScreen
+import com.example.movieapp.screens.watchlist.WatchlistScreen
 
 @androidx.compose.runtime.Composable
 fun MainNavHost(
@@ -43,9 +43,11 @@ fun MainNavHost(
         composable<Route.FavoriteScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
-            FavoriteScreen(modifier = Modifier.fillMaxSize(), onNavigateToDetailsScreen = { name, movieId ->
-                navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
-            })
+            FavoriteScreen(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToDetailsScreen = { name, movieId ->
+                    navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
+                })
         }
 
         composable<Route.SearchScreen> { backStackEntry ->
@@ -53,11 +55,12 @@ fun MainNavHost(
 
             SearchScreen(
                 onNavigateToAdvancedSearchScreen = {
-                navController.navigate(Route.AdvancedSearchScreen(it)) },
+                    navController.navigate(Route.AdvancedSearchScreen(it))
+                },
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
-                navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
-            })
+                    navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
+                })
         }
 
         composable<Route.SettingsScreen> { backStackEntry ->
@@ -77,9 +80,11 @@ fun MainNavHost(
         composable<Route.WatchlistScreen> { backStackEntry ->
             androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
-            WatchlistScreen(modifier = Modifier.fillMaxSize(),    onNavigateToDetailsScreen = { name, movieId ->
-                navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
-            })
+            WatchlistScreen(
+                modifier = Modifier.fillMaxSize(),
+                onNavigateToDetailsScreen = { name, movieId ->
+                    navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
+                })
         }
 
         composable<Route.AboutScreen> { backStackEntry ->

@@ -35,7 +35,7 @@ class FavoriteMovieDataSource(private val context: Context) {
             emptyList()
         }
 
-        val isFavorite = currentFavorites.any() { it.id == id }
+        val isFavorite = currentFavorites.any { it.id == id }
         val updatedFavorites = if (isFavorite) {
             currentFavorites.filterNot { it.id == id }
         } else {

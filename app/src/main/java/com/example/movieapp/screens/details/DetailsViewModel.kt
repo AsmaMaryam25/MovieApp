@@ -29,8 +29,15 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 movieRepository.getVideoLink(movieId),
                 movieRepository.getFavorites(),
                 movieRepository.getWatchlist(),
-            ) { movie, credits, videoLink, favorites, watchlist->
-                DetailsUIModel.Data(movie, credits, videoLink, favorites.any{ it.id == movie.id.toString() }, watchlist.any{ it.id == movie.id.toString() }, movieRepository.getAverageRating(movieId.toString()))
+            ) { movie, credits, videoLink, favorites, watchlist ->
+                DetailsUIModel.Data(
+                    movie,
+                    credits,
+                    videoLink,
+                    favorites.any { it.id == movie.id.toString() },
+                    watchlist.any { it.id == movie.id.toString() },
+                    movieRepository.getAverageRating(movieId.toString())
+                )
             }.collect { detailsUIModel ->
                 mutableDetailsUIState.value = detailsUIModel
             }
@@ -39,13 +46,23 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
 
     fun toggleFavorite(movie: Movie) {
         viewModelScope.launch {
-            movieRepository.toggleFavorite(movie.id.toString(), movie.title, movie.posterPath, movie.avgRating)
+            movieRepository.toggleFavorite(
+                movie.id.toString(),
+                movie.title,
+                movie.posterPath,
+                movie.avgRating
+            )
         }
     }
 
     fun toggleWatchlist(movie: Movie) {
         viewModelScope.launch {
-            movieRepository.toggleWatchlist(movie.id.toString(), movie.title, movie.posterPath, movie.avgRating)
+            movieRepository.toggleWatchlist(
+                movie.id.toString(),
+                movie.title,
+                movie.posterPath,
+                movie.avgRating
+            )
         }
     }
 
@@ -63,7 +80,14 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 val newTotalRating = currentTotalRating + 1
                 val newAverageRating = newRating / newTotalRating
 
-                ratingsRef.update("rating", newRating, "totalRating", newTotalRating, "averageRating", newAverageRating).await()
+                ratingsRef.update(
+                    "rating",
+                    newRating,
+                    "totalRating",
+                    newTotalRating,
+                    "averageRating",
+                    newAverageRating
+                ).await()
                 updateAverageRating(newAverageRating)
             } else {
                 val initialData = mapOf(

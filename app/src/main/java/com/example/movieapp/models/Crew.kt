@@ -1,6 +1,6 @@
 package com.example.movieapp.models
 
-data class Crew (
+data class Crew(
     val id: Int,
     val name: String,
     val popularity: Double,

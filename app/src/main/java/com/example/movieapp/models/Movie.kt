@@ -1,6 +1,6 @@
 package com.example.movieapp.models
+
 import java.time.LocalDate
-import java.util.Date
 
 data class Movie(
     val adult: Boolean,

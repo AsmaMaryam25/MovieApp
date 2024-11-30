@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -51,7 +53,13 @@ fun SearchScreen(
 
     when (searchUIModel) {
         SearchUIModel.Empty -> Text("Empty")
-        SearchUIModel.Loading -> Text("Loading")
+        SearchUIModel.Loading -> Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(50.dp)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(50.dp))
+        }
+
         is SearchUIModel.Data -> {
             SearchContent(
                 modifier,
@@ -89,7 +97,7 @@ private fun SearchContent(
         LazyColumn(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            item{
+            item {
                 FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center

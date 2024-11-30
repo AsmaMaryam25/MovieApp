@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieapp.di.DataModule
 import com.example.movieapp.models.CollectionMovie
-import com.example.movieapp.screens.home.HomeViewModel.HomeUIModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
