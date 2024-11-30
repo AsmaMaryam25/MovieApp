@@ -1,6 +1,5 @@
 package com.example.movieapp.screens
 
-import android.R.attr.isLightTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +16,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlin.compareTo
 
 @Composable
 fun AppearanceScreen(
@@ -28,7 +26,7 @@ fun AppearanceScreen(
     showTopBar()
 
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
-    var switchIsOn = remember { mutableStateOf(isDarkTheme)}
+    var switchIsOn = remember { mutableStateOf(isDarkTheme) }
 
     Column(modifier = modifier) {
         Row(
