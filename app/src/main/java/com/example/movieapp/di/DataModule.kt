@@ -41,6 +41,11 @@ object DataModule {
         localFavoriteMovieDataSource = FavoriteMovieDataSource(context)
         localWatchlistMovieDataSource = WatchListMovieDataSource(context)
         val firestore = FirebaseFirestore.getInstance()
-        movieRepository = MovieRepository(remoteMovieDataSource, localFavoriteMovieDataSource, localWatchlistMovieDataSource, firestore)
+        movieRepository = MovieRepository(
+            remoteMovieDataSource,
+            localFavoriteMovieDataSource,
+            localWatchlistMovieDataSource,
+            firestore
+        )
     }
 }

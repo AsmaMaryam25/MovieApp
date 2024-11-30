@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -41,14 +42,27 @@ import java.util.Locale
 import kotlin.String
 
 @Composable
-fun WatchlistScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String, Int) -> Unit) {
+fun WatchlistScreen(
+    modifier: Modifier = Modifier,
+    onNavigateToDetailsScreen: (String, Int) -> Unit
+) {
     val watchlistViewModel: WatchlistViewModel = viewModel()
     val watchlistUIModel = watchlistViewModel.watchlistUIState.collectAsState().value
 
     when (watchlistUIModel) {
         WatchlistUIModel.Empty -> Text("Empty")
-        WatchlistUIModel.Loading -> Text("Loading")
-        is WatchlistUIModel.Data -> WatchlistContent(onNavigateToDetailsScreen, modifier, watchlistUIModel.watchlist)
+        WatchlistUIModel.Loading -> Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(50.dp)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(50.dp))
+        }
+
+        is WatchlistUIModel.Data -> WatchlistContent(
+            onNavigateToDetailsScreen,
+            modifier,
+            watchlistUIModel.watchlist
+        )
     }
 }
 
@@ -120,7 +134,12 @@ fun CreateWatchlistCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = { onNavigateToDetailsScreen(watchlistMovie.title, watchlistMovie.id.toInt())}),
+                    .clickable(onClick = {
+                        onNavigateToDetailsScreen(
+                            watchlistMovie.title,
+                            watchlistMovie.id.toInt()
+                        )
+                    }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
@@ -136,7 +155,12 @@ fun CreateWatchlistCard(
             modifier = modifier
                 .padding(vertical = 40.dp)
                 .weight(1f)
-                .clickable { onNavigateToDetailsScreen(watchlistMovie.title, watchlistMovie.id.toInt())}
+                .clickable {
+                    onNavigateToDetailsScreen(
+                        watchlistMovie.title,
+                        watchlistMovie.id.toInt()
+                    )
+                }
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

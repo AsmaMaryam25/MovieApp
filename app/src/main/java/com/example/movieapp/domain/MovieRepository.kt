@@ -1,6 +1,5 @@
 package com.example.movieapp.domain
 
-import android.R.attr.rating
 import com.example.movieapp.data.local.FavoriteMovieDataSource
 import com.example.movieapp.data.local.WatchListMovieDataSource
 import com.example.movieapp.data.model.CastDao
@@ -13,7 +12,6 @@ import com.example.movieapp.data.model.ProductionCompanyDao
 import com.example.movieapp.data.model.ProductionCountryDao
 import com.example.movieapp.data.model.SpokenLanguageDao
 import com.example.movieapp.data.remote.RemoteMovieDataSource
-import com.example.movieapp.di.DataModule.movieRepository
 import com.example.movieapp.models.Cast
 import com.example.movieapp.models.CollectionMovie
 import com.example.movieapp.models.Credits
@@ -61,7 +59,7 @@ class MovieRepository(
 
     fun getNowPlayingMovies(): Flow<List<CollectionMovie>> = flow {
         emit(remoteMovieDataSource.getNowPlayingMovies().results
-            .map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres, ) })
+            .map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres) })
     }
 
     fun getPopularMovies(): Flow<List<CollectionMovie>> = flow {
@@ -80,7 +78,10 @@ class MovieRepository(
     }
 
     fun getMovie(externalId: Int): Flow<Movie> = flow {
-        emit(remoteMovieDataSource.getMovie(externalId.toString()).mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository))
+        emit(
+            remoteMovieDataSource.getMovie(externalId.toString())
+                .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
+        )
     }
 
     fun getCredits(externalId: Int): Flow<Credits> = flow {
@@ -88,17 +89,19 @@ class MovieRepository(
     }
 
     fun getVideoLink(externalId: Int): Flow<String?> = flow {
-        emit(remoteMovieDataSource.getVideos(externalId.toString()).results.filter { it.official == true && it.type == "Trailer" &&  it.site == "YouTube" }
+        emit(remoteMovieDataSource.getVideos(externalId.toString()).results.filter { it.official == true && it.type == "Trailer" && it.site == "YouTube" }
             .firstOrNull()?.key)
     }
 
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
 
-    suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) = localFavoriteMovieDataSource.toggleFavorite(id, title, posterPath, rating)
+    suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) =
+        localFavoriteMovieDataSource.toggleFavorite(id, title, posterPath, rating)
 
     fun getWatchlist() = localWatchlistMovieDataSource.getWatchlist()
 
-    suspend fun toggleWatchlist(id: String?, title: String, posterPath: String?, rating: Double) = localWatchlistMovieDataSource.toggleWatchlist(id, title, posterPath, rating)
+    suspend fun toggleWatchlist(id: String?, title: String, posterPath: String?, rating: Double) =
+        localWatchlistMovieDataSource.toggleWatchlist(id, title, posterPath, rating)
 
     suspend fun getAverageRating(id: String): Double {
         val ratingsRef = firestore.collection("ratings").document(id)
@@ -112,21 +115,22 @@ class MovieRepository(
     }
 }
 
-fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int, String>) = CollectionMovie(
-    genres = genreIds.map { Genre(it, movieGenres[it].toString()) },
-    id = id,
-    title = title,
-    overview = overview,
-    posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
-    backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
-    releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-    adult = adult,
-    originalLanguage = originalLanguage,
-    originalTitle = originalTitle,
-    popularity = popularity.toDouble(),
-    video = video,
-    category = category,
-)
+fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int, String>) =
+    CollectionMovie(
+        genres = genreIds.map { Genre(it, movieGenres[it].toString()) },
+        id = id,
+        title = title,
+        overview = overview,
+        posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
+        backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
+        releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+        adult = adult,
+        originalLanguage = originalLanguage,
+        originalTitle = originalTitle,
+        popularity = popularity.toDouble(),
+        video = video,
+        category = category,
+    )
 
 suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) = Movie(
     id = id,

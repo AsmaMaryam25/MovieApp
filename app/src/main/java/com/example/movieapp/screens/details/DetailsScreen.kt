@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +56,12 @@ import com.example.movieapp.models.Movie
 import java.util.Locale
 
 @Composable
-fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit, setVideoLink: (String?) -> Unit) {
+fun DetailsScreen(
+    modifier: Modifier = Modifier,
+    movieId: Int,
+    showTopBar: () -> Unit,
+    setVideoLink: (String?) -> Unit
+) {
 
     LaunchedEffect(Unit) {
         showTopBar()
@@ -67,7 +73,13 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
 
     when (detailsUIModel) {
         DetailsViewModel.DetailsUIModel.Empty -> Text("Empty")
-        DetailsViewModel.DetailsUIModel.Loading -> Text("Loading")
+        DetailsViewModel.DetailsUIModel.Loading -> Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(50.dp)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(50.dp))
+        }
+
         is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
             modifier = modifier,
             movie = detailsUIModel.movie,
@@ -95,8 +107,8 @@ private fun DetailsContent(
     averageRating: Double
 ) {
 
-    LaunchedEffect(Unit){
-    setVideoLink(videoLink)
+    LaunchedEffect(Unit) {
+        setVideoLink(videoLink)
     }
 
     LazyColumn(
@@ -151,10 +163,12 @@ private fun DetailsContent(
                         textAlign = TextAlign.Center,
                     )
                     Row {
-                        val favIcon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
+                        val favIcon =
+                            if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
                         var favoriteIcon by remember { mutableStateOf(favIcon) }
 
-                        val watchIcon = if (isWatchList) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
+                        val watchIcon =
+                            if (isWatchList) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
                         var watchlistIcon by remember { mutableStateOf(watchIcon) }
                         Icon(
                             imageVector = favoriteIcon,
@@ -194,7 +208,7 @@ private fun DetailsContent(
                             .height(30.dp)
                             .fillMaxWidth()
                     )
-                    Column (horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(
                             imageVector = Icons.Filled.Star,
                             contentDescription = "Favorite",
@@ -288,7 +302,7 @@ private fun DetailsContent(
                 fontSize = 15.sp,
             )
         }
-        if(credits.cast.isNotEmpty()) {
+        if (credits.cast.isNotEmpty()) {
             item {
                 Text(
                     text = "Cast",
@@ -304,7 +318,7 @@ private fun DetailsContent(
                 }
             }
         }
-        if(credits.crew.isNotEmpty()) {
+        if (credits.crew.isNotEmpty()) {
             item {
                 Text(
                     text = "Crew",
@@ -348,7 +362,10 @@ private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) 
                             } else if (j > i) {
                                 iconList[j] = Icons.Outlined.StarOutline
                             }
-                            detailsViewModel.addRating(detailsViewModel.movieId.toString(), (i+1).toDouble())
+                            detailsViewModel.addRating(
+                                detailsViewModel.movieId.toString(),
+                                (i + 1).toDouble()
+                            )
                         }
                     }),
             )

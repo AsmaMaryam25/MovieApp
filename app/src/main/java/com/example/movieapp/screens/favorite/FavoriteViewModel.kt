@@ -23,7 +23,11 @@ class FavoriteViewModel : ViewModel() {
             }
 
             movieRepository.getFavorites().collect { favorites ->
-                val updatedFavorites = favorites.map { movieItem -> movieItem.copy(rating = movieRepository.getAverageRating(movieItem.id)) }
+                val updatedFavorites = favorites.map { movieItem ->
+                    movieItem.copy(
+                        rating = movieRepository.getAverageRating(movieItem.id)
+                    )
+                }
 
                 mutableDetailsUIState.update {
                     FavoriteUIModel.Data(
@@ -34,6 +38,7 @@ class FavoriteViewModel : ViewModel() {
         }
 
     }
+
     sealed class FavoriteUIModel {
         data object Empty : FavoriteUIModel()
         data object Loading : FavoriteUIModel()

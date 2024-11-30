@@ -1,6 +1,5 @@
 package com.example.movieapp
 
-import android.R.attr.navigationIcon
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -178,7 +177,7 @@ class MainActivity : ComponentActivity() {
                             if (topBarShown) {
                                 TopAppBar(
                                     actions = {
-                                        if(videoLink != null) {
+                                        if (videoLink != null) {
                                             IconButton(onClick = {
                                                 val intent = Intent(
                                                     Intent.ACTION_VIEW,

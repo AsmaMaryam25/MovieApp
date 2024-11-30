@@ -35,7 +35,7 @@ class WatchListMovieDataSource(private val context: Context) {
             emptyList()
         }
 
-        val isWatchlist = currentWatchlist.any() { it.id == id }
+        val isWatchlist = currentWatchlist.any { it.id == id }
         val updatedWatchlist = if (isWatchlist) {
             currentWatchlist.filterNot { it.id == id }
         } else {

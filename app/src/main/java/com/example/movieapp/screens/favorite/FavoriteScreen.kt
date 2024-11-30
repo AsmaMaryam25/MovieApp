@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -40,14 +41,27 @@ import com.example.movieapp.screens.favorite.FavoriteViewModel.FavoriteUIModel
 import java.util.Locale
 
 @Composable
-fun FavoriteScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String, Int) -> Unit) {
+fun FavoriteScreen(
+    modifier: Modifier = Modifier,
+    onNavigateToDetailsScreen: (String, Int) -> Unit
+) {
     val favoriteViewModel: FavoriteViewModel = viewModel()
     val favoriteUIModel = favoriteViewModel.favoriteUIState.collectAsState().value
 
     when (favoriteUIModel) {
         FavoriteUIModel.Empty -> Text("Empty")
-        FavoriteUIModel.Loading -> Text("Loading")
-        is FavoriteUIModel.Data -> FavoriteContent(onNavigateToDetailsScreen, modifier, favoriteUIModel.favorites)
+        FavoriteUIModel.Loading -> Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(50.dp)
+        ) {
+            CircularProgressIndicator(modifier = Modifier.size(50.dp))
+        }
+
+        is FavoriteUIModel.Data -> FavoriteContent(
+            onNavigateToDetailsScreen,
+            modifier,
+            favoriteUIModel.favorites
+        )
     }
 }
 
@@ -56,7 +70,7 @@ private fun FavoriteContent(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     modifier: Modifier,
     favorites: List<MovieItem>,
-    ) {
+) {
     val posterWidth = 140.dp
     LazyColumn(
         modifier = modifier.fillMaxSize()
@@ -119,7 +133,12 @@ fun CreateFavCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = { onNavigateToDetailsScreen(favoriteMovie.title, favoriteMovie.id.toInt())}),
+                    .clickable(onClick = {
+                        onNavigateToDetailsScreen(
+                            favoriteMovie.title,
+                            favoriteMovie.id.toInt()
+                        )
+                    }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
@@ -135,7 +154,12 @@ fun CreateFavCard(
             modifier = modifier
                 .padding(vertical = 40.dp)
                 .weight(1f)
-                .clickable { onNavigateToDetailsScreen(favoriteMovie.title, favoriteMovie.id.toInt())}
+                .clickable {
+                    onNavigateToDetailsScreen(
+                        favoriteMovie.title,
+                        favoriteMovie.id.toInt()
+                    )
+                }
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
