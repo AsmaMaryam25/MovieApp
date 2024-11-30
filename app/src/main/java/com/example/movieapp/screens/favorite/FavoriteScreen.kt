@@ -37,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.data.model.MovieItem
 import com.example.movieapp.screens.favorite.FavoriteViewModel.FavoriteUIModel
+import java.util.Locale
 
 @Composable
 fun FavoriteScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String, Int) -> Unit) {
@@ -146,7 +147,7 @@ fun CreateFavCard(
                 modifier = modifier.size(24.dp)
             )
             Text(
-                text = favoriteMovie.rating.toString(),
+                text = String.format(Locale.getDefault(), "%.2f", favoriteMovie.rating),
             )
         }
     }

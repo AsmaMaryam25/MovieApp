@@ -21,6 +21,7 @@ agp = "8.1.4"
 [libraries]
 firebaseAnalytics = { module = "com.google.firebase:firebase-analytics" }
 firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
+firebaseFirestoreKtx = { module = "com.google.firebase:firebase-firestore-ktx" }
 materialIconsExtended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 accompanistPager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanistPager" }
 lifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }

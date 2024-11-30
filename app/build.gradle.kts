@@ -76,6 +76,7 @@ dependencies {
     implementation(libs.material3)
     implementation(platform(libs.firebaseBom))
     implementation(libs.firebaseAnalytics)
+    implementation(libs.firebaseFirestoreKtx)
 
     implementation(libs.kotlinxSerializationJson)
     implementation(libs.retrofitConverterKotlinxSerialization)

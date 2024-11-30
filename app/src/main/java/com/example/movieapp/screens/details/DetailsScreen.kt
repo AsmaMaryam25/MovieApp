@@ -52,6 +52,7 @@ import com.example.movieapp.models.Cast
 import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Crew
 import com.example.movieapp.models.Movie
+import java.util.Locale
 
 @Composable
 fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () -> Unit, setVideoLink: (String?) -> Unit) {
@@ -75,7 +76,8 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
             videoLink = detailsUIModel.videoLink,
             detailsViewModel = detailsViewModel,
             isFavorite = detailsUIModel.isFavorite,
-            isWatchList = detailsUIModel.isWatchlist
+            isWatchList = detailsUIModel.isWatchlist,
+            averageRating = detailsUIModel.averageRating
         )
     }
 }
@@ -89,7 +91,8 @@ private fun DetailsContent(
     videoLink: String? = null,
     detailsViewModel: DetailsViewModel,
     isFavorite: Boolean,
-    isWatchList: Boolean
+    isWatchList: Boolean,
+    averageRating: Double
 ) {
 
     LaunchedEffect(Unit){
@@ -122,7 +125,7 @@ private fun DetailsContent(
                         )
                     }
                     Row {
-                        CreateStars(Modifier)
+                        CreateStars(Modifier, detailsViewModel)
                     }
                 }
                 Column(
@@ -199,7 +202,7 @@ private fun DetailsContent(
                                 .size(50.dp)
                         )
                         Text(
-                            text = "1.5",
+                            text = String.format(Locale.getDefault(), "%.2f", averageRating),
                             fontSize = 15.sp,
                             textAlign = TextAlign.Center,
                         )
@@ -321,7 +324,7 @@ private fun DetailsContent(
 }
 
 @Composable
-private fun CreateStars(modifier: Modifier) {
+private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) {
     val iconList = remember {
         mutableStateListOf(
             Icons.Outlined.StarOutline,
@@ -345,6 +348,7 @@ private fun CreateStars(modifier: Modifier) {
                             } else if (j > i) {
                                 iconList[j] = Icons.Outlined.StarOutline
                             }
+                            detailsViewModel.addRating(detailsViewModel.movieId.toString(), (i+1).toDouble())
                         }
                     }),
             )

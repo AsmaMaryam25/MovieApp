@@ -6,6 +6,7 @@ import com.example.movieapp.data.local.FavoriteMovieDataSource
 import com.example.movieapp.data.local.WatchListMovieDataSource
 import com.example.movieapp.data.remote.RemoteMovieDataSource
 import com.example.movieapp.domain.MovieRepository
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import retrofit2.Retrofit
@@ -39,6 +40,7 @@ object DataModule {
     fun initialize(context: Context) {
         localFavoriteMovieDataSource = FavoriteMovieDataSource(context)
         localWatchlistMovieDataSource = WatchListMovieDataSource(context)
-        movieRepository = MovieRepository(remoteMovieDataSource, localFavoriteMovieDataSource, localWatchlistMovieDataSource )
+        val firestore = FirebaseFirestore.getInstance()
+        movieRepository = MovieRepository(remoteMovieDataSource, localFavoriteMovieDataSource, localWatchlistMovieDataSource, firestore)
     }
 }

@@ -23,9 +23,11 @@ class WatchlistViewModel : ViewModel() {
             }
 
             movieRepository.getWatchlist().collect { watchlist ->
+                val updatedWatchlist = watchlist.map { movieItem -> movieItem.copy(rating = movieRepository.getAverageRating(movieItem.id)) }
+
                 mutableDetailsUIState.update {
                     WatchlistUIModel.Data(
-                        watchlist = watchlist
+                        watchlist = updatedWatchlist
                     )
                 }
             }

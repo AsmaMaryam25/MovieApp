@@ -37,6 +37,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.data.model.MovieItem
 import com.example.movieapp.screens.watchlist.WatchlistViewModel.WatchlistUIModel
+import java.util.Locale
+import kotlin.String
 
 @Composable
 fun WatchlistScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String, Int) -> Unit) {
@@ -146,7 +148,7 @@ fun CreateWatchlistCard(
                 modifier = modifier.size(24.dp)
             )
             Text(
-                text = watchlistMovie.rating.toString(),
+                text = String.format(Locale.getDefault(), "%.2f", watchlistMovie.rating),
             )
         }
     }

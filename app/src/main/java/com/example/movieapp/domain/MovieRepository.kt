@@ -1,5 +1,6 @@
 package com.example.movieapp.domain
 
+import android.R.attr.rating
 import com.example.movieapp.data.local.FavoriteMovieDataSource
 import com.example.movieapp.data.local.WatchListMovieDataSource
 import com.example.movieapp.data.model.CastDao
@@ -12,6 +13,7 @@ import com.example.movieapp.data.model.ProductionCompanyDao
 import com.example.movieapp.data.model.ProductionCountryDao
 import com.example.movieapp.data.model.SpokenLanguageDao
 import com.example.movieapp.data.remote.RemoteMovieDataSource
+import com.example.movieapp.di.DataModule.movieRepository
 import com.example.movieapp.models.Cast
 import com.example.movieapp.models.CollectionMovie
 import com.example.movieapp.models.Credits
@@ -22,15 +24,18 @@ import com.example.movieapp.models.MovieCategory
 import com.example.movieapp.models.ProductionCompany
 import com.example.movieapp.models.ProductionCountry
 import com.example.movieapp.models.SpokenLanguage
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class MovieRepository(
     private val remoteMovieDataSource: RemoteMovieDataSource,
     private val localFavoriteMovieDataSource: FavoriteMovieDataSource,
-    private val localWatchlistMovieDataSource: WatchListMovieDataSource
+    private val localWatchlistMovieDataSource: WatchListMovieDataSource,
+    val firestore: FirebaseFirestore
 ) {
     val movieGenres = mapOf(
         28 to "Action",
@@ -56,7 +61,7 @@ class MovieRepository(
 
     fun getNowPlayingMovies(): Flow<List<CollectionMovie>> = flow {
         emit(remoteMovieDataSource.getNowPlayingMovies().results
-            .map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres) })
+            .map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres, ) })
     }
 
     fun getPopularMovies(): Flow<List<CollectionMovie>> = flow {
@@ -75,7 +80,7 @@ class MovieRepository(
     }
 
     fun getMovie(externalId: Int): Flow<Movie> = flow {
-        emit(remoteMovieDataSource.getMovie(externalId.toString()).mapToMovie(MovieCategory.SPECIFIC))
+        emit(remoteMovieDataSource.getMovie(externalId.toString()).mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository))
     }
 
     fun getCredits(externalId: Int): Flow<Credits> = flow {
@@ -94,6 +99,17 @@ class MovieRepository(
     fun getWatchlist() = localWatchlistMovieDataSource.getWatchlist()
 
     suspend fun toggleWatchlist(id: String?, title: String, posterPath: String?, rating: Double) = localWatchlistMovieDataSource.toggleWatchlist(id, title, posterPath, rating)
+
+    suspend fun getAverageRating(id: String): Double {
+        val ratingsRef = firestore.collection("ratings").document(id)
+        val snapshot = ratingsRef.get().await()
+        return if (snapshot.exists()) {
+            val currentData = snapshot.data
+            currentData?.get("averageRating") as Double
+        } else {
+            0.0
+        }
+    }
 }
 
 fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int, String>) = CollectionMovie(
@@ -109,10 +125,10 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
     originalTitle = originalTitle,
     popularity = popularity.toDouble(),
     video = video,
-    category = category
+    category = category,
 )
 
-fun MovieDao.mapToMovie(category: MovieCategory) = Movie(
+suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) = Movie(
     id = id,
     title = originalTitle,
     overview = overview,
@@ -132,7 +148,8 @@ fun MovieDao.mapToMovie(category: MovieCategory) = Movie(
     spokenLanguages = spokenLanguageDaos.map { it.mapToSpokenLanguage() },
     status = status,
     video = video,
-    category = category
+    category = category,
+    avgRating = movieRepository.getAverageRating(id.toString())
 )
 
 fun GenreDao.mapToGenre() = Genre(

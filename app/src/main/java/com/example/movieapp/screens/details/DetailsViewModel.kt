@@ -8,13 +8,16 @@ import com.example.movieapp.models.Movie
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class DetailsViewModel(val movieId: Int) : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
     private val mutableDetailsUIState = MutableStateFlow<DetailsUIModel>(DetailsUIModel.Empty)
     val detailsUIState: StateFlow<DetailsUIModel> = mutableDetailsUIState
+    private val firestore = movieRepository.firestore
 
     init {
         viewModelScope.launch {
@@ -25,9 +28,9 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 movieRepository.getCredits(movieId),
                 movieRepository.getVideoLink(movieId),
                 movieRepository.getFavorites(),
-                movieRepository.getWatchlist()
+                movieRepository.getWatchlist(),
             ) { movie, credits, videoLink, favorites, watchlist->
-                DetailsUIModel.Data(movie, credits, videoLink, favorites.any{ it.id == movie.id.toString() }, watchlist.any{ it.id == movie.id.toString() })
+                DetailsUIModel.Data(movie, credits, videoLink, favorites.any{ it.id == movie.id.toString() }, watchlist.any{ it.id == movie.id.toString() }, movieRepository.getAverageRating(movieId.toString()))
             }.collect { detailsUIModel ->
                 mutableDetailsUIState.value = detailsUIModel
             }
@@ -36,13 +39,51 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
 
     fun toggleFavorite(movie: Movie) {
         viewModelScope.launch {
-            movieRepository.toggleFavorite(movie.id.toString(), movie.title, movie.posterPath, rating = 1.5)
+            movieRepository.toggleFavorite(movie.id.toString(), movie.title, movie.posterPath, movie.avgRating)
         }
     }
 
     fun toggleWatchlist(movie: Movie) {
         viewModelScope.launch {
-            movieRepository.toggleWatchlist(movie.id.toString(), movie.title, movie.posterPath, rating = 1.5)
+            movieRepository.toggleWatchlist(movie.id.toString(), movie.title, movie.posterPath, movie.avgRating)
+        }
+    }
+
+    fun addRating(id: String, rating: Double) {
+        viewModelScope.launch {
+            val ratingsRef = firestore.collection("ratings").document(id)
+
+            val snapshot = ratingsRef.get().await()
+            if (snapshot.exists()) {
+                val currentData = snapshot.data
+                val currentRating = currentData?.get("rating") as Double
+                val currentTotalRating = currentData?.get("totalRating") as Double
+
+                val newRating = currentRating + rating
+                val newTotalRating = currentTotalRating + 1
+                val newAverageRating = newRating / newTotalRating
+
+                ratingsRef.update("rating", newRating, "totalRating", newTotalRating, "averageRating", newAverageRating).await()
+                updateAverageRating(newAverageRating)
+            } else {
+                val initialData = mapOf(
+                    "rating" to rating,
+                    "totalRating" to 1.0,
+                    "averageRating" to rating
+                )
+                ratingsRef.set(initialData).await()
+                updateAverageRating(rating)
+            }
+        }
+    }
+
+    private fun updateAverageRating(newAverageRating: Double) {
+        mutableDetailsUIState.update { currentState ->
+            if (currentState is DetailsUIModel.Data) {
+                currentState.copy(averageRating = newAverageRating)
+            } else {
+                currentState
+            }
         }
     }
 
@@ -54,7 +95,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val credits: Credits,
             val videoLink: String? = null,
             val isFavorite: Boolean,
-            val isWatchlist: Boolean
+            val isWatchlist: Boolean,
+            val averageRating: Double
         ) : DetailsUIModel()
     }
 }
