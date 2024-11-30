@@ -1,5 +1,8 @@
 package com.example.movieapp
 
+import android.R.attr.navigationIcon
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,6 +19,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
+import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -34,9 +38,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.movieapp.di.DataModule
 import com.example.movieapp.ui.theme.NavigationInComposeTheme
 
 class MainActivity : ComponentActivity() {
@@ -51,6 +57,8 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        DataModule.initialize(this)
         setContent {
             var isDarkTheme by remember { mutableStateOf(false) }
             NavigationInComposeTheme(
@@ -66,6 +74,8 @@ class MainActivity : ComponentActivity() {
                     var isNavigationBarAction by remember { mutableStateOf(false) }
                     var topBarShown by remember { mutableStateOf(false) }
                     var selectedItem by remember { mutableStateOf(navItemList[0].label) }
+                    var videoLink by remember { mutableStateOf<String?>(null) }
+                    val context = LocalContext.current
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
                         if (!isNavigationBarAction) {
@@ -167,6 +177,25 @@ class MainActivity : ComponentActivity() {
                         topBar = {
                             if (topBarShown) {
                                 TopAppBar(
+                                    actions = {
+                                        if(videoLink != null) {
+                                            IconButton(onClick = {
+                                                val intent = Intent(
+                                                    Intent.ACTION_VIEW,
+                                                    Uri.parse("https://www.youtube.com/watch?v=$videoLink")
+                                                ).apply {
+                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                }
+                                                context.startActivity(intent)
+                                            }) {
+                                                Icon(
+                                                    imageVector = Icons.Outlined.PlayCircle,
+                                                    contentDescription = "Open video trailer",
+                                                    modifier = Modifier.fillMaxSize()
+                                                )
+                                            }
+                                        }
+                                    },
                                     title = {
                                         Text(
                                             text = currentScreenTitle,
@@ -181,6 +210,7 @@ class MainActivity : ComponentActivity() {
                                             IconButton(onClick = {
                                                 navController.popBackStack()
                                                 topBarShown = false
+                                                videoLink = null
                                             }) {
                                                 Icon(
                                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -198,7 +228,8 @@ class MainActivity : ComponentActivity() {
                             onRouteChanged = { route -> currentScreenTitle = route.title },
                             modifier = Modifier.padding(it),
                             showTopBar = { topBarShown = true },
-                            toggleDarkTheme = { isDarkTheme = !isDarkTheme }
+                            toggleDarkTheme = { isDarkTheme = !isDarkTheme },
+                            setVideoLink = { link: String? -> videoLink = link }
                         )
                     }
                 }
