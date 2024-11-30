@@ -2,7 +2,6 @@ package com.example.movieapp.screens.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.movieapp.data.model.FavoriteMovie
 import com.example.movieapp.di.DataModule
 import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Movie
@@ -25,9 +24,10 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 movieRepository.getMovie(movieId),
                 movieRepository.getCredits(movieId),
                 movieRepository.getVideoLink(movieId),
-                movieRepository.getFavorites()
-            ) { movie, credits, videoLink, favorites->
-                DetailsUIModel.Data(movie, credits, videoLink, favorites.any{ it.id == movie.id.toString() })
+                movieRepository.getFavorites(),
+                movieRepository.getWatchlist()
+            ) { movie, credits, videoLink, favorites, watchlist->
+                DetailsUIModel.Data(movie, credits, videoLink, favorites.any{ it.id == movie.id.toString() }, watchlist.any{ it.id == movie.id.toString() })
             }.collect { detailsUIModel ->
                 mutableDetailsUIState.value = detailsUIModel
             }
@@ -40,6 +40,12 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         }
     }
 
+    fun toggleWatchlist(movie: Movie) {
+        viewModelScope.launch {
+            movieRepository.toggleWatchlist(movie.id.toString(), movie.title, movie.posterPath, rating = 1.5)
+        }
+    }
+
     sealed class DetailsUIModel {
         data object Empty : DetailsUIModel()
         data object Loading : DetailsUIModel()
@@ -47,7 +53,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val movie: Movie,
             val credits: Credits,
             val videoLink: String? = null,
-            val isFavorite: Boolean
+            val isFavorite: Boolean,
+            val isWatchlist: Boolean
         ) : DetailsUIModel()
     }
 }

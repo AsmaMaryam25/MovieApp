@@ -3,6 +3,7 @@ package com.example.movieapp.di
 import android.annotation.SuppressLint
 import android.content.Context
 import com.example.movieapp.data.local.FavoriteMovieDataSource
+import com.example.movieapp.data.local.WatchListMovieDataSource
 import com.example.movieapp.data.remote.RemoteMovieDataSource
 import com.example.movieapp.domain.MovieRepository
 import kotlinx.serialization.json.Json
@@ -28,12 +29,16 @@ object DataModule {
     private val remoteMovieDataSource = RemoteMovieDataSource(retrofit)
 
     @SuppressLint("StaticFieldLeak")
-    private lateinit var localMovieDataSource: FavoriteMovieDataSource
+    private lateinit var localFavoriteMovieDataSource: FavoriteMovieDataSource
+
+    @SuppressLint("StaticFieldLeak")
+    private lateinit var localWatchlistMovieDataSource: WatchListMovieDataSource
 
     lateinit var movieRepository: MovieRepository
 
     fun initialize(context: Context) {
-        localMovieDataSource = FavoriteMovieDataSource(context)
-        movieRepository = MovieRepository(remoteMovieDataSource, localMovieDataSource)
+        localFavoriteMovieDataSource = FavoriteMovieDataSource(context)
+        localWatchlistMovieDataSource = WatchListMovieDataSource(context)
+        movieRepository = MovieRepository(remoteMovieDataSource, localFavoriteMovieDataSource, localWatchlistMovieDataSource )
     }
 }

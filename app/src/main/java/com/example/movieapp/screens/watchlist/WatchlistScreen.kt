@@ -1,5 +1,6 @@
-package com.example.movieapp.screens.favorite
+package com.example.movieapp.screens.watchlist
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,7 +17,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Reorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -36,33 +37,34 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.movieapp.R
 import com.example.movieapp.data.model.FavoriteMovie
-import com.example.movieapp.screens.favorite.FavoriteViewModel.FavoriteUIModel
-import kotlin.toString
+import com.example.movieapp.screens.favorite.CreateFavCard
+import com.example.movieapp.screens.watchlist.WatchlistViewModel.WatchlistUIModel
 
 @Composable
-fun FavoriteScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String, Int) -> Unit) {
-    val favoriteViewModel: FavoriteViewModel = viewModel()
-    val favoriteUIModel = favoriteViewModel.favoriteUIState.collectAsState().value
+fun WatchlistScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String, Int) -> Unit) {
+    val watchlistViewModel: WatchlistViewModel = viewModel()
+    val watchlistUIModel = watchlistViewModel.watchlistUIState.collectAsState().value
 
-    when (favoriteUIModel) {
-        FavoriteUIModel.Empty -> Text("Empty")
-        FavoriteUIModel.Loading -> Text("Loading")
-        is FavoriteUIModel.Data -> FavoriteContent(onNavigateToDetailsScreen, modifier, favoriteUIModel.favorites)
+    when (watchlistUIModel) {
+        WatchlistUIModel.Empty -> Text("Empty")
+        WatchlistUIModel.Loading -> Text("Loading")
+        is WatchlistUIModel.Data -> WatchlistContent(onNavigateToDetailsScreen, modifier, watchlistUIModel.watchlist)
     }
 }
 
 @Composable
-private fun FavoriteContent(
+private fun WatchlistContent(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     modifier: Modifier,
-    favorites: List<FavoriteMovie>,
-    ) {
+    watchlist: List<FavoriteMovie>
+) {
     val posterWidth = 140.dp
     LazyColumn(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier.fillMaxSize(),
     ) {
-        if (favorites.isEmpty()) {
+        if (watchlist.isEmpty()) {
             item {
                 Column(
                     modifier = modifier.fillParentMaxSize(),
@@ -70,7 +72,7 @@ private fun FavoriteContent(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "No favorites yet",
+                        text = "Nothing in watchlist yet",
                         style = TextStyle(
                             fontSize = 25.sp,
                             lineHeight = 30.sp,
@@ -79,11 +81,11 @@ private fun FavoriteContent(
                 }
             }
         } else {
-            items(favorites.size) { index ->
-                CreateFavCard(
+            items(watchlist.size) { index ->
+                CreateWatchlistCard(
                     posterWidth,
                     onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                    favoriteMovie = favorites[index]
+                    watchlistMovie = watchlist[index]
                 )
                 HorizontalDivider(
                     modifier = modifier
@@ -96,11 +98,11 @@ private fun FavoriteContent(
 }
 
 @Composable
-fun CreateFavCard(
+fun CreateWatchlistCard(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    favoriteMovie: FavoriteMovie
+    watchlistMovie: FavoriteMovie
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -114,19 +116,19 @@ fun CreateFavCard(
                 .background(Color.Gray)
         ) {
             AsyncImage(
-                model = favoriteMovie.posterPath,
+                model = watchlistMovie.posterPath,
                 contentDescription = null,
                 modifier = Modifier
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = { onNavigateToDetailsScreen(favoriteMovie.title, favoriteMovie.id.toInt())}),
+                    .clickable(onClick = { onNavigateToDetailsScreen(watchlistMovie.title, watchlistMovie.id.toInt())}),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
         Spacer(modifier = Modifier.size(30.dp))
         Text(
-            text = favoriteMovie.title,
+            text = watchlistMovie.title,
             style = TextStyle(
                 fontSize = 25.sp,
                 lineHeight = 30.sp,
@@ -136,7 +138,7 @@ fun CreateFavCard(
             modifier = modifier
                 .padding(vertical = 40.dp)
                 .weight(1f)
-                .clickable { onNavigateToDetailsScreen(favoriteMovie.title, favoriteMovie.id.toInt())}
+                .clickable { onNavigateToDetailsScreen(watchlistMovie.title, watchlistMovie.id.toInt())}
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -148,8 +150,9 @@ fun CreateFavCard(
                 modifier = modifier.size(24.dp)
             )
             Text(
-                text = favoriteMovie.rating.toString(),
+                text = watchlistMovie.rating.toString(),
             )
         }
     }
 }
+

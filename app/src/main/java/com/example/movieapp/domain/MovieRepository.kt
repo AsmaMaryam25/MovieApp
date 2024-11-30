@@ -1,6 +1,7 @@
 package com.example.movieapp.domain
 
 import com.example.movieapp.data.local.FavoriteMovieDataSource
+import com.example.movieapp.data.local.WatchListMovieDataSource
 import com.example.movieapp.data.model.CastDao
 import com.example.movieapp.data.model.CollectionMovieDao
 import com.example.movieapp.data.model.CreditsDao
@@ -28,7 +29,8 @@ import java.time.format.DateTimeFormatter
 
 class MovieRepository(
     private val remoteMovieDataSource: RemoteMovieDataSource,
-    private val localMovieDataSource: FavoriteMovieDataSource,
+    private val localFavoriteMovieDataSource: FavoriteMovieDataSource,
+    private val localWatchlistMovieDataSource: WatchListMovieDataSource
 ) {
     val movieGenres = mapOf(
         28 to "Action",
@@ -85,9 +87,13 @@ class MovieRepository(
             .firstOrNull()?.key)
     }
 
-    fun getFavorites() = localMovieDataSource.getFavorites()
+    fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
 
-    suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) = localMovieDataSource.toggleFavorite(id, title, posterPath, rating)
+    suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) = localFavoriteMovieDataSource.toggleFavorite(id, title, posterPath, rating)
+
+    fun getWatchlist() = localWatchlistMovieDataSource.getWatchlist()
+
+    suspend fun toggleWatchlist(id: String?, title: String, posterPath: String?, rating: Double) = localWatchlistMovieDataSource.toggleWatchlist(id, title, posterPath, rating)
 }
 
 fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int, String>) = CollectionMovie(

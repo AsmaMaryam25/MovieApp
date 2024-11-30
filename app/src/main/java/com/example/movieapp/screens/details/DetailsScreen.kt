@@ -75,6 +75,7 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
             videoLink = detailsUIModel.videoLink,
             detailsViewModel = detailsViewModel,
             isFavorite = detailsUIModel.isFavorite,
+            isWatchList = detailsUIModel.isWatchlist
         )
     }
 }
@@ -88,6 +89,7 @@ private fun DetailsContent(
     videoLink: String? = null,
     detailsViewModel: DetailsViewModel,
     isFavorite: Boolean,
+    isWatchList: Boolean
 ) {
 
     LaunchedEffect(Unit){
@@ -148,7 +150,9 @@ private fun DetailsContent(
                     Row {
                         val favIcon = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
                         var favoriteIcon by remember { mutableStateOf(favIcon) }
-                        var watchlistIcon by remember { mutableStateOf(Icons.Outlined.BookmarkBorder) }
+
+                        val watchIcon = if (isWatchList) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
+                        var watchlistIcon by remember { mutableStateOf(watchIcon) }
                         Icon(
                             imageVector = favoriteIcon,
                             contentDescription = "Favorite",
@@ -172,13 +176,13 @@ private fun DetailsContent(
                                 .padding(5.dp)
                                 .size(40.dp)
                                 .clickable(onClick = {
-                                    //TODO Add to watchlist
                                     watchlistIcon =
                                         if (watchlistIcon == Icons.Outlined.BookmarkBorder) {
                                             Icons.Filled.Bookmark
                                         } else {
                                             Icons.Outlined.BookmarkBorder
                                         }
+                                    detailsViewModel.toggleWatchlist(movie)
                                 })
                         )
                     }

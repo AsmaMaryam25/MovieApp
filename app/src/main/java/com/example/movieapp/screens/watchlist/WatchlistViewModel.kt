@@ -1,0 +1,42 @@
+package com.example.movieapp.screens.watchlist
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.movieapp.data.model.FavoriteMovie
+import com.example.movieapp.di.DataModule
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+
+class WatchlistViewModel : ViewModel() {
+
+    private val movieRepository = DataModule.movieRepository
+
+    private val mutableDetailsUIState = MutableStateFlow<WatchlistUIModel>(WatchlistUIModel.Empty)
+    val watchlistUIState: StateFlow<WatchlistUIModel> = mutableDetailsUIState
+
+    init {
+        viewModelScope.launch {
+            mutableDetailsUIState.update {
+                WatchlistUIModel.Loading
+            }
+
+            movieRepository.getWatchlist().collect { watchlist ->
+                mutableDetailsUIState.update {
+                    WatchlistUIModel.Data(
+                        watchlist = watchlist
+                    )
+                }
+            }
+        }
+
+    }
+    sealed class WatchlistUIModel {
+        data object Empty : WatchlistUIModel()
+        data object Loading : WatchlistUIModel()
+        data class Data(
+            val watchlist: List<FavoriteMovie>
+        ) : WatchlistUIModel()
+    }
+}
