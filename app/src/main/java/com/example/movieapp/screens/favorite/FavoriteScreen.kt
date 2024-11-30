@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Reorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -36,9 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.example.movieapp.data.model.FavoriteMovie
+import com.example.movieapp.data.model.MovieItem
 import com.example.movieapp.screens.favorite.FavoriteViewModel.FavoriteUIModel
-import kotlin.toString
 
 @Composable
 fun FavoriteScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (String, Int) -> Unit) {
@@ -56,7 +54,7 @@ fun FavoriteScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (St
 private fun FavoriteContent(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     modifier: Modifier,
-    favorites: List<FavoriteMovie>,
+    favorites: List<MovieItem>,
     ) {
     val posterWidth = 140.dp
     LazyColumn(
@@ -100,7 +98,7 @@ fun CreateFavCard(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    favoriteMovie: FavoriteMovie
+    favoriteMovie: MovieItem
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,

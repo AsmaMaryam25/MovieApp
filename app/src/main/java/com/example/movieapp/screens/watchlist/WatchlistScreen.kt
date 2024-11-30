@@ -1,6 +1,5 @@
 package com.example.movieapp.screens.watchlist
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -28,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -37,9 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
-import com.example.movieapp.R
-import com.example.movieapp.data.model.FavoriteMovie
-import com.example.movieapp.screens.favorite.CreateFavCard
+import com.example.movieapp.data.model.MovieItem
 import com.example.movieapp.screens.watchlist.WatchlistViewModel.WatchlistUIModel
 
 @Composable
@@ -58,7 +54,7 @@ fun WatchlistScreen(modifier: Modifier = Modifier, onNavigateToDetailsScreen: (S
 private fun WatchlistContent(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     modifier: Modifier,
-    watchlist: List<FavoriteMovie>
+    watchlist: List<MovieItem>
 ) {
     val posterWidth = 140.dp
     LazyColumn(
@@ -102,7 +98,7 @@ fun CreateWatchlistCard(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    watchlistMovie: FavoriteMovie
+    watchlistMovie: MovieItem
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,

@@ -2,7 +2,7 @@ package com.example.movieapp.screens.watchlist
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.movieapp.data.model.FavoriteMovie
+import com.example.movieapp.data.model.MovieItem
 import com.example.movieapp.di.DataModule
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,7 +36,7 @@ class WatchlistViewModel : ViewModel() {
         data object Empty : WatchlistUIModel()
         data object Loading : WatchlistUIModel()
         data class Data(
-            val watchlist: List<FavoriteMovie>
+            val watchlist: List<MovieItem>
         ) : WatchlistUIModel()
     }
 }

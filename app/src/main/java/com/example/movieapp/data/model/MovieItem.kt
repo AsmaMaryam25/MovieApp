@@ -4,7 +4,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FavoriteMovie (
+data class MovieItem (
     @SerialName("id")
     val id: String,
 
