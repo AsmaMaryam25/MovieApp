@@ -3,6 +3,7 @@ package com.example.movieapp.data.remote
 import com.example.movieapp.data.model.CollectionDao
 import com.example.movieapp.data.model.CreditsDao
 import com.example.movieapp.data.model.MovieDao
+import com.example.movieapp.data.model.QueryDao
 import com.example.movieapp.data.model.VideosDao
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -47,4 +48,10 @@ interface MovieApiService {
     suspend fun getUpcomingMovies(
         @Query("api_key") apiKey: String
     ): CollectionDao
+
+    @GET("search/movie")
+    suspend fun searchMovies(
+        @Query("query") query: String,
+        @Query("api_key") apiKey: String
+    ): QueryDao
 }

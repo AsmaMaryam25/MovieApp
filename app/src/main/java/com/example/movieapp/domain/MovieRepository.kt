@@ -10,6 +10,7 @@ import com.example.movieapp.data.model.GenreDao
 import com.example.movieapp.data.model.MovieDao
 import com.example.movieapp.data.model.ProductionCompanyDao
 import com.example.movieapp.data.model.ProductionCountryDao
+import com.example.movieapp.data.model.SearchMovieDao
 import com.example.movieapp.data.model.SpokenLanguageDao
 import com.example.movieapp.data.remote.RemoteMovieDataSource
 import com.example.movieapp.models.Cast
@@ -17,10 +18,11 @@ import com.example.movieapp.models.CollectionMovie
 import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Crew
 import com.example.movieapp.models.Genre
-import com.example.movieapp.models.Movie
+import com.example.movieapp.models.LocalMovie
 import com.example.movieapp.models.MovieCategory
 import com.example.movieapp.models.ProductionCompany
 import com.example.movieapp.models.ProductionCountry
+import com.example.movieapp.models.SearchMovie
 import com.example.movieapp.models.SpokenLanguage
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
@@ -77,7 +79,12 @@ class MovieRepository(
             .map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) })
     }
 
-    fun getMovie(externalId: Int): Flow<Movie> = flow {
+    fun searchMovies(query: String): Flow<List<SearchMovie>> = flow {
+        emit(remoteMovieDataSource.searchMovies(query).results
+            .map { it.mapToMovie() })
+    }
+
+    fun getMovie(externalId: Int): Flow<LocalMovie> = flow {
         emit(
             remoteMovieDataSource.getMovie(externalId.toString())
                 .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
@@ -123,7 +130,7 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
         overview = overview,
         posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
         backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
-        releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+        releaseDate = if (releaseDate.isEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
         adult = adult,
         originalLanguage = originalLanguage,
         originalTitle = originalTitle,
@@ -132,13 +139,13 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
         category = category,
     )
 
-suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) = Movie(
+suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) = LocalMovie(
     id = id,
     title = originalTitle,
     overview = overview,
     posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
     backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
-    releaseDate = LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+    releaseDate = if (releaseDate.isEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
     adult = adult,
     budget = budget,
     genres = genreDaos.map { it.mapToGenre() },
@@ -154,6 +161,20 @@ suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieR
     video = video,
     category = category,
     avgRating = movieRepository.getAverageRating(id.toString())
+)
+
+fun SearchMovieDao.mapToMovie() = SearchMovie(
+    id = id,
+    title = title.toString(),
+    overview = overview,
+    posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
+    backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
+    releaseDate = if (releaseDate?.isEmpty() == true) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+    adult = adult,
+    originalLanguage = originalLanguage.toString(),
+    originalTitle = originalTitle.toString(),
+    popularity = popularity,
+    video = video,
 )
 
 fun GenreDao.mapToGenre() = Genre(

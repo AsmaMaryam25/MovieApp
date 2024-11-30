@@ -52,7 +52,7 @@ import coil3.compose.AsyncImage
 import com.example.movieapp.models.Cast
 import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Crew
-import com.example.movieapp.models.Movie
+import com.example.movieapp.models.LocalMovie
 import java.util.Locale
 
 @Composable
@@ -82,7 +82,7 @@ fun DetailsScreen(
 
         is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
             modifier = modifier,
-            movie = detailsUIModel.movie,
+            localMovie = detailsUIModel.localMovie,
             credits = detailsUIModel.credits,
             setVideoLink = setVideoLink,
             videoLink = detailsUIModel.videoLink,
@@ -97,7 +97,7 @@ fun DetailsScreen(
 @Composable
 private fun DetailsContent(
     modifier: Modifier,
-    movie: Movie,
+    localMovie: LocalMovie,
     credits: Credits,
     setVideoLink: (String?) -> Unit,
     videoLink: String? = null,
@@ -128,7 +128,7 @@ private fun DetailsContent(
                             .background(Color.Gray)
                     ) {
                         AsyncImage(
-                            model = movie.posterPath,
+                            model = localMovie.posterPath,
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -146,19 +146,19 @@ private fun DetailsContent(
                     modifier = Modifier.padding(10.dp)
                 ) {
                     Text(
-                        text = movie.title,
+                        text = localMovie.title,
                         fontSize = 20.sp,
                         textAlign = TextAlign.Center,
                         fontWeight = FontWeight.Bold,
                         modifier = Modifier.fillMaxWidth()
                     )
                     Text(
-                        text = movie.genres.map { it.name }.joinToString(),
+                        text = localMovie.genres.map { it.name }.joinToString(),
                         fontSize = 15.sp,
                         textAlign = TextAlign.Center,
                     )
                     Text(
-                        text = movie.releaseDate.year.toString(),
+                        text = localMovie.releaseDate.year.toString(),
                         fontSize = 15.sp,
                         textAlign = TextAlign.Center,
                     )
@@ -183,7 +183,7 @@ private fun DetailsContent(
                                         } else {
                                             Icons.Outlined.FavoriteBorder
                                         }
-                                    detailsViewModel.toggleFavorite(movie)
+                                    detailsViewModel.toggleFavorite(localMovie)
                                 })
                         )
                         Icon(
@@ -199,7 +199,7 @@ private fun DetailsContent(
                                         } else {
                                             Icons.Outlined.BookmarkBorder
                                         }
-                                    detailsViewModel.toggleWatchlist(movie)
+                                    detailsViewModel.toggleWatchlist(localMovie)
                                 })
                         )
                     }
@@ -233,7 +233,7 @@ private fun DetailsContent(
         }
         item {
             Text(
-                text = movie.overview ?: "No overview available"
+                text = localMovie.overview ?: "No overview available"
             )
         }
         item {
@@ -242,7 +242,7 @@ private fun DetailsContent(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Release date: ")
                     }
-                    append(movie.releaseDate.toString())
+                    append(localMovie.releaseDate.toString())
                 },
                 fontSize = 15.sp
             )
@@ -253,7 +253,7 @@ private fun DetailsContent(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Produced by: ")
                     }
-                    append(movie.productionCompanies.joinToString { it.name })
+                    append(localMovie.productionCompanies.joinToString { it.name })
                 },
                 fontSize = 15.sp
             )
@@ -264,7 +264,7 @@ private fun DetailsContent(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Produced in: ")
                     }
-                    append(movie.productionCountries.joinToString { it.name })
+                    append(localMovie.productionCountries.joinToString { it.name })
                 },
                 fontSize = 15.sp,
             )
@@ -275,7 +275,7 @@ private fun DetailsContent(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Revenue generated: ")
                     }
-                    append(movie.revenue.toString())
+                    append(localMovie.revenue.toString())
                 },
                 fontSize = 15.sp
             )
@@ -286,7 +286,7 @@ private fun DetailsContent(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Runtime: ")
                     }
-                    append("${movie.runtime} minutes")
+                    append("${localMovie.runtime} minutes")
                 },
                 fontSize = 15.sp
             )
@@ -297,7 +297,7 @@ private fun DetailsContent(
                     withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                         append("Spoken languages: ")
                     }
-                    append(movie.spokenLanguages.joinToString { it.name })
+                    append(localMovie.spokenLanguages.joinToString { it.name })
                 },
                 fontSize = 15.sp,
             )
