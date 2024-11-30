@@ -73,7 +73,7 @@ fun DetailsScreen(modifier: Modifier = Modifier, movieId: Int, showTopBar: () ->
             credits = detailsUIModel.credits,
             setVideoLink = setVideoLink,
             videoLink = detailsUIModel.videoLink,
-            toggleFavorite = detailsViewModel.toggleFavorite(detailsUIModel.movie),
+            detailsViewModel = detailsViewModel,
             isFavorite = detailsUIModel.isFavorite,
         )
     }
@@ -86,7 +86,7 @@ private fun DetailsContent(
     credits: Credits,
     setVideoLink: (String?) -> Unit,
     videoLink: String? = null,
-    toggleFavorite: Unit,
+    detailsViewModel: DetailsViewModel,
     isFavorite: Boolean,
 ) {
 
@@ -162,7 +162,7 @@ private fun DetailsContent(
                                         } else {
                                             Icons.Outlined.FavoriteBorder
                                         }
-                                    toggleFavorite
+                                    detailsViewModel.toggleFavorite(movie)
                                 })
                         )
                         Icon(
