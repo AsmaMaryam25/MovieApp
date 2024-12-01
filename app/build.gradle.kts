@@ -1,16 +1,26 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("org.jetbrains.kotlin.plugin.compose")
     kotlin("plugin.serialization")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "dk.shape.dtu.navigation"
+    namespace = "com.example.movieapp"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "dk.shape.dtu.navigation"
+        // Load the local.properties file
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
+        // Set the TMDB_API key in BuildConfig
+        buildConfigField("String", "TMDB_API", "\"${properties["TMDB_API"]}\"")
+
+        applicationId = "com.example.movieapp"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
@@ -24,6 +34,7 @@ android {
 
     buildTypes {
         release {
+            buildConfigField("String", "TMDB_API", "\"${properties["TMDB_API"]}\"")
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -32,13 +43,14 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
     packaging {
@@ -49,20 +61,31 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.6")
-    implementation("androidx.activity:activity-compose:1.9.3")
+    implementation(libs.materialIconsExtended)
+    implementation(libs.accompanistPager)
+    implementation(libs.lifecycleViewModelCompose)
+    implementation(libs.coreKtx)
+    implementation(libs.lifecycleRuntimeKtx)
+    implementation(libs.activityCompose)
+    implementation(libs.datastorePreferences)
 
-    implementation(platform("androidx.compose:compose-bom:2024.10.00"))
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
+    implementation(platform(libs.composeBom))
+    implementation(libs.composeUi)
+    implementation(libs.composeUiGraphics)
+    implementation(libs.composeUiToolingPreview)
+    implementation(libs.material3)
+    implementation(platform(libs.firebaseBom))
+    implementation(libs.firebaseAnalytics)
+    implementation(libs.firebaseFirestoreKtx)
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
-    implementation("androidx.navigation:navigation-compose:2.8.3")
-    implementation("androidx.navigation:navigation-runtime-ktx:2.8.3")
+    implementation(libs.kotlinxSerializationJson)
+    implementation(libs.retrofitConverterKotlinxSerialization)
+    implementation(libs.navigationCompose)
+    implementation(libs.navigationRuntimeKtx)
+    implementation(libs.retrofit)
+    implementation(libs.coilCompose)
+    implementation(libs.coilNetworkOkhttp)
 
-    debugImplementation("androidx.compose.ui:ui-tooling")
-    debugImplementation("androidx.compose.ui:ui-test-manifest")
+    debugImplementation(libs.composeUiTooling)
+    debugImplementation(libs.composeUiTestManifest)
 }
