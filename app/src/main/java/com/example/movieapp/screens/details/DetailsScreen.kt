@@ -312,7 +312,7 @@ private fun DetailsContent(
             }
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(5) {
+                    items(credits.cast.size) {
                         CreateCast(Modifier, credits.cast[it])
                     }
                 }
@@ -328,7 +328,7 @@ private fun DetailsContent(
             }
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(5) {
+                    items(credits.crew.size) {
                         CreateCrew(Modifier, credits.crew[it])
                     }
                 }

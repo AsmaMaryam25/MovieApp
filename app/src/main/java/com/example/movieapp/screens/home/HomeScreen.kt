@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -30,6 +31,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -174,15 +176,23 @@ private fun CreatePoster(
                 textAlign = TextAlign.Center
             ),
         )
-        Text(
+        Box(
             modifier = Modifier
                 .width(posterWidth)
-                .padding(bottom = 10.dp),
-            text = collectionMovie.overview ?: "No overview available",
-            style = TextStyle(
-                textAlign = TextAlign.Center
-            ),
-        )
+                .height(110.dp)
+        ) {
+            Text(
+                modifier = Modifier
+                    .width(posterWidth)
+                    .padding(bottom = 10.dp),
+                text = collectionMovie.overview ?: "No overview available",
+                style = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
+                maxLines = 6,
+                overflow = TextOverflow.Ellipsis
+            )
+        }
     }
 }
 
