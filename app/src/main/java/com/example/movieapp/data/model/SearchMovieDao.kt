@@ -8,7 +8,7 @@ data class SearchMovieDao(
     @SerialName("adult")
     val adult: Boolean = true,
     @SerialName("backdrop_path")
-    val backdropPath: String? = null,
+    val backdropPath: String?,
     @SerialName("genre_ids")
     val genreIds: List<Int> = emptyList(),
     @SerialName("id")

@@ -10,7 +10,7 @@ data class MovieDao(
     val adult: Boolean = true,
 
     @SerialName("backdrop_path")
-    val backdropPath: String = "",
+    val backdropPath: String?,
 
     @SerialName("belongs_to_collection")
     val belongsToCollection: CollectionDao?,
@@ -28,7 +28,7 @@ data class MovieDao(
     val id: Int = 0,
 
     @SerialName("imdb_id")
-    val imdbId: String = "",
+    val imdbId: String?,
 
     @SerialName("original_language")
     val originalLanguage: String = "",
