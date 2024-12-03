@@ -3,81 +3,80 @@ package com.example.movieapp.data.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class MovieDao(
     @SerialName("adult")
-    val adult: Boolean = true,
+    val adult: Boolean? = false,
 
     @SerialName("backdrop_path")
-    val backdropPath: String?,
+    val backdropPath: String? = "",
 
     @SerialName("belongs_to_collection")
-    val belongsToCollection: CollectionDao?,
+    val belongsToCollection: CollectionDao? = CollectionDao(),
 
     @SerialName("budget")
-    val budget: Int = 0,
+    val budget: Int? = 0,
 
     @SerialName("genres")
-    val genreDaos: List<GenreDao> = emptyList(),
+    val genreDaos: List<GenreDao>? = emptyList(),
 
     @SerialName("homepage")
-    val homepage: String = "",
+    val homepage: String? = "",
 
     @SerialName("id")
-    val id: Int = 0,
+    val id: Int? = 0,
 
     @SerialName("imdb_id")
-    val imdbId: String?,
+    val imdbId: String? = "",
 
     @SerialName("original_language")
-    val originalLanguage: String = "",
+    val originalLanguage: String? = "",
 
     @SerialName("original_title")
-    val originalTitle: String = "",
+    val originalTitle: String? = "",
 
     @SerialName("overview")
-    val overview: String = "",
+    val overview: String? = "",
 
     @SerialName("popularity")
-    val popularity: Double = 0.0,
+    val popularity: Double? = 0.0,
 
     @SerialName("poster_path")
-    val posterPath: String = "",
+    val posterPath: String? = "",
 
     @SerialName("production_companies")
-    val productionCompanies: List<ProductionCompanyDao> = emptyList(),
+    val productionCompanies: List<ProductionCompanyDao>? = emptyList(),
 
     @SerialName("production_countries")
-    val productionCountries: List<ProductionCountryDao> = emptyList(),
+    val productionCountries: List<ProductionCountryDao>? = emptyList(),
 
     @SerialName("release_date")
-    val releaseDate: String = "",
+    val releaseDate: String? = "",
 
     @SerialName("revenue")
-    val revenue: Int = 0,
+    val revenue: Int? = 0,
 
     @SerialName("runtime")
-    val runtime: Int = 0,
+    val runtime: Int? = 0,
 
     @SerialName("spoken_languages")
-    val spokenLanguageDaos: List<SpokenLanguageDao> = emptyList(),
+    val spokenLanguageDaos: List<SpokenLanguageDao>? = emptyList(),
 
     @SerialName("status")
-    val status: String = "",
+    val status: String? = "",
 
     @SerialName("tagline")
-    val tagline: String = "",
+    val tagline: String? = "",
 
     @SerialName("title")
-    val title: String = "",
+    val title: String? = "",
 
     @SerialName("video")
-    val video: Boolean = true,
+    val video: Boolean? = false,
 
     @SerialName("vote_average")
-    val voteAverage: Double = 0.0,
+    val voteAverage: Double? = 0.0,
 
     @SerialName("vote_count")
-    val voteCount: Int = 0
+    val voteCount: Int? = 0
 )

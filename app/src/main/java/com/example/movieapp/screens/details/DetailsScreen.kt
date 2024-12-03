@@ -236,71 +236,89 @@ private fun DetailsContent(
                 text = localMovie.overview ?: "No overview available"
             )
         }
-        item {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Release date: ")
-                    }
-                    append(localMovie.releaseDate.toString())
-                },
-                fontSize = 15.sp
-            )
+        if(!localMovie.releaseDate.equals("")) {
+            item {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Release date: ")
+                        }
+                        append(localMovie.releaseDate.toString())
+                    },
+                    fontSize = 15.sp
+                )
+            }
         }
-        item {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Produced by: ")
-                    }
-                    append(localMovie.productionCompanies.joinToString { it.name })
-                },
-                fontSize = 15.sp
-            )
+        if(localMovie.productionCompanies.isNotEmpty()) {
+            item {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Produced by: ")
+                        }
+                        append(localMovie.productionCompanies.joinToString { it.name })
+                    },
+                    fontSize = 15.sp
+                )
+            }
         }
-        item {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Produced in: ")
-                    }
-                    append(localMovie.productionCountries.joinToString { it.name })
-                },
-                fontSize = 15.sp,
-            )
+        if(localMovie.productionCountries.isNotEmpty()) {
+            item {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Produced in: ")
+                        }
+                        append(localMovie.productionCountries.joinToString { it.name })
+                    },
+                    fontSize = 15.sp,
+                )
+            }
         }
-        item {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Revenue generated: ")
-                    }
-                    append(localMovie.revenue.toString())
-                },
-                fontSize = 15.sp
-            )
+        if(localMovie.revenue > 0) {
+            item {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Revenue generated: ")
+                        }
+                        append(localMovie.revenue.toString())
+                    },
+                    fontSize = 15.sp
+                )
+            }
         }
-        item {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Runtime: ")
-                    }
-                    append("${localMovie.runtime} minutes")
-                },
-                fontSize = 15.sp
-            )
+        localMovie.runtime?.let {
+            if(it > 0) {
+                item {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Runtime: ")
+                            }
+                            if (localMovie.runtime == 1){
+                                append("${localMovie.runtime} minute")
+                            } else {
+                                append("${localMovie.runtime} minutes")
+                            }
+                        },
+                        fontSize = 15.sp
+                    )
+                }
+            }
         }
-        item {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Spoken languages: ")
-                    }
-                    append(localMovie.spokenLanguages.joinToString { it.name })
-                },
-                fontSize = 15.sp,
-            )
+        if(localMovie.spokenLanguages.isNotEmpty()) {
+            item {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Spoken languages: ")
+                        }
+                        append(localMovie.spokenLanguages.joinToString { it.name })
+                    },
+                    fontSize = 15.sp,
+                )
+            }
         }
         if (credits.cast.isNotEmpty()) {
             item {

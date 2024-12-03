@@ -6,23 +6,32 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class VideoDao(
     @SerialName("iso_639_1")
-    val iso6391: String,
+    val iso6391: String? = "",
+
     @SerialName("iso_3166_1")
-    val iso31661: String,
+    val iso31661: String? = "",
+
     @SerialName("name")
-    val name: String,
+    val name: String? = "",
+
     @SerialName("key")
-    val key: String,
+    val key: String? = "",
+
     @SerialName("site")
-    val site: String,
+    val site: String? = "",
+
     @SerialName("size")
-    val size: Int = 0,
+    val size: Int? = 0,
+
     @SerialName("type")
-    val type: String,
+    val type: String? = "",
+
     @SerialName("official")
-    val official: Boolean = true,
+    val official: Boolean? = false,
+
     @SerialName("published_at")
-    val publishedAt: String,
+    val publishedAt: String? = "",
+
     @SerialName("id")
-    val id: String
+    val id: String? = ""
 )

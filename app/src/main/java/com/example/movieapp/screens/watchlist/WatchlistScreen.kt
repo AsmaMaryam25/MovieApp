@@ -1,5 +1,6 @@
 package com.example.movieapp.screens.watchlist
 
+import android.R.attr.fontWeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -136,8 +137,8 @@ fun CreateWatchlistCard(
                     .clip(shape = RoundedCornerShape(30.dp))
                     .clickable(onClick = {
                         onNavigateToDetailsScreen(
-                            watchlistMovie.title,
-                            watchlistMovie.id.toInt()
+                            watchlistMovie.title ?: "",
+                            watchlistMovie.id?.toInt() ?: 0
                         )
                     }),
                 placeholder = ColorPainter(Color.Gray)
@@ -145,7 +146,7 @@ fun CreateWatchlistCard(
         }
         Spacer(modifier = Modifier.size(30.dp))
         Text(
-            text = watchlistMovie.title,
+            text = watchlistMovie.title ?: "",
             style = TextStyle(
                 fontSize = 25.sp,
                 lineHeight = 30.sp,
@@ -157,8 +158,8 @@ fun CreateWatchlistCard(
                 .weight(1f)
                 .clickable {
                     onNavigateToDetailsScreen(
-                        watchlistMovie.title,
-                        watchlistMovie.id.toInt()
+                        watchlistMovie.title ?: "",
+                        watchlistMovie.id?.toInt() ?: 0
                     )
                 }
         )

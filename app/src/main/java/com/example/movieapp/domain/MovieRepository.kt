@@ -2,28 +2,9 @@ package com.example.movieapp.domain
 
 import com.example.movieapp.data.local.FavoriteMovieDataSource
 import com.example.movieapp.data.local.WatchListMovieDataSource
-import com.example.movieapp.data.model.CastDao
-import com.example.movieapp.data.model.CollectionMovieDao
-import com.example.movieapp.data.model.CreditsDao
-import com.example.movieapp.data.model.CrewDao
-import com.example.movieapp.data.model.GenreDao
-import com.example.movieapp.data.model.MovieDao
-import com.example.movieapp.data.model.ProductionCompanyDao
-import com.example.movieapp.data.model.ProductionCountryDao
-import com.example.movieapp.data.model.SearchMovieDao
-import com.example.movieapp.data.model.SpokenLanguageDao
+import com.example.movieapp.data.model.*
 import com.example.movieapp.data.remote.RemoteMovieDataSource
-import com.example.movieapp.models.Cast
-import com.example.movieapp.models.CollectionMovie
-import com.example.movieapp.models.Credits
-import com.example.movieapp.models.Crew
-import com.example.movieapp.models.Genre
-import com.example.movieapp.models.LocalMovie
-import com.example.movieapp.models.MovieCategory
-import com.example.movieapp.models.ProductionCompany
-import com.example.movieapp.models.ProductionCountry
-import com.example.movieapp.models.SearchMovie
-import com.example.movieapp.models.SpokenLanguage
+import com.example.movieapp.models.*
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -61,43 +42,44 @@ class MovieRepository(
 
     fun getNowPlayingMovies(): Flow<List<CollectionMovie>> = flow {
         emit(remoteMovieDataSource.getNowPlayingMovies().results
-            .map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres) })
+            ?.map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres) } ?: emptyList())
     }
 
     fun getPopularMovies(): Flow<List<CollectionMovie>> = flow {
         emit(remoteMovieDataSource.getPopularMovies().results
-            .map { it.mapToMovie(MovieCategory.POPULAR, movieGenres) })
+            ?.map { it.mapToMovie(MovieCategory.POPULAR, movieGenres) } ?: emptyList())
     }
 
     fun getTopRatedMovies(): Flow<List<CollectionMovie>> = flow {
         emit(remoteMovieDataSource.getTopRatedMovies().results
-            .map { it.mapToMovie(MovieCategory.TOP_RATED, movieGenres) })
+            ?.map { it.mapToMovie(MovieCategory.TOP_RATED, movieGenres) } ?: emptyList())
     }
 
     fun getUpcomingMovies(): Flow<List<CollectionMovie>> = flow {
         emit(remoteMovieDataSource.getUpcomingMovies().results
-            .map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) })
+            ?.map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) } ?: emptyList())
     }
 
     fun searchMovies(query: String): Flow<List<SearchMovie>> = flow {
         emit(remoteMovieDataSource.searchMovies(query).results
-            .map { it.mapToMovie() })
+            ?.map { it.mapToMovie() } ?: emptyList())
     }
 
     fun getMovie(externalId: Int): Flow<LocalMovie> = flow {
         emit(
             remoteMovieDataSource.getMovie(externalId.toString())
-                .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
+                ?.mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository) ?: LocalMovie()
         )
     }
 
     fun getCredits(externalId: Int): Flow<Credits> = flow {
-        emit(remoteMovieDataSource.getCredits(externalId.toString()).mapToCredits())
+        emit(remoteMovieDataSource.getCredits(externalId.toString())?.mapToCredits() ?: Credits())
     }
 
     fun getVideoLink(externalId: Int): Flow<String?> = flow {
-        emit(remoteMovieDataSource.getVideos(externalId.toString()).results.filter { it.official == true && it.type == "Trailer" && it.site == "YouTube" }
-            .firstOrNull()?.key)
+        emit(remoteMovieDataSource.getVideos(externalId.toString()).results
+            ?.filter { it.official == true && it.type == "Trailer" && it.site == "YouTube" }
+            ?.firstOrNull()?.key)
     }
 
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
@@ -115,7 +97,7 @@ class MovieRepository(
         val snapshot = ratingsRef.get().await()
         return if (snapshot.exists()) {
             val currentData = snapshot.data
-            currentData?.get("averageRating") as Double
+            currentData?.get("averageRating") as? Double ?: 0.0
         } else {
             0.0
         }
@@ -124,102 +106,102 @@ class MovieRepository(
 
 fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int, String>) =
     CollectionMovie(
-        genres = genreIds.map { Genre(it, movieGenres[it].toString()) },
-        id = id,
-        title = title,
-        overview = overview,
-        posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
-        backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
-        releaseDate = if (releaseDate.isEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-        adult = adult,
-        originalLanguage = originalLanguage,
-        originalTitle = originalTitle,
-        popularity = popularity.toDouble(),
-        video = video,
+        genres = genreIds?.map { Genre(it, movieGenres[it].toString()) } ?: emptyList(),
+        id = id ?: 0,
+        title = title.orEmpty(),
+        overview = overview.orEmpty(),
+        posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
+        backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
+        releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+        adult = adult == true,
+        originalLanguage = originalLanguage.orEmpty(),
+        originalTitle = originalTitle.orEmpty(),
+        popularity = popularity ?: 0.0,
+        video = video ?: false,
         category = category,
     )
 
 suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) = LocalMovie(
-    id = id,
-    title = originalTitle,
-    overview = overview,
-    posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
-    backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
-    releaseDate = if (releaseDate.isEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-    adult = adult,
-    budget = budget,
-    genres = genreDaos.map { it.mapToGenre() },
-    originalLanguage = originalLanguage,
-    originalTitle = originalTitle,
-    popularity = popularity,
-    productionCompanies = productionCompanies.map { it.mapToProductionCompany() },
-    productionCountries = productionCountries.map { it.mapToProductionCountry() },
-    revenue = revenue,
-    runtime = runtime,
-    spokenLanguages = spokenLanguageDaos.map { it.mapToSpokenLanguage() },
-    status = status,
-    video = video,
+    id = id ?: 0,
+    title = originalTitle.orEmpty(),
+    overview = overview.orEmpty(),
+    posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
+    backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
+    releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+    adult = adult ?: false,
+    budget = budget ?: 0,
+    genres = genreDaos?.map { it.mapToGenre() } ?: emptyList(),
+    originalLanguage = originalLanguage.orEmpty(),
+    originalTitle = originalTitle.orEmpty(),
+    popularity = popularity ?: 0.0,
+    productionCompanies = productionCompanies?.map { it.mapToProductionCompany() } ?: emptyList(),
+    productionCountries = productionCountries?.map { it.mapToProductionCountry() } ?: emptyList(),
+    revenue = revenue ?: 0,
+    runtime = runtime ?: 0,
+    spokenLanguages = spokenLanguageDaos?.map { it.mapToSpokenLanguage() } ?: emptyList(),
+    status = status.orEmpty(),
+    video = video ?: false,
     category = category,
     avgRating = movieRepository.getAverageRating(id.toString())
 )
 
 fun SearchMovieDao.mapToMovie() = SearchMovie(
-    id = id,
-    title = title.toString(),
-    overview = overview,
-    posterPath = "https://image.tmdb.org/t/p/original/$posterPath",
-    backdropPath = "https://image.tmdb.org/t/p/original/$backdropPath",
-    releaseDate = if (releaseDate?.isEmpty() == true) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-    adult = adult,
-    originalLanguage = originalLanguage.toString(),
-    originalTitle = originalTitle.toString(),
-    popularity = popularity,
-    video = video,
+    id = id ?: 0,
+    title = title.orEmpty(),
+    overview = overview.orEmpty(),
+    posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
+    backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
+    releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+    adult = adult ?: false,
+    originalLanguage = originalLanguage.orEmpty(),
+    originalTitle = originalTitle.orEmpty(),
+    popularity = popularity ?: 0.0,
+    video = video ?: false,
 )
 
 fun GenreDao.mapToGenre() = Genre(
-    id = id,
-    name = name
+    id = id ?: 0,
+    name = name.orEmpty()
 )
 
 fun ProductionCompanyDao.mapToProductionCompany() = ProductionCompany(
-    id = id,
-    logoPath = logoPath,
-    name = name,
-    originCountry = originCountry
+    id = id ?: 0,
+    logoPath = logoPath.orEmpty(),
+    name = name.orEmpty(),
+    originCountry = originCountry.orEmpty()
 )
 
 fun ProductionCountryDao.mapToProductionCountry() = ProductionCountry(
-    iso31661 = iso31661,
-    name = name
+    iso31661 = iso31661.orEmpty(),
+    name = name.orEmpty()
 )
 
 fun SpokenLanguageDao.mapToSpokenLanguage() = SpokenLanguage(
-    iso6391 = iso6391,
-    name = name
+    iso6391 = iso6391.orEmpty(),
+    name = name.orEmpty()
 )
 
 fun CreditsDao.mapToCredits() = Credits(
-    id = id,
-    cast = cast.map { it.mapToCast() },
-    crew = crew.map { it.mapToCrew() },
+    id = id ?: 0,
+    cast = cast?.map { it.mapToCast() } ?: emptyList(),
+    crew = crew?.map { it.mapToCrew() } ?: emptyList(),
 )
 
 fun CastDao.mapToCast() = Cast(
-    id = id,
-    name = name,
-    originalName = originalName,
-    popularity = popularity,
-    profilePath = "https://image.tmdb.org/t/p/original/$profilePath",
-    character = character,
-    order = order
+    id = id ?: 0,
+    name = name.orEmpty(),
+    originalName = originalName.orEmpty(),
+    popularity = popularity ?: 0.0,
+    profilePath = "https://image.tmdb.org/t/p/original/${profilePath.orEmpty()}",
+    character = character.orEmpty(),
+    order = order ?: 0
 )
 
 fun CrewDao.mapToCrew() = Crew(
-    id = id,
-    name = name,
-    popularity = popularity,
-    profilePath = "https://image.tmdb.org/t/p/original/$profilePath",
-    department = department,
-    job = job
+    id = id ?: 0,
+    name = name.orEmpty(),
+    popularity = popularity ?: 0.0,
+    profilePath = "https://image.tmdb.org/t/p/original/${profilePath.orEmpty()}",
+    department = department.orEmpty(),
+    job = job.orEmpty()
 )
