@@ -54,4 +54,4 @@ This project focuses on building a modern movie application using **Kotlin Jetpa
 
 ## Figma Prototype  
 
-[Click here to view the prototype in Figma](https://www.figma.com/proto/p6uLDVN9WIQM0IqQCDdCPY/UI%2FUX-LO-FI-WIREFRAME?node-id=4213-323&t=A9vJNChlRFYsKwyG-1](https://www.figma.com/proto/p6uLDVN9WIQM0IqQCDdCPY/UI%2FUX-LO-FI-WIREFRAME?node-id=4213-323&t=A9vJNChlRFYsKwyG-1)  
+[Click here to view the prototype in Figma]([https://www.figma.com/proto/p6uLDVN9WIQM0IqQCDdCPY/UI%2FUX-LO-FI-WIREFRAME?node-id=4213-323&t=A9vJNChlRFYsKwyG-1](https://www.figma.com/proto/p6uLDVN9WIQM0IqQCDdCPY/UI%2FUX-LO-FI-WIREFRAME?node-id=4213-323&t=A9vJNChlRFYsKwyG-1))  
