@@ -1,14 +1,8 @@
----
-
-# DDU Eksamensprojekt 🎓  
-
 **Author**  
 - **Turan Talayhan (s224746)**
 - **Daniel Overballe Lerche (s235095)**
 - **Marcus Reiner Langkilde (s195080)**
 - **Asma Maryam (s230716)**
-  
----
 
 ## Overview  
 
