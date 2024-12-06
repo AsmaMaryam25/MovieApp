@@ -2,10 +2,10 @@
 ---  
 
 **Authors**  
-- **Turan Talayhan (s224746)**  
-- **Daniel Overballe Lerche (s235095)**  
-- **Marcus Reiner Langkilde (s195080)**  
-- **Asma Maryam (s230716)**  
+- **Turan Talayhan**  
+- **Daniel Overballe Lerche**  
+- **Marcus Reiner Langkilde**  
+- **Asma Maryam**  
 
 ---  
 
