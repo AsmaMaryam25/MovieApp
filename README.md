@@ -1,14 +1,19 @@
-**Author**  
-- **Turan Talayhan (s224746)**
-- **Daniel Overballe Lerche (s235095)**
-- **Marcus Reiner Langkilde (s195080)**
-- **Asma Maryam (s230716)**
+# MovieApp 🎥  
+---  
+
+**Authors**  
+- **Turan Talayhan (s224746)**  
+- **Daniel Overballe Lerche (s235095)**  
+- **Marcus Reiner Langkilde (s195080)**  
+- **Asma Maryam (s230716)**  
+
+---  
 
 ## Overview  
 
 This project focuses on building a modern movie application using **Kotlin Jetpack Compose**, **Firebase**, and the **TMDb API**. The app aims to provide users with a seamless experience for discovering, searching, and managing their favorite movies and watchlists.  
 
----
+---  
 
 ## Features  
 
@@ -37,7 +42,7 @@ This project focuses on building a modern movie application using **Kotlin Jetpa
 - A bottom navigation bar ensures easy access to key sections like Home, Search, Favorites, and Watchlist.  
 - The design follows minimalist principles, making it visually calming in both Light and Dark modes.  
 
----
+---  
 
 ## Design Highlights  
 
@@ -45,8 +50,8 @@ This project focuses on building a modern movie application using **Kotlin Jetpa
 - **Accessibility**: The navigation bar allows users to return to the Home or previous page with a single tap.  
 - **Aesthetic Choices**: The app uses a clean color palette, including blue tones, to maintain a professional yet engaging look.  
 
----
+---  
 
 ## Figma Prototype  
 
-[Click here to view the prototype in Figma]([https://www.figma.com/proto/p6uLDVN9WIQM0IqQCDdCPY/UI%2FUX-LO-FI-WIREFRAME?node-id=4213-323&t=A9vJNChlRFYsKwyG-1](https://www.figma.com/proto/p6uLDVN9WIQM0IqQCDdCPY/UI%2FUX-LO-FI-WIREFRAME?node-id=4213-323&t=A9vJNChlRFYsKwyG-1))  
+[Click here to view the prototype in Figma](https://www.figma.com/proto/p6uLDVN9WIQM0IqQCDdCPY/UI%2FUX-LO-FI-WIREFRAME?node-id=4213-323&t=A9vJNChlRFYsKwyG-1)  
