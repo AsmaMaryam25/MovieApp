@@ -3,35 +3,47 @@ package com.example.movieapp.data.model
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-
 @Serializable
 data class CollectionMovieDao(
     @SerialName("id")
-    val id: Int = 0,
+    val id: Int? = 0,
+
     @SerialName("title")
-    val title: String = "",
+    val title: String? = "",
+
     @SerialName("overview")
-    val overview: String = "",
+    val overview: String? = "",
+
     @SerialName("poster_path")
-    val posterPath: String = "",
+    val posterPath: String? = "",
+
     @SerialName("backdrop_path")
-    val backdropPath: String = "",
+    val backdropPath: String? = "",
+
     @SerialName("release_date")
-    val releaseDate: String = "",
+    val releaseDate: String? = "",
+
     @SerialName("vote_average")
-    val voteAverage: Float = 0.0f,
+    val voteAverage: Float? = 0.0f,
+
     @SerialName("vote_count")
-    val voteCount: Int = 0,
+    val voteCount: Int? = 0,
+
     @SerialName("popularity")
-    val popularity: Float = 0.0f,
+    val popularity: Double? = 0.0,
+
     @SerialName("genre_ids")
-    val genreIds: List<Int> = emptyList(),
+    val genreIds: List<Int>? = emptyList(),
+
     @SerialName("original_language")
-    val originalLanguage: String = "",
+    val originalLanguage: String? = "",
+
     @SerialName("original_title")
-    val originalTitle: String = "",
+    val originalTitle: String? = "",
+
     @SerialName("adult")
-    val adult: Boolean = false,
+    val adult: Boolean? = false,
+
     @SerialName("video")
-    val video: Boolean = false
+    val video: Boolean? = false
 )

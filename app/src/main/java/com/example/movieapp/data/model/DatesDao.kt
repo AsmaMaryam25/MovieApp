@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class DatesDao(
     @SerialName("maximum")
-    val maximum: String = "",
+    val maximum: String? = "",
     @SerialName("minimum")
-    val minimum: String = ""
+    val minimum: String? = ""
 )

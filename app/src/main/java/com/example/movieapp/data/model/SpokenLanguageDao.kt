@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class SpokenLanguageDao(
     @SerialName("english_name")
-    val englishName: String = "",
+    val englishName: String? = "",
 
     @SerialName("iso_639_1")
-    val iso6391: String = "",
+    val iso6391: String? = "",
 
     @SerialName("name")
-    val name: String = ""
+    val name: String? = ""
 )

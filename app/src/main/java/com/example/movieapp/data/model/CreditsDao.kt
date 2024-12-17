@@ -6,9 +6,11 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CreditsDao(
     @SerialName("id")
-    val id: Int = 0,
+    val id: Int? = 0,
+
     @SerialName("cast")
-    val cast: List<CastDao> = emptyList(),
+    val cast: List<CastDao>? = emptyList(),
+
     @SerialName("crew")
-    val crew: List<CrewDao> = emptyList()
+    val crew: List<CrewDao>? = emptyList()
 )

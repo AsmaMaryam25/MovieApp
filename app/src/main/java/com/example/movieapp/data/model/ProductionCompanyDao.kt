@@ -6,14 +6,14 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ProductionCompanyDao(
     @SerialName("id")
-    val id: Int = 0,
+    val id: Int? = 0,
 
     @SerialName("logo_path")
-    val logoPath: String? = null,
+    val logoPath: String? = "",
 
     @SerialName("name")
-    val name: String = "",
+    val name: String? = "",
 
     @SerialName("origin_country")
-    val originCountry: String = ""
+    val originCountry: String? = ""
 )

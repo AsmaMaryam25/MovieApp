@@ -6,13 +6,17 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CollectionDao(
     @SerialName("dates")
-    val datesDao: DatesDao = DatesDao(),
+    val datesDao: DatesDao? = DatesDao(),
+
     @SerialName("page")
-    val page: Int = 0,
+    val page: Int? = 0,
+
     @SerialName("results")
-    val results: List<CollectionMovieDao> = emptyList(),
+    val results: List<CollectionMovieDao>? = emptyList(),
+
     @SerialName("total_pages")
-    val totalPages: Int = 0,
+    val totalPages: Int? = 0,
+
     @SerialName("total_results")
-    val totalResults: Int = 0
+    val totalResults: Int? = 0
 )
