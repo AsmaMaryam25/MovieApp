@@ -11,13 +11,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.models.CollectionMovie
+import com.example.movieapp.screens.EmptyScreen
+import com.example.movieapp.screens.LoadingScreen
 import com.example.movieapp.screens.home.HomeViewModel.HomeUIModel
 import kotlinx.coroutines.launch
 
@@ -49,13 +49,8 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
     val homeUIModel = homeViewModel.homeUIState.collectAsState().value
 
     when (homeUIModel) {
-        HomeUIModel.Empty -> Text("Empty")
-        HomeUIModel.Loading -> Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(50.dp)
-        ) {
-            CircularProgressIndicator(modifier = Modifier.size(50.dp))
-        }
+        HomeUIModel.Empty -> EmptyScreen()
+        HomeUIModel.Loading -> LoadingScreen()
 
         is HomeUIModel.Data -> HomeContent(modifier, homeUIModel, onNavigateToDetailsScreen)
     }

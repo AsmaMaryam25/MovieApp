@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.StarOutline
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,6 +52,8 @@ import com.example.movieapp.models.Cast
 import com.example.movieapp.models.Credits
 import com.example.movieapp.models.Crew
 import com.example.movieapp.models.LocalMovie
+import com.example.movieapp.screens.EmptyScreen
+import com.example.movieapp.screens.LoadingScreen
 import java.util.Locale
 
 @Composable
@@ -72,13 +73,8 @@ fun DetailsScreen(
 
 
     when (detailsUIModel) {
-        DetailsViewModel.DetailsUIModel.Empty -> Text("Empty")
-        DetailsViewModel.DetailsUIModel.Loading -> Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(50.dp)
-        ) {
-            CircularProgressIndicator(modifier = Modifier.size(50.dp))
-        }
+        DetailsViewModel.DetailsUIModel.Empty -> EmptyScreen()
+        DetailsViewModel.DetailsUIModel.Loading -> LoadingScreen()
 
         is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
             modifier = modifier,

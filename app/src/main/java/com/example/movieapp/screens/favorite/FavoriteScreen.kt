@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -37,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.data.model.MovieItem
+import com.example.movieapp.screens.EmptyScreen
+import com.example.movieapp.screens.LoadingScreen
 import com.example.movieapp.screens.favorite.FavoriteViewModel.FavoriteUIModel
 import java.util.Locale
 
@@ -49,13 +50,8 @@ fun FavoriteScreen(
     val favoriteUIModel = favoriteViewModel.favoriteUIState.collectAsState().value
 
     when (favoriteUIModel) {
-        FavoriteUIModel.Empty -> Text("Empty")
-        FavoriteUIModel.Loading -> Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(50.dp)
-        ) {
-            CircularProgressIndicator(modifier = Modifier.size(50.dp))
-        }
+        FavoriteUIModel.Empty -> EmptyScreen()
+        FavoriteUIModel.Loading -> LoadingScreen()
 
         is FavoriteUIModel.Data -> FavoriteContent(
             onNavigateToDetailsScreen,
