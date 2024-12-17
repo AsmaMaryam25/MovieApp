@@ -1,6 +1,7 @@
 package com.example.movieapp
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,7 +31,7 @@ fun MainNavHost(
         modifier = modifier.fillMaxSize()
     ) {
         composable<Route.HomeScreen> {
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
 
             HomeScreen(
                 onNavigateToDetailsScreen = { name, movieId ->
@@ -41,7 +42,7 @@ fun MainNavHost(
         }
 
         composable<Route.FavoriteScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
             FavoriteScreen(
                 modifier = Modifier.fillMaxSize(),
@@ -51,7 +52,7 @@ fun MainNavHost(
         }
 
         composable<Route.SearchScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchScreen>()) }
 
             SearchScreen(
                 onNavigateToAdvancedSearchScreen = {
@@ -64,7 +65,7 @@ fun MainNavHost(
         }
 
         composable<Route.SettingsScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>()) }
 
             SettingsScreen(
                 onNavigateToAboutScreen = {
@@ -78,7 +79,7 @@ fun MainNavHost(
         }
 
         composable<Route.WatchlistScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
             WatchlistScreen(
                 modifier = Modifier.fillMaxSize(),
@@ -88,7 +89,7 @@ fun MainNavHost(
         }
 
         composable<Route.AboutScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
             AboutScreen(showTopBar = showTopBar, modifier = Modifier.fillMaxSize())
         }
 
@@ -103,7 +104,7 @@ fun MainNavHost(
         }
 
         composable<Route.DetailsScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>()) }
 
             DetailsScreen(
                 movieId = backStackEntry.arguments?.getInt("movieId")!!,
@@ -114,7 +115,7 @@ fun MainNavHost(
         }
 
         composable<Route.AdvancedSearchScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
 
             AdvancedSearchScreen(
                 query = backStackEntry.arguments?.getString("query")!!,
