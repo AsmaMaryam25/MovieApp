@@ -1,6 +1,5 @@
 package com.example.movieapp.screens.watchlist
 
-import android.R.attr.fontWeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,7 +17,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -38,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.movieapp.data.model.MovieItem
+import com.example.movieapp.screens.EmptyScreen
+import com.example.movieapp.screens.LoadingScreen
 import com.example.movieapp.screens.watchlist.WatchlistViewModel.WatchlistUIModel
 import java.util.Locale
 import kotlin.String
@@ -51,13 +51,8 @@ fun WatchlistScreen(
     val watchlistUIModel = watchlistViewModel.watchlistUIState.collectAsState().value
 
     when (watchlistUIModel) {
-        WatchlistUIModel.Empty -> Text("Empty")
-        WatchlistUIModel.Loading -> Box(
-            contentAlignment = Alignment.Center,
-            modifier = Modifier.size(50.dp)
-        ) {
-            CircularProgressIndicator(modifier = Modifier.size(50.dp))
-        }
+        WatchlistUIModel.Empty -> EmptyScreen()
+        WatchlistUIModel.Loading -> LoadingScreen()
 
         is WatchlistUIModel.Data -> WatchlistContent(
             onNavigateToDetailsScreen,
