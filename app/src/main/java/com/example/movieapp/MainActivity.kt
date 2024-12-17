@@ -43,7 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.movieapp.di.DataModule
-import com.example.movieapp.ui.theme.NavigationInComposeTheme
+import com.example.movieapp.ui.theme.MovieAppTheme
 
 class MainActivity : ComponentActivity() {
     private var navItemList = mutableListOf(
@@ -62,7 +62,7 @@ class MainActivity : ComponentActivity() {
         DataModule.initialize(this)
         setContent {
             var isDarkTheme by remember { mutableStateOf(false) }
-            NavigationInComposeTheme(
+            MovieAppTheme(
                 darkTheme = isDarkTheme
             ) {
                 Surface(
