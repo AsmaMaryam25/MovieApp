@@ -68,12 +68,12 @@ class MovieRepository(
     fun getMovie(externalId: Int): Flow<LocalMovie> = flow {
         emit(
             remoteMovieDataSource.getMovie(externalId.toString())
-                ?.mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository) ?: LocalMovie()
+                .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
         )
     }
 
     fun getCredits(externalId: Int): Flow<Credits> = flow {
-        emit(remoteMovieDataSource.getCredits(externalId.toString())?.mapToCredits() ?: Credits())
+        emit(remoteMovieDataSource.getCredits(externalId.toString()).mapToCredits())
     }
 
     fun getVideoLink(externalId: Int): Flow<String?> = flow {
@@ -117,7 +117,7 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
         originalLanguage = originalLanguage.orEmpty(),
         originalTitle = originalTitle.orEmpty(),
         popularity = popularity ?: 0.0,
-        video = video ?: false,
+        video = video == true,
         category = category,
     )
 
@@ -128,7 +128,7 @@ suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieR
     posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
     backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
     releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-    adult = adult ?: false,
+    adult = adult == true,
     budget = budget ?: 0,
     genres = genreDaos?.map { it.mapToGenre() } ?: emptyList(),
     originalLanguage = originalLanguage.orEmpty(),
@@ -140,7 +140,7 @@ suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieR
     runtime = runtime ?: 0,
     spokenLanguages = spokenLanguageDaos?.map { it.mapToSpokenLanguage() } ?: emptyList(),
     status = status.orEmpty(),
-    video = video ?: false,
+    video = video == true,
     category = category,
     avgRating = movieRepository.getAverageRating(id.toString())
 )
@@ -152,11 +152,11 @@ fun SearchMovieDao.mapToMovie() = SearchMovie(
     posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
     backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
     releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-    adult = adult ?: false,
+    adult = adult == true,
     originalLanguage = originalLanguage.orEmpty(),
     originalTitle = originalTitle.orEmpty(),
     popularity = popularity ?: 0.0,
-    video = video ?: false,
+    video = video == true,
 )
 
 fun GenreDao.mapToGenre() = Genre(

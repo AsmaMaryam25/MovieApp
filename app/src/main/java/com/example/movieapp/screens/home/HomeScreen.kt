@@ -13,14 +13,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,7 +39,6 @@ import com.example.movieapp.models.CollectionMovie
 import com.example.movieapp.screens.EmptyScreen
 import com.example.movieapp.screens.LoadingScreen
 import com.example.movieapp.screens.home.HomeViewModel.HomeUIModel
-import kotlinx.coroutines.launch
 
 
 @Composable
@@ -48,11 +47,25 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
     val homeViewModel: HomeViewModel = viewModel()
     val homeUIModel = homeViewModel.homeUIState.collectAsState().value
 
+    val nowPlayingState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+    val popularState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+    val topRatedState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+    val upcomingState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
+
+
     when (homeUIModel) {
         HomeUIModel.Empty -> EmptyScreen()
         HomeUIModel.Loading -> LoadingScreen()
 
-        is HomeUIModel.Data -> HomeContent(modifier, homeUIModel, onNavigateToDetailsScreen)
+        is HomeUIModel.Data -> HomeContent(
+            modifier,
+            homeUIModel,
+            onNavigateToDetailsScreen,
+            nowPlayingState,
+            popularState,
+            topRatedState,
+            upcomingState
+        )
     }
 }
 
@@ -60,7 +73,11 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
 private fun HomeContent(
     modifier: Modifier,
     homeUIModel: HomeUIModel,
-    onNavigateToDetailsScreen: (String, Int) -> Unit
+    onNavigateToDetailsScreen: (String, Int) -> Unit,
+    nowPlayingState: LazyListState,
+    popularState: LazyListState,
+    topRatedState: LazyListState,
+    upcomingState: LazyListState
 ) {
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -74,7 +91,11 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.nowPlayingCollectionMovies)
+                CreatePosters(
+                    onNavigateToDetailsScreen,
+                    homeUIModel.nowPlayingCollectionMovies,
+                    nowPlayingState
+                )
             }
         }
 
@@ -84,7 +105,11 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.popularCollectionMovies)
+                CreatePosters(
+                    onNavigateToDetailsScreen,
+                    homeUIModel.popularCollectionMovies,
+                    popularState
+                )
             }
         }
 
@@ -94,7 +119,11 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.topRatedCollectionMovies)
+                CreatePosters(
+                    onNavigateToDetailsScreen,
+                    homeUIModel.topRatedCollectionMovies,
+                    topRatedState
+                )
             }
         }
 
@@ -104,7 +133,11 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.upcomingCollectionMovies)
+                CreatePosters(
+                    onNavigateToDetailsScreen,
+                    homeUIModel.upcomingCollectionMovies,
+                    upcomingState
+                )
             }
         }
     }
@@ -204,10 +237,10 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 @Composable
 fun CreatePosters(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    collectionMovies: List<CollectionMovie>
+    collectionMovies: List<CollectionMovie>,
+    state: LazyListState
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val rowState = rememberLazyListState()
+    val rowState = state
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = rowState)
 
     LazyRow(
@@ -218,12 +251,6 @@ fun CreatePosters(
     ) {
         items(collectionMovies.size) { index ->
             CreatePoster(onNavigateToDetailsScreen, 300.dp, collectionMovies[index])
-        }
-    }
-
-    LaunchedEffect(rowState) {
-        coroutineScope.launch {
-            rowState.scrollToItem(collectionMovies.size / 2) // Assuming 6 items, center is at index 3
         }
     }
 }

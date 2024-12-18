@@ -132,8 +132,8 @@ fun CreateWatchlistCard(
                     .clip(shape = RoundedCornerShape(30.dp))
                     .clickable(onClick = {
                         onNavigateToDetailsScreen(
-                            watchlistMovie.title ?: "",
-                            watchlistMovie.id?.toInt() ?: 0
+                            watchlistMovie.title,
+                            watchlistMovie.id.toInt()
                         )
                     }),
                 placeholder = ColorPainter(Color.Gray)
@@ -141,7 +141,7 @@ fun CreateWatchlistCard(
         }
         Spacer(modifier = Modifier.size(30.dp))
         Text(
-            text = watchlistMovie.title ?: "",
+            text = watchlistMovie.title,
             style = TextStyle(
                 fontSize = 25.sp,
                 lineHeight = 30.sp,
@@ -153,8 +153,8 @@ fun CreateWatchlistCard(
                 .weight(1f)
                 .clickable {
                     onNavigateToDetailsScreen(
-                        watchlistMovie.title ?: "",
-                        watchlistMovie.id?.toInt() ?: 0
+                        watchlistMovie.title,
+                        watchlistMovie.id.toInt()
                     )
                 }
         )
