@@ -148,7 +148,7 @@ private fun CreatePoster(
             )
         }
         Column(
-            modifier = Modifier.height(150.dp)
+            modifier = Modifier.height(152.dp)
         ) {
             Text(
                 modifier = Modifier
