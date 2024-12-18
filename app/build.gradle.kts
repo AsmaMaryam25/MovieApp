@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.movieapp"
+    namespace = "com.example.blackbeard"
     compileSdk = 35
 
     defaultConfig {
@@ -20,7 +20,7 @@ android {
         // Set the TMDB_API key in BuildConfig
         buildConfigField("String", "TMDB_API", "\"${properties["TMDB_API"]}\"")
 
-        applicationId = "com.example.movieapp"
+        applicationId = "com.example.blackbeard"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
