@@ -1,5 +1,4 @@
 # MovieApp 🎥  
----  
 
 **Authors**  
 - **Turan Talayhan**  
@@ -9,6 +8,43 @@
 - **Haleef Abu Talib**
 
 ---  
+
+
+## Table of Contents
+- [Prerequisites](#prerequisites)
+- [Setup Instructions](#setup-instructions)
+- [Overview](#overview)
+- [Features](#features)
+- [Design Highlights](#design-highlights)
+- [Figma Prototype](#figma-prototype)
+
+## Prerequisites
+Before setting up anything you are going to need the following things to be able to run and build the project:
+- [Android Studio](https://developer.android.com/studio) (version Ladybug or later)
+- A [TMDB](https://www.themoviedb.org/) API key
+- A [Firebase](https://firebase.google.com/docs/android/setup) project with a [Firestore](https://firebase.google.com/docs/firestore/) database setup which has read and write set to true
+
+## Setup Instructions
+1. **Clone the repository**
+  ```bash
+  git clone https://github.com/AsmaMaryam25/MovieApp.git
+  cd MovieApp
+  ```
+2. **Open the project in Android Studio**
+   - Open Android Studio.
+   - Click on "File > Open" and select the cloned repository folder.
+3. **Sync Gradle**
+   - Android Studio will prompt you to sync the Gradle files. Click "Sync Now." and wait till it is finished
+4. **Set up API Keys**
+   - Add your TMDB API key to the local.properties file
+  ```properties
+  TMDB_API=<your_api_key_here>
+  ```
+5. **Setup firebase**
+   - Add the `google-services.json` file from your Firebase project in the project settings and put the file in the `app` directory 
+6. **Run the App**
+   - Connect an Android device or start an emulator.
+   - Click the green "Run" button in Android Studio.
 
 ## Overview  
 
