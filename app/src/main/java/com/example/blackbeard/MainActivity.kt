@@ -43,7 +43,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.models.NavItem
+import com.example.blackbeard.models.Route
 import com.example.blackbeard.ui.theme.BlackbeardTheme
+import com.example.blackbeard.utils.ConnectivityObserver
 
 class MainActivity : ComponentActivity() {
     private var navItemList = mutableListOf(
@@ -57,6 +60,7 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
+        ConnectivityObserver.initialize(this)
         super.onCreate(savedInstanceState)
 
         DataModule.initialize(this)

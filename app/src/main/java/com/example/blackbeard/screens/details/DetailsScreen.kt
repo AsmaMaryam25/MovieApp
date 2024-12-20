@@ -39,6 +39,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -75,7 +76,12 @@ fun DetailsScreen(
     when (detailsUIModel) {
         DetailsViewModel.DetailsUIModel.Empty -> EmptyScreen()
         DetailsViewModel.DetailsUIModel.Loading -> LoadingScreen()
-
+        DetailsViewModel.DetailsUIModel.NoConnection ->
+            Text(
+                text = "No connection",
+                modifier = Modifier.fillMaxSize(),
+                textAlign = TextAlign.Center
+            )
         is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
             modifier = modifier,
             localMovie = detailsUIModel.localMovie,

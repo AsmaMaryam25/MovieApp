@@ -1,4 +1,4 @@
-package com.example.blackbeard
+package com.example.blackbeard.models
 
 import kotlinx.serialization.Serializable
 

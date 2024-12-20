@@ -5,9 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
+import com.example.blackbeard.utils.ConnectivityObserver
+import com.example.blackbeard.utils.ConnectivityObserver.isConnected
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -18,28 +23,39 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
     private val mutableDetailsUIState = MutableStateFlow<DetailsUIModel>(DetailsUIModel.Empty)
     val detailsUIState: StateFlow<DetailsUIModel> = mutableDetailsUIState
     private val firestore = movieRepository.firestore
+    val connectivityFlow: Flow<Boolean> = isConnected.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(5000L),
+        false
+    )
 
     init {
         viewModelScope.launch {
             mutableDetailsUIState.value = DetailsUIModel.Loading
 
-            combine(
-                movieRepository.getMovie(movieId),
-                movieRepository.getCredits(movieId),
-                movieRepository.getVideoLink(movieId),
-                movieRepository.getFavorites(),
-                movieRepository.getWatchlist(),
-            ) { movie, credits, videoLink, favorites, watchlist ->
-                DetailsUIModel.Data(
-                    movie,
-                    credits,
-                    videoLink,
-                    favorites.any { it.id == movie.id.toString() },
-                    watchlist.any { it.id == movie.id.toString() },
-                    movieRepository.getAverageRating(movieId.toString())
-                )
-            }.collect { detailsUIModel ->
-                mutableDetailsUIState.value = detailsUIModel
+            connectivityFlow.collect{
+                if(it){
+                    combine(
+                        movieRepository.getMovie(movieId),
+                        movieRepository.getCredits(movieId),
+                        movieRepository.getVideoLink(movieId),
+                        movieRepository.getFavorites(),
+                        movieRepository.getWatchlist(),
+                    ) { movie, credits, videoLink, favorites, watchlist ->
+                        DetailsUIModel.Data(
+                            movie,
+                            credits,
+                            videoLink,
+                            favorites.any { it.id == movie.id.toString() },
+                            watchlist.any { it.id == movie.id.toString() },
+                            movieRepository.getAverageRating(movieId.toString())
+                        )
+                    }.collect { detailsUIModel ->
+                        mutableDetailsUIState.value = detailsUIModel
+                    }
+                } else {
+                    mutableDetailsUIState.value = DetailsUIModel.NoConnection
+                }
             }
         }
     }
@@ -114,6 +130,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
     sealed class DetailsUIModel {
         data object Empty : DetailsUIModel()
         data object Loading : DetailsUIModel()
+        data object NoConnection : DetailsUIModel()
         data class Data(
             val localMovie: LocalMovie,
             val credits: Credits,

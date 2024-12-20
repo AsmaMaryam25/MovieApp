@@ -26,6 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,7 +57,13 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
     when (homeUIModel) {
         HomeUIModel.Empty -> EmptyScreen()
         HomeUIModel.Loading -> LoadingScreen()
-
+        HomeUIModel.NoConnection -> {
+            Text(
+                text = "No connection",
+                modifier = Modifier.fillMaxSize(),
+                textAlign = TextAlign.Center
+            )
+        }
         is HomeUIModel.Data -> HomeContent(
             modifier,
             homeUIModel,
