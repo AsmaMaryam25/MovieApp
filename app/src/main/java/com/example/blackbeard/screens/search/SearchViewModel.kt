@@ -3,6 +3,7 @@ package com.example.blackbeard.screens.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,13 +14,19 @@ class SearchViewModel() : ViewModel() {
     private val movieRepository = DataModule.movieRepository
     private val mutableSearchUIState = MutableStateFlow<SearchUIModel>(SearchUIModel.Empty)
     val searchUIState: StateFlow<SearchUIModel> = mutableSearchUIState
+    var popularMovies: List<CollectionMovie> = emptyList()
 
     init {
         viewModelScope.launch {
-            mutableSearchUIState.value = SearchUIModel.Loading
-            movieRepository.getPopularMovies().collect { popular ->
-                mutableSearchUIState.value = SearchUIModel.Data(popular)
-            }
+            loadPopularMovies()
+        }
+    }
+
+    private suspend fun loadPopularMovies() {
+        mutableSearchUIState.value = SearchUIModel.Loading
+        movieRepository.getPopularMovies().collect { popular ->
+            popularMovies = popular
+            mutableSearchUIState.value = SearchUIModel.Data(popular)
         }
     }
 
@@ -28,7 +35,7 @@ class SearchViewModel() : ViewModel() {
             mutableSearchUIState.value = SearchUIModel.Loading
             movieRepository.searchMovies(query).collect { searchResults ->
                 mutableSearchUIState.value = if (searchResults.isEmpty()) {
-                    SearchUIModel.Empty
+                    SearchUIModel.Data(popularMovies)
                 } else {
                     SearchUIModel.Data(searchResults)
                 }
