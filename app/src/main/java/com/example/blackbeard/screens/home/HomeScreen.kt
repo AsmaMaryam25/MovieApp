@@ -182,50 +182,49 @@ private fun CreatePoster(
                 placeholder = ColorPainter(Color.Gray)
             )
         }
-        Text(
-            modifier = Modifier
-                .width(posterWidth)
-                .padding(start = 35.dp, top = 15.dp, end = 35.dp)
-                .clickable { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id) },
-            text = collectionMovie.title,
-            style = TextStyle(
-                fontSize = 25.sp,
-                lineHeight = 30.sp,
-                textAlign = TextAlign.Center
-            ),
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            modifier = Modifier
-                .width(posterWidth),
-            text = collectionMovie.genres.joinToString { it.name },
-            style = TextStyle(
-                textAlign = TextAlign.Center
-            ),
-        )
-        Text(
-            modifier = Modifier
-                .width(posterWidth),
-            text = collectionMovie.releaseDate.year.toString(),
-            style = TextStyle(
-                textAlign = TextAlign.Center
-            ),
-        )
-        Box(
-            modifier = Modifier
-                .width(posterWidth)
-                .height(110.dp)
+        Column(
+            modifier = Modifier.height(152.dp)
         ) {
             Text(
                 modifier = Modifier
                     .width(posterWidth)
-                    .padding(bottom = 10.dp),
-                text = collectionMovie.overview ?: "No overview available",
+                    .padding(start = 35.dp, top = 15.dp, end = 35.dp)
+                    .clickable { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id) },
+                text = collectionMovie.title,
+                style = TextStyle(
+                    fontSize = 25.sp,
+                    lineHeight = 30.sp,
+                    textAlign = TextAlign.Center
+                ),
+                maxLines = 3,
+                overflow = TextOverflow.Ellipsis,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                modifier = Modifier
+                    .width(posterWidth),
+                text = collectionMovie.genres.joinToString { it.name },
                 style = TextStyle(
                     textAlign = TextAlign.Center
                 ),
-                maxLines = 6,
-                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                modifier = Modifier
+                    .width(posterWidth),
+                text = collectionMovie.releaseDate.year.toString(),
+                style = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
+            )
+            Text(
+                modifier = Modifier
+                    .width(posterWidth),
+                text = collectionMovie.overview ?: "No overview available",
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis,
+                style = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
             )
         }
     }
