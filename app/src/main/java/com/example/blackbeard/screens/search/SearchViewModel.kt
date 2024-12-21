@@ -52,6 +52,19 @@ class SearchViewModel() : ViewModel() {
                 }
             } catch (e: TimeoutCancellationException) {
                 mutableSearchUIState.value = SearchUIModel.NoConnection
+
+                initialConnectivityFlow.stateIn(
+                    viewModelScope,
+                    SharingStarted.WhileSubscribed(5000L),
+                    false
+                ).collect { isConnected ->
+                    if (isConnected) {
+                        loadPopularMovies()
+                    } else {
+                        mutableSearchUIState.value = SearchUIModel.NoConnection
+                    }
+                }
+
             }
         }
     }
