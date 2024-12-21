@@ -36,14 +36,18 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                     initialConnectivityFlow.first()
                 }
 
-                if(isInitiallyConnected){
+                if (isInitiallyConnected) {
                     getMovieDetails()
                 } else {
                     mutableDetailsUIState.value = DetailsUIModel.NoConnection
                 }
 
                 initialConnectivityFlow
-                    .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000L), isInitiallyConnected)
+                    .stateIn(
+                        viewModelScope,
+                        SharingStarted.WhileSubscribed(5000L),
+                        isInitiallyConnected
+                    )
                     .collect { isConnected ->
                         if (isConnected) {
                             getMovieDetails()

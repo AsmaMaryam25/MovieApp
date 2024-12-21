@@ -25,7 +25,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -36,6 +35,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
 
 @Composable
@@ -61,15 +61,10 @@ fun SearchScreen(
             emptyList(),
             searchViewModel
         )
+
         SearchUIModel.Loading -> LoadingScreen()
 
-        SearchUIModel.NoConnection -> {
-            Text(
-                text = "No connection",
-                modifier = Modifier.fillMaxSize(),
-                textAlign = TextAlign.Center
-            )
-        }
+        SearchUIModel.NoConnection -> NoConnectionScreen()
 
         is SearchUIModel.Data -> {
             SearchContent(
@@ -112,7 +107,7 @@ private fun SearchContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                if(collectionMovies.isEmpty()) {
+                if (collectionMovies.isEmpty()) {
                     Text(
                         text = "No results found",
                         modifier = Modifier.padding(10.dp)

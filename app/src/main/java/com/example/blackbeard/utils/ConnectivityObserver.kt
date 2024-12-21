@@ -13,7 +13,8 @@ object ConnectivityObserver {
     private lateinit var connectivityManager: ConnectivityManager
 
     fun initialize(context: Context) {
-        connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     }
 
     val isConnected: Flow<Boolean>
@@ -29,7 +30,8 @@ object ConnectivityObserver {
                     networkCapabilities: NetworkCapabilities
                 ) {
                     super.onCapabilitiesChanged(network, networkCapabilities)
-                    val connected = networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                    val connected =
+                        networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
                     trySend(connected)
                 }
 

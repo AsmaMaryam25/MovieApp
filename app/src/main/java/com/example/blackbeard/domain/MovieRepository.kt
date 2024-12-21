@@ -112,7 +112,10 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
         overview = overview.orEmpty(),
         posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
         backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
-        releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+        releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(
+            releaseDate,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        ),
         adult = adult == true,
         originalLanguage = originalLanguage.orEmpty(),
         originalTitle = originalTitle.orEmpty(),
@@ -121,29 +124,35 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
         category = category,
     )
 
-suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) = LocalMovie(
-    id = id ?: 0,
-    title = originalTitle.orEmpty(),
-    overview = overview.orEmpty(),
-    posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
-    backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
-    releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-    adult = adult == true,
-    budget = budget ?: 0,
-    genres = genreDaos?.map { it.mapToGenre() } ?: emptyList(),
-    originalLanguage = originalLanguage.orEmpty(),
-    originalTitle = originalTitle.orEmpty(),
-    popularity = popularity ?: 0.0,
-    productionCompanies = productionCompanies?.map { it.mapToProductionCompany() } ?: emptyList(),
-    productionCountries = productionCountries?.map { it.mapToProductionCountry() } ?: emptyList(),
-    revenue = revenue ?: 0,
-    runtime = runtime ?: 0,
-    spokenLanguages = spokenLanguageDaos?.map { it.mapToSpokenLanguage() } ?: emptyList(),
-    status = status.orEmpty(),
-    video = video == true,
-    category = category,
-    avgRating = movieRepository.getAverageRating(id.toString())
-)
+suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) =
+    LocalMovie(
+        id = id ?: 0,
+        title = originalTitle.orEmpty(),
+        overview = overview.orEmpty(),
+        posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
+        backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
+        releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(
+            releaseDate,
+            DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        ),
+        adult = adult == true,
+        budget = budget ?: 0,
+        genres = genreDaos?.map { it.mapToGenre() } ?: emptyList(),
+        originalLanguage = originalLanguage.orEmpty(),
+        originalTitle = originalTitle.orEmpty(),
+        popularity = popularity ?: 0.0,
+        productionCompanies = productionCompanies?.map { it.mapToProductionCompany() }
+            ?: emptyList(),
+        productionCountries = productionCountries?.map { it.mapToProductionCountry() }
+            ?: emptyList(),
+        revenue = revenue ?: 0,
+        runtime = runtime ?: 0,
+        spokenLanguages = spokenLanguageDaos?.map { it.mapToSpokenLanguage() } ?: emptyList(),
+        status = status.orEmpty(),
+        video = video == true,
+        category = category,
+        avgRating = movieRepository.getAverageRating(id.toString())
+    )
 
 fun SearchMovieDao.mapToMovie() = SearchMovie(
     id = id ?: 0,
@@ -151,7 +160,10 @@ fun SearchMovieDao.mapToMovie() = SearchMovie(
     overview = overview.orEmpty(),
     posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
     backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
-    releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(releaseDate, DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+    releaseDate = if (releaseDate.isNullOrEmpty()) LocalDate.MIN else LocalDate.parse(
+        releaseDate,
+        DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    ),
     adult = adult == true,
     originalLanguage = originalLanguage.orEmpty(),
     originalTitle = originalTitle.orEmpty(),
