@@ -38,6 +38,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 
 
@@ -56,7 +57,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
     when (homeUIModel) {
         HomeUIModel.Empty -> EmptyScreen()
         HomeUIModel.Loading -> LoadingScreen()
-
+        HomeUIModel.NoConnection -> NoConnectionScreen()
         is HomeUIModel.Data -> HomeContent(
             modifier,
             homeUIModel,
@@ -182,7 +183,12 @@ private fun CreatePoster(
                 modifier = Modifier
                     .width(posterWidth)
                     .padding(start = 35.dp, top = 15.dp, end = 35.dp)
-                    .clickable { onNavigateToDetailsScreen(collectionMovie.title, collectionMovie.id) },
+                    .clickable {
+                        onNavigateToDetailsScreen(
+                            collectionMovie.title,
+                            collectionMovie.id
+                        )
+                    },
                 text = collectionMovie.title,
                 style = TextStyle(
                     fontSize = 25.sp,

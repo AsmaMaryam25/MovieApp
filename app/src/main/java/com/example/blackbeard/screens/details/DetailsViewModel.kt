@@ -5,12 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
+import com.example.blackbeard.utils.ConnectivityObserver.isConnected
+import kotlinx.coroutines.TimeoutCancellationException
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withTimeout
 
 class DetailsViewModel(val movieId: Int) : ViewModel() {
 
@@ -18,29 +25,74 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
     private val mutableDetailsUIState = MutableStateFlow<DetailsUIModel>(DetailsUIModel.Empty)
     val detailsUIState: StateFlow<DetailsUIModel> = mutableDetailsUIState
     private val firestore = movieRepository.firestore
+    val initialConnectivityFlow: Flow<Boolean> = isConnected
 
     init {
         viewModelScope.launch {
-            mutableDetailsUIState.value = DetailsUIModel.Loading
+            try {
+                mutableDetailsUIState.value = DetailsUIModel.Loading
 
-            combine(
-                movieRepository.getMovie(movieId),
-                movieRepository.getCredits(movieId),
-                movieRepository.getVideoLink(movieId),
-                movieRepository.getFavorites(),
-                movieRepository.getWatchlist(),
-            ) { movie, credits, videoLink, favorites, watchlist ->
-                DetailsUIModel.Data(
-                    movie,
-                    credits,
-                    videoLink,
-                    favorites.any { it.id == movie.id.toString() },
-                    watchlist.any { it.id == movie.id.toString() },
-                    movieRepository.getAverageRating(movieId.toString())
-                )
-            }.collect { detailsUIModel ->
-                mutableDetailsUIState.value = detailsUIModel
+                val isInitiallyConnected = withTimeout(5000L) {
+                    initialConnectivityFlow.first()
+                }
+
+                if (isInitiallyConnected) {
+                    getMovieDetails()
+                } else {
+                    mutableDetailsUIState.value = DetailsUIModel.NoConnection
+                }
+
+                initialConnectivityFlow
+                    .stateIn(
+                        viewModelScope,
+                        SharingStarted.WhileSubscribed(5000L),
+                        isInitiallyConnected
+                    )
+                    .collect { isConnected ->
+                        if (isConnected) {
+                            getMovieDetails()
+                        } else {
+                            mutableDetailsUIState.value = DetailsUIModel.NoConnection
+                        }
+                    }
+            } catch (e: TimeoutCancellationException) {
+                mutableDetailsUIState.value = DetailsUIModel.NoConnection
+                
+                initialConnectivityFlow
+                    .stateIn(
+                        viewModelScope,
+                        SharingStarted.WhileSubscribed(5000L),
+                        false
+                    )
+                    .collect { isConnected ->
+                        if (isConnected) {
+                            getMovieDetails()
+                        } else {
+                            mutableDetailsUIState.value = DetailsUIModel.NoConnection
+                        }
+                    }
             }
+        }
+    }
+
+    private suspend fun getMovieDetails() {
+        combine(
+            movieRepository.getMovie(movieId),
+            movieRepository.getCredits(movieId),
+            movieRepository.getVideoLink(movieId),
+            movieRepository.getFavorites(),
+            movieRepository.getWatchlist(),
+        ) { movie, credits, videoLink, favorites, watchlist ->
+            DetailsUIModel.Data(
+                movie,
+                credits,
+                videoLink,
+                favorites.any { it.id == movie.id.toString() },
+                watchlist.any { it.id == movie.id.toString() },
+                movieRepository.getAverageRating(movieId.toString())
+            )
+        }.collect { detailsUIModel ->
+            mutableDetailsUIState.value = detailsUIModel
         }
     }
 
@@ -114,6 +166,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
     sealed class DetailsUIModel {
         data object Empty : DetailsUIModel()
         data object Loading : DetailsUIModel()
+        data object NoConnection : DetailsUIModel()
         data class Data(
             val localMovie: LocalMovie,
             val credits: Credits,

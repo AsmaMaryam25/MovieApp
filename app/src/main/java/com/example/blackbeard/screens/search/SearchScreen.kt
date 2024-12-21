@@ -35,6 +35,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
 
 @Composable
@@ -60,7 +61,10 @@ fun SearchScreen(
             emptyList(),
             searchViewModel
         )
+
         SearchUIModel.Loading -> LoadingScreen()
+
+        SearchUIModel.NoConnection -> NoConnectionScreen()
 
         is SearchUIModel.Data -> {
             SearchContent(
@@ -103,7 +107,7 @@ private fun SearchContent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             item {
-                if(collectionMovies.isEmpty()) {
+                if (collectionMovies.isEmpty()) {
                     Text(
                         text = "No results found",
                         modifier = Modifier.padding(10.dp)

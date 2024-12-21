@@ -54,6 +54,7 @@ import com.example.blackbeard.models.Crew
 import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import java.util.Locale
 
 @Composable
@@ -75,7 +76,7 @@ fun DetailsScreen(
     when (detailsUIModel) {
         DetailsViewModel.DetailsUIModel.Empty -> EmptyScreen()
         DetailsViewModel.DetailsUIModel.Loading -> LoadingScreen()
-
+        DetailsViewModel.DetailsUIModel.NoConnection -> NoConnectionScreen()
         is DetailsViewModel.DetailsUIModel.Data -> DetailsContent(
             modifier = modifier,
             localMovie = detailsUIModel.localMovie,
@@ -232,7 +233,7 @@ private fun DetailsContent(
                 text = localMovie.overview ?: "No overview available"
             )
         }
-        if(!localMovie.releaseDate.equals("")) {
+        if (!localMovie.releaseDate.equals("")) {
             item {
                 Text(
                     text = buildAnnotatedString {
@@ -245,7 +246,7 @@ private fun DetailsContent(
                 )
             }
         }
-        if(localMovie.productionCompanies.isNotEmpty()) {
+        if (localMovie.productionCompanies.isNotEmpty()) {
             item {
                 Text(
                     text = buildAnnotatedString {
@@ -258,7 +259,7 @@ private fun DetailsContent(
                 )
             }
         }
-        if(localMovie.productionCountries.isNotEmpty()) {
+        if (localMovie.productionCountries.isNotEmpty()) {
             item {
                 Text(
                     text = buildAnnotatedString {
@@ -271,7 +272,7 @@ private fun DetailsContent(
                 )
             }
         }
-        if(localMovie.revenue > 0) {
+        if (localMovie.revenue > 0) {
             item {
                 Text(
                     text = buildAnnotatedString {
@@ -285,14 +286,14 @@ private fun DetailsContent(
             }
         }
         localMovie.runtime?.let {
-            if(it > 0) {
+            if (it > 0) {
                 item {
                     Text(
                         text = buildAnnotatedString {
                             withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                                 append("Runtime: ")
                             }
-                            if (localMovie.runtime == 1){
+                            if (localMovie.runtime == 1) {
                                 append("${localMovie.runtime} minute")
                             } else {
                                 append("${localMovie.runtime} minutes")
@@ -303,7 +304,7 @@ private fun DetailsContent(
                 }
             }
         }
-        if(localMovie.spokenLanguages.isNotEmpty()) {
+        if (localMovie.spokenLanguages.isNotEmpty()) {
             item {
                 Text(
                     text = buildAnnotatedString {

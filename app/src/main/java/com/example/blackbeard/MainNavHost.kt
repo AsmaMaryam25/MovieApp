@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import com.example.blackbeard.models.Route
 import com.example.blackbeard.screens.AboutScreen
 import com.example.blackbeard.screens.AdvancedSearchScreen
 import com.example.blackbeard.screens.AppearanceScreen
