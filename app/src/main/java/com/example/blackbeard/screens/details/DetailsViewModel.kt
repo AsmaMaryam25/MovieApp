@@ -57,7 +57,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                     }
             } catch (e: TimeoutCancellationException) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
-                
+
                 initialConnectivityFlow
                     .stateIn(
                         viewModelScope,

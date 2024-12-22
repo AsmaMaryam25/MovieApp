@@ -13,12 +13,12 @@ class FavoriteViewModel : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
 
-    private val mutableDetailsUIState = MutableStateFlow<FavoriteUIModel>(FavoriteUIModel.Empty)
-    val favoriteUIState: StateFlow<FavoriteUIModel> = mutableDetailsUIState
+    private val mutableFavoriteUIState = MutableStateFlow<FavoriteUIModel>(FavoriteUIModel.Empty)
+    val favoriteUIState: StateFlow<FavoriteUIModel> = mutableFavoriteUIState
 
     init {
         viewModelScope.launch {
-            mutableDetailsUIState.update {
+            mutableFavoriteUIState.update {
                 FavoriteUIModel.Loading
             }
 
@@ -29,7 +29,7 @@ class FavoriteViewModel : ViewModel() {
                     )
                 }
 
-                mutableDetailsUIState.update {
+                mutableFavoriteUIState.update {
                     FavoriteUIModel.Data(
                         favorites = updatedFavorites
                     )

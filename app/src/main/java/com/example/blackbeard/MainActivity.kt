@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.blackbeard.di.DataModule
@@ -65,9 +67,11 @@ class MainActivity : ComponentActivity() {
 
         DataModule.initialize(this)
         setContent {
-            var isDarkTheme by remember { mutableStateOf(false) }
+            val isSystemDarkTheme = isSystemInDarkTheme()
+            val isDarkTheme by DataModule.movieRepository.getTheme()
+                .collectAsStateWithLifecycle(isSystemDarkTheme)
             BlackbeardTheme(
-                darkTheme = isDarkTheme
+                darkTheme = isDarkTheme ?: isSystemDarkTheme
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -233,7 +237,6 @@ class MainActivity : ComponentActivity() {
                             onRouteChanged = { route -> currentScreenTitle = route.title },
                             modifier = Modifier.padding(it),
                             showTopBar = { topBarShown = true },
-                            toggleDarkTheme = { isDarkTheme = !isDarkTheme },
                             setVideoLink = { link: String? -> videoLink = link }
                         )
                     }
