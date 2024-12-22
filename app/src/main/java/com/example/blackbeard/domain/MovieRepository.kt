@@ -1,6 +1,7 @@
 package com.example.blackbeard.domain
 
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
+import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
 import com.example.blackbeard.data.model.*
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
@@ -16,6 +17,7 @@ class MovieRepository(
     private val remoteMovieDataSource: RemoteMovieDataSource,
     private val localFavoriteMovieDataSource: FavoriteMovieDataSource,
     private val localWatchlistMovieDataSource: WatchListMovieDataSource,
+    private val localThemeDataSource: ThemeDataSource,
     val firestore: FirebaseFirestore
 ) {
     val movieGenres = mapOf(
@@ -91,6 +93,10 @@ class MovieRepository(
 
     suspend fun toggleWatchlist(id: String?, title: String, posterPath: String?, rating: Double) =
         localWatchlistMovieDataSource.toggleWatchlist(id, title, posterPath, rating)
+
+    fun getTheme() = localThemeDataSource.isDarkModeEnabled()
+
+    suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
 
     suspend fun getAverageRating(id: String): Double {
         val ratingsRef = firestore.collection("ratings").document(id)

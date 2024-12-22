@@ -13,12 +13,12 @@ class WatchlistViewModel : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
 
-    private val mutableDetailsUIState = MutableStateFlow<WatchlistUIModel>(WatchlistUIModel.Empty)
-    val watchlistUIState: StateFlow<WatchlistUIModel> = mutableDetailsUIState
+    private val mutableWatchlistUIState = MutableStateFlow<WatchlistUIModel>(WatchlistUIModel.Empty)
+    val watchlistUIState: StateFlow<WatchlistUIModel> = mutableWatchlistUIState
 
     init {
         viewModelScope.launch {
-            mutableDetailsUIState.update {
+            mutableWatchlistUIState.update {
                 WatchlistUIModel.Loading
             }
 
@@ -29,7 +29,7 @@ class WatchlistViewModel : ViewModel() {
                     )
                 }
 
-                mutableDetailsUIState.update {
+                mutableWatchlistUIState.update {
                     WatchlistUIModel.Data(
                         watchlist = updatedWatchlist
                     )

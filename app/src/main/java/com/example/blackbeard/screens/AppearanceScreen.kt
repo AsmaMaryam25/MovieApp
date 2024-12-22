@@ -8,25 +8,33 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.blackbeard.di.DataModule
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun AppearanceScreen(
     showTopBar: () -> Unit,
-    toggleDarkTheme: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     showTopBar()
 
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
     var switchIsOn = remember { mutableStateOf(isDarkTheme) }
+    val coroutineScope = rememberCoroutineScope()
 
     Column(modifier = modifier) {
         Row(
@@ -38,7 +46,9 @@ fun AppearanceScreen(
             Switch(checked = switchIsOn.value,
                 onCheckedChange = {
                     switchIsOn.value = !switchIsOn.value
-                    toggleDarkTheme()
+                    coroutineScope.launch{
+                        DataModule.movieRepository.setTheme(switchIsOn.value)
+                    }
                 })
         }
     }
