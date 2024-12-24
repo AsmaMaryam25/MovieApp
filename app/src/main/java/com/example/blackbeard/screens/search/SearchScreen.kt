@@ -13,6 +13,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridState
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +24,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -50,6 +55,7 @@ fun SearchScreen(
 
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
+    val popularState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
 
     when (searchUIModel) {
         SearchUIModel.Empty -> SearchContent(
@@ -74,7 +80,8 @@ fun SearchScreen(
                 posterWidth,
                 onNavigateToDetailsScreen,
                 searchUIModel.collectionMovies,
-                searchViewModel
+                searchViewModel,
+                popularState
             )
         }
     }
@@ -89,8 +96,8 @@ private fun SearchContent(
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<Movie>,
-    searchViewModel: SearchViewModel
-
+    searchViewModel: SearchViewModel,
+    popularState: LazyGridState = rememberLazyGridState()
 ) {
     Column(
         modifier = modifier.fillMaxSize()
@@ -103,27 +110,24 @@ private fun SearchContent(
             onClickMenu = { onNavigateToAdvancedSearchScreen("Advanced Search") }
         )
 
-        LazyColumn(
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            item {
-                if (collectionMovies.isEmpty()) {
-                    Text(
-                        text = "No results found",
-                        modifier = Modifier.padding(10.dp)
+        if (collectionMovies.isEmpty()) {
+            Text(
+                text = "No results found",
+                modifier = Modifier.padding(10.dp)
+            )
+        } else {
+            LazyVerticalGrid(
+                state = popularState,
+                columns = GridCells.Adaptive(posterWidth),
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                items(collectionMovies.size) { index ->
+                    CreateSearchPoster(
+                        posterWidth = posterWidth,
+                        onNavigateToDetailsScreen = onNavigateToDetailsScreen,
+                        movie = collectionMovies[index]
                     )
-                }
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center
-                ) {
-                    collectionMovies.forEach { movie ->
-                        CreateSearchPoster(
-                            posterWidth = posterWidth,
-                            onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                            movie = movie
-                        )
-                    }
                 }
             }
         }
