@@ -62,9 +62,15 @@ class MovieRepository(
             ?.map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) } ?: emptyList())
     }
 
-    fun searchMovies(query: String): Flow<List<SearchMovie>> = flow {
-        emit(remoteMovieDataSource.searchMovies(query).results
-            ?.map { it.mapToMovie() } ?: emptyList())
+    fun searchMovies(query: String, pageNum: Int): Flow<MovieSearchResult> = flow {
+        val response = remoteMovieDataSource.searchMovies(query, pageNum)
+
+        val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
+
+        val totalPages = response.totalPages
+
+        // Emit the result as MovieSearchResult
+        emit(MovieSearchResult(movies, totalPages))
     }
 
     fun getMovie(externalId: Int): Flow<LocalMovie> = flow {
