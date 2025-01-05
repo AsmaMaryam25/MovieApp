@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,7 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -24,6 +27,7 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -92,6 +96,138 @@ fun DetailsScreen(
 }
 
 @Composable
+private fun MainContentLeftSide(
+     localMovie: LocalMovie,
+     detailsViewModel: DetailsViewModel
+) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Box(
+            modifier = Modifier
+                .width(180.dp)
+                .aspectRatio(2 / 3f)
+                .clip(shape = RoundedCornerShape(30.dp))
+                .background(Color.Gray)
+        ) {
+            AsyncImage(
+                model = localMovie.posterPath,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(shape = RoundedCornerShape(30.dp)),
+                placeholder = ColorPainter(Color.Gray)
+            )
+        }
+        Row {
+            CreateStars(Modifier, detailsViewModel)
+        }
+    }
+}
+
+@Composable
+private fun MainContentRightSide(
+    detailsViewModel: DetailsViewModel,
+    isFavorite: Boolean,
+    isWatchList: Boolean,
+    averageRating: Double,
+    localMovie: LocalMovie
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(10.dp)
+    ) {
+        Text(
+            text = localMovie.title,
+            fontSize = 20.sp,
+            textAlign = TextAlign.Center,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.fillMaxWidth()
+        )
+        Text(
+            text = localMovie.genres.map { it.name }.joinToString(),
+            fontSize = 15.sp,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = localMovie.releaseDate.year.toString(),
+            fontSize = 15.sp,
+            textAlign = TextAlign.Center,
+        )
+        Row {
+            val favIcon =
+                if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
+            var favoriteIcon by remember { mutableStateOf(favIcon) }
+
+            val watchIcon =
+                if (isWatchList) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
+            var watchlistIcon by remember { mutableStateOf(watchIcon) }
+            Icon(
+                imageVector = favoriteIcon,
+                contentDescription = "Favorite",
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(40.dp)
+                    .clickable(onClick = {
+                        favoriteIcon =
+                            if (favoriteIcon == Icons.Outlined.FavoriteBorder) {
+                                Icons.Filled.Favorite
+                            } else {
+                                Icons.Outlined.FavoriteBorder
+                            }
+                        detailsViewModel.toggleFavorite(localMovie)
+                    })
+            )
+            Icon(
+                imageVector = watchlistIcon,
+                contentDescription = "Watchlist",
+                modifier = Modifier
+                    .padding(5.dp)
+                    .size(40.dp)
+                    .clickable(onClick = {
+                        watchlistIcon =
+                            if (watchlistIcon == Icons.Outlined.BookmarkBorder) {
+                                Icons.Filled.Bookmark
+                            } else {
+                                Icons.Outlined.BookmarkBorder
+                            }
+                        detailsViewModel.toggleWatchlist(localMovie)
+                    })
+            )
+        }
+        Spacer(
+            modifier = Modifier
+                .height(30.dp)
+                .fillMaxWidth()
+        )
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(
+                imageVector = Icons.Filled.Star,
+                contentDescription = "Favorite",
+                modifier = Modifier
+                    .size(50.dp)
+            )
+            Text(
+                text = String.format(Locale.getDefault(), "%.2f", averageRating),
+                fontSize = 15.sp,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Composable
+private fun Overview(content: String) {
+    Text(
+        text = "Overview",
+        fontSize = 20.sp,
+        fontWeight = FontWeight.Bold
+    )
+    Text(
+        text = content
+    )
+}
+
+@Composable
 private fun DetailsContent(
     modifier: Modifier,
     localMovie: LocalMovie,
@@ -101,7 +237,7 @@ private fun DetailsContent(
     detailsViewModel: DetailsViewModel,
     isFavorite: Boolean,
     isWatchList: Boolean,
-    averageRating: Double
+    averageRating: Double,
 ) {
 
     LaunchedEffect(Unit) {
@@ -111,245 +247,135 @@ private fun DetailsContent(
     LazyColumn(
         modifier = modifier
             .padding(10.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Box(
-                        modifier = Modifier
-                            .width(180.dp)
-                            .aspectRatio(2 / 3f)
-                            .clip(shape = RoundedCornerShape(30.dp))
-                            .background(Color.Gray)
-                    ) {
-                        AsyncImage(
-                            model = localMovie.posterPath,
-                            contentDescription = null,
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(shape = RoundedCornerShape(30.dp)),
-                            placeholder = ColorPainter(Color.Gray)
-                        )
-                    }
-                    Row {
-                        CreateStars(Modifier, detailsViewModel)
-                    }
-                }
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(10.dp)
-                ) {
-                    Text(
-                        text = localMovie.title,
-                        fontSize = 20.sp,
-                        textAlign = TextAlign.Center,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Text(
-                        text = localMovie.genres.map { it.name }.joinToString(),
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Center,
-                    )
-                    Text(
-                        text = localMovie.releaseDate.year.toString(),
-                        fontSize = 15.sp,
-                        textAlign = TextAlign.Center,
-                    )
-                    Row {
-                        val favIcon =
-                            if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder
-                        var favoriteIcon by remember { mutableStateOf(favIcon) }
-
-                        val watchIcon =
-                            if (isWatchList) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder
-                        var watchlistIcon by remember { mutableStateOf(watchIcon) }
-                        Icon(
-                            imageVector = favoriteIcon,
-                            contentDescription = "Favorite",
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .size(40.dp)
-                                .clickable(onClick = {
-                                    favoriteIcon =
-                                        if (favoriteIcon == Icons.Outlined.FavoriteBorder) {
-                                            Icons.Filled.Favorite
-                                        } else {
-                                            Icons.Outlined.FavoriteBorder
-                                        }
-                                    detailsViewModel.toggleFavorite(localMovie)
-                                })
-                        )
-                        Icon(
-                            imageVector = watchlistIcon,
-                            contentDescription = "Watchlist",
-                            modifier = Modifier
-                                .padding(5.dp)
-                                .size(40.dp)
-                                .clickable(onClick = {
-                                    watchlistIcon =
-                                        if (watchlistIcon == Icons.Outlined.BookmarkBorder) {
-                                            Icons.Filled.Bookmark
-                                        } else {
-                                            Icons.Outlined.BookmarkBorder
-                                        }
-                                    detailsViewModel.toggleWatchlist(localMovie)
-                                })
-                        )
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(30.dp)
-                            .fillMaxWidth()
-                    )
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "Favorite",
-                            modifier = Modifier
-                                .size(50.dp)
-                        )
-                        Text(
-                            text = String.format(Locale.getDefault(), "%.2f", averageRating),
-                            fontSize = 15.sp,
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            }
-        }
-        item {
-            Text(
-                text = "Overview",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-        }
-        item {
-            Text(
-                text = localMovie.overview ?: "No overview available"
-            )
-        }
-        if (!localMovie.releaseDate.equals("")) {
-            item {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Release date: ")
-                        }
-                        append(localMovie.releaseDate.toString())
-                    },
-                    fontSize = 15.sp
+                MainContentLeftSide(
+                    localMovie = localMovie,
+                    detailsViewModel = detailsViewModel
                 )
+                MainContentRightSide(
+                    detailsViewModel = detailsViewModel,
+                    isFavorite = isFavorite,
+                    isWatchList = isWatchList,
+                    averageRating = averageRating,
+                    localMovie = localMovie
+                )
+
             }
+        }
+        HorizontalDivider()
+        Overview(localMovie.overview ?: "No overview available")
+        HorizontalDivider()
+        if (!localMovie.releaseDate.equals("")) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Release date: ")
+                    }
+                    append(localMovie.releaseDate.toString())
+                },
+                fontSize = 15.sp
+            )
         }
         if (localMovie.productionCompanies.isNotEmpty()) {
-            item {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Produced by: ")
-                        }
-                        append(localMovie.productionCompanies.joinToString { it.name })
-                    },
-                    fontSize = 15.sp
-                )
-            }
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Produced by: ")
+                    }
+                    append(localMovie.productionCompanies.joinToString { it.name })
+                },
+                fontSize = 15.sp
+            )
+
         }
         if (localMovie.productionCountries.isNotEmpty()) {
-            item {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Produced in: ")
-                        }
-                        append(localMovie.productionCountries.joinToString { it.name })
-                    },
-                    fontSize = 15.sp,
-                )
-            }
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Produced in: ")
+                    }
+                    append(localMovie.productionCountries.joinToString { it.name })
+                },
+                fontSize = 15.sp,
+            )
         }
         if (localMovie.revenue > 0) {
-            item {
-                Text(
-                    text = buildAnnotatedString {
-                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Revenue generated: ")
-                        }
-                        append(localMovie.revenue.toString())
-                    },
-                    fontSize = 15.sp
-                )
-            }
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Revenue generated: ")
+                    }
+                    append(localMovie.revenue.toString())
+                },
+                fontSize = 15.sp
+            )
         }
         localMovie.runtime?.let {
             if (it > 0) {
-                item {
-                    Text(
-                        text = buildAnnotatedString {
-                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                                append("Runtime: ")
-                            }
-                            if (localMovie.runtime == 1) {
-                                append("${localMovie.runtime} minute")
-                            } else {
-                                append("${localMovie.runtime} minutes")
-                            }
-                        },
-                        fontSize = 15.sp
-                    )
-                }
-            }
-        }
-        if (localMovie.spokenLanguages.isNotEmpty()) {
-            item {
                 Text(
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Spoken languages: ")
+                            append("Runtime: ")
                         }
-                        append(localMovie.spokenLanguages.joinToString { it.name })
+                        if (localMovie.runtime == 1) {
+                            append("${localMovie.runtime} minute")
+                        } else {
+                            append("${localMovie.runtime} minutes")
+                        }
                     },
-                    fontSize = 15.sp,
+                    fontSize = 15.sp
                 )
             }
         }
-        if (credits.cast.isNotEmpty()) {
-            item {
-                Text(
-                    text = "Cast",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            item {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(credits.cast.size) {
-                        CreateCast(Modifier, credits.cast[it])
+        if (localMovie.spokenLanguages.isNotEmpty()) {
+            Text(
+                text = buildAnnotatedString {
+                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                        append("Spoken languages: ")
                     }
+                    append(localMovie.spokenLanguages.joinToString { it.name })
+                },
+                fontSize = 15.sp,
+            )
+        }
+        HorizontalDivider()
+        if (credits.cast.isNotEmpty()) {
+            Text(
+                text = "Cast",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(credits.cast.size) {
+                    Cast(Modifier, credits.cast[it])
                 }
             }
         }
+        HorizontalDivider()
         if (credits.crew.isNotEmpty()) {
-            item {
-                Text(
-                    text = "Crew",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-            }
-            item {
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(credits.crew.size) {
-                        CreateCrew(Modifier, credits.crew[it])
-                    }
+            Text(
+                text = "Crew",
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                items(credits.crew.size) {
+                    Crew(Modifier, credits.crew[it])
                 }
             }
         }
     }
+}
+
+@Composable
+private fun Overview(modifier: Modifier, text: String) {
+    Text(text)
 }
 
 @Composable
@@ -389,8 +415,11 @@ private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) 
 }
 
 @Composable
-private fun CreateCast(modifier: Modifier, cast: Cast) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+private fun Cast(modifier: Modifier, cast: Cast) {
+    Column(
+        Modifier.fillMaxHeight(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Box(
             modifier = Modifier
                 .width(130.dp)
@@ -424,7 +453,7 @@ private fun CreateCast(modifier: Modifier, cast: Cast) {
 }
 
 @Composable
-private fun CreateCrew(modifier: Modifier, crew: Crew) {
+private fun Crew(modifier: Modifier, crew: Crew) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
