@@ -17,9 +17,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -55,6 +55,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.models.Cast
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.Crew
+import com.example.blackbeard.models.Genre
 import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
@@ -124,6 +125,29 @@ private fun MainContentLeftSide(
 }
 
 @Composable
+private fun GenreContainer(genres: List<Genre>) {
+    LazyHorizontalGrid(rows = GridCells.Adaptive(minSize = 30.dp)) {
+        items(genres.size) {
+
+        }
+    }
+}
+
+@Composable
+private fun Genre(genre: Genre) {
+    Box(
+        Modifier
+            .background(Color.Gray, shape = RoundedCornerShape(10.dp))
+    ) {
+        Text(
+            text = genre.name,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+
+@Composable
 private fun MainContentRightSide(
     detailsViewModel: DetailsViewModel,
     isFavorite: Boolean,
@@ -143,6 +167,7 @@ private fun MainContentRightSide(
             fontWeight = FontWeight.Bold,
             modifier = Modifier.fillMaxWidth()
         )
+
         Text(
             text = localMovie.genres.map { it.name }.joinToString(),
             fontSize = 15.sp,
@@ -247,8 +272,7 @@ private fun DetailsContent(
     LazyColumn(
         modifier = modifier
             .padding(10.dp)
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState()),
+            .fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         item {
@@ -267,106 +291,123 @@ private fun DetailsContent(
 
             }
         }
-        HorizontalDivider()
-        Overview(localMovie.overview ?: "No overview available")
-        HorizontalDivider()
-        if (!localMovie.releaseDate.equals("")) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Release date: ")
-                    }
-                    append(localMovie.releaseDate.toString())
-                },
-                fontSize = 15.sp
-            )
+        item {
+            Overview(localMovie.overview ?: "No overview available")
+            HorizontalDivider()
         }
-        if (localMovie.productionCompanies.isNotEmpty()) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Produced by: ")
-                    }
-                    append(localMovie.productionCompanies.joinToString { it.name })
-                },
-                fontSize = 15.sp
-            )
-
-        }
-        if (localMovie.productionCountries.isNotEmpty()) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Produced in: ")
-                    }
-                    append(localMovie.productionCountries.joinToString { it.name })
-                },
-                fontSize = 15.sp,
-            )
-        }
-        if (localMovie.revenue > 0) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Revenue generated: ")
-                    }
-                    append(localMovie.revenue.toString())
-                },
-                fontSize = 15.sp
-            )
-        }
-        localMovie.runtime?.let {
-            if (it > 0) {
+        item {
+            if (!localMovie.releaseDate.equals("")) {
                 Text(
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                            append("Runtime: ")
+                            append("Release date: ")
                         }
-                        if (localMovie.runtime == 1) {
-                            append("${localMovie.runtime} minute")
-                        } else {
-                            append("${localMovie.runtime} minutes")
-                        }
+                        append(localMovie.releaseDate.toString())
                     },
                     fontSize = 15.sp
                 )
             }
         }
-        if (localMovie.spokenLanguages.isNotEmpty()) {
-            Text(
-                text = buildAnnotatedString {
-                    withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
-                        append("Spoken languages: ")
-                    }
-                    append(localMovie.spokenLanguages.joinToString { it.name })
-                },
-                fontSize = 15.sp,
-            )
+        item {
+            if (localMovie.productionCompanies.isNotEmpty()) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Produced by: ")
+                        }
+                        append(localMovie.productionCompanies.joinToString { it.name })
+                    },
+                    fontSize = 15.sp
+                )
+
+            }
         }
-        HorizontalDivider()
-        if (credits.cast.isNotEmpty()) {
-            Text(
-                text = "Cast",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(credits.cast.size) {
-                    Cast(Modifier, credits.cast[it])
+        item {
+            if (localMovie.productionCountries.isNotEmpty()) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Produced in: ")
+                        }
+                        append(localMovie.productionCountries.joinToString { it.name })
+                    },
+                    fontSize = 15.sp,
+                )
+            }
+        }
+        item {
+            if (localMovie.revenue > 0) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Revenue generated: ")
+                        }
+                        append(localMovie.revenue.toString())
+                    },
+                    fontSize = 15.sp
+                )
+            }
+        }
+        item {
+            localMovie.runtime?.let {
+                if (it > 0) {
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                                append("Runtime: ")
+                            }
+                            if (localMovie.runtime == 1) {
+                                append("${localMovie.runtime} minute")
+                            } else {
+                                append("${localMovie.runtime} minutes")
+                            }
+                        },
+                        fontSize = 15.sp
+                    )
                 }
             }
         }
-        HorizontalDivider()
-        if (credits.crew.isNotEmpty()) {
-            Text(
-                text = "Crew",
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
+        item {
+            if (localMovie.spokenLanguages.isNotEmpty()) {
+                Text(
+                    text = buildAnnotatedString {
+                        withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                            append("Spoken languages: ")
+                        }
+                        append(localMovie.spokenLanguages.joinToString { it.name })
+                    },
+                    fontSize = 15.sp,
+                )
+            }
+            HorizontalDivider()
+        }
+        item {
+            if (credits.cast.isNotEmpty()) {
+                Text(
+                    text = "Cast",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(credits.cast.size) {
+                        Cast(Modifier, credits.cast[it])
+                    }
+                }
+            }
+            HorizontalDivider()
+        }
+        item {
+            if (credits.crew.isNotEmpty()) {
+                Text(
+                    text = "Crew",
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
 
-            LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                items(credits.crew.size) {
-                    Crew(Modifier, credits.crew[it])
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    items(credits.crew.size) {
+                        Crew(Modifier, credits.crew[it])
+                    }
                 }
             }
         }
