@@ -88,6 +88,9 @@ dependencies {
 
     testImplementation(libs.junitJupiter)
     testRuntimeOnly(libs.junitPlatformLauncher)
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoKotlin)
+    androidTestImplementation(libs.mockitoAndroid)
 
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeUiTestManifest)
