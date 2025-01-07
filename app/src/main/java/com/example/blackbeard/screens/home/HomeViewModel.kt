@@ -39,18 +39,6 @@ class HomeViewModel : ViewModel() {
                     mutableHomeUIState.value = HomeUIModel.NoConnection
                 }
 
-                initialConnectivityFlow.stateIn(
-                    viewModelScope,
-                    SharingStarted.WhileSubscribed(5000L),
-                    isInitiallyConnected
-                ).collect { isConnected ->
-                    if (isConnected) {
-                        getMovies()
-                    } else {
-                        mutableHomeUIState.value = HomeUIModel.NoConnection
-                    }
-                }
-
 
             } catch (e: TimeoutCancellationException) {
                 mutableHomeUIState.value = HomeUIModel.NoConnection

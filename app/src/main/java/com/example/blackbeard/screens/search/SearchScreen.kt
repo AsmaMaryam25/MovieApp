@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,10 +13,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -55,7 +56,7 @@ fun SearchScreen(
 
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
-    val popularState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
+    val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
 
     when (searchUIModel) {
         SearchUIModel.Empty -> SearchContent(
@@ -65,6 +66,7 @@ fun SearchScreen(
             posterWidth,
             onNavigateToDetailsScreen,
             emptyList(),
+            null,
             searchViewModel
         )
 
@@ -80,8 +82,9 @@ fun SearchScreen(
                 posterWidth,
                 onNavigateToDetailsScreen,
                 searchUIModel.collectionMovies,
+                searchUIModel.totalPages,
                 searchViewModel,
-                popularState
+                gridState
             )
         }
     }
@@ -96,8 +99,9 @@ private fun SearchContent(
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<Movie>,
+    totalPages: Int? = null,
     searchViewModel: SearchViewModel,
-    popularState: LazyGridState = rememberLazyGridState()
+    gridState: LazyGridState = rememberLazyGridState()
 ) {
     Column(
         modifier = modifier.fillMaxSize()
@@ -105,29 +109,47 @@ private fun SearchContent(
         SearchBar(
             searchQuery = searchQuery,
             onSearchQueryChange = { query ->
-                searchViewModel.searchMovies(query)
+                searchViewModel.searchMovies(query, 1)
             },
             onClickMenu = { onNavigateToAdvancedSearchScreen("Advanced Search") }
         )
 
-        if (collectionMovies.isEmpty()) {
-            Text(
-                text = "No results found",
-                modifier = Modifier.padding(10.dp)
-            )
-        } else {
-            LazyVerticalGrid(
-                state = popularState,
-                columns = GridCells.Adaptive(posterWidth),
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
+        LazyVerticalGrid (
+            state = gridState,
+            columns = GridCells.Adaptive(posterWidth)
+        ) {
+            if (collectionMovies.isEmpty()) {
+                item {
+                    Text(
+                        text = "No results found",
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+            } else {
                 items(collectionMovies.size) { index ->
                     CreateSearchPoster(
                         posterWidth = posterWidth,
                         onNavigateToDetailsScreen = onNavigateToDetailsScreen,
                         movie = collectionMovies[index]
                     )
+                }
+            }
+
+            item(span = { GridItemSpan(2) }) {
+                if (searchViewModel.currentPage.intValue < (searchViewModel.totalPages.value
+                        ?: 0)
+                ) {
+                    Button(
+                        onClick = {
+                            searchViewModel.searchMovies(
+                                searchQuery.value,
+                                searchViewModel.currentPage.intValue + 1
+                            )
+                        },
+                        modifier = modifier.fillMaxWidth().padding(horizontal = 10.dp),
+                    ) {
+                        Text(text = "Load more")
+                    }
                 }
             }
         }

@@ -52,6 +52,7 @@ interface MovieApiService {
     @GET("search/movie")
     suspend fun searchMovies(
         @Query("query") query: String,
+        @Query("page") pageNum: Int,
         @Query("api_key") apiKey: String
     ): QueryDao
 }
