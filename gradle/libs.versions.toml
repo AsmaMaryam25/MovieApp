@@ -1,5 +1,6 @@
 [versions]
 firebaseBom = "33.6.0"
+junitJupiter = "5.7.1"
 materialIconsExtended = "1.7.5"
 accompanistPager = "0.24.13-rc"
 lifecycleViewModelCompose = "2.8.7"
@@ -22,6 +23,8 @@ agp = "8.1.4"
 firebaseAnalytics = { module = "com.google.firebase:firebase-analytics" }
 firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebaseFirestoreKtx = { module = "com.google.firebase:firebase-firestore-ktx" }
+junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 materialIconsExtended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 accompanistPager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanistPager" }
 lifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }

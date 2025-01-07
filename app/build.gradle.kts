@@ -86,6 +86,9 @@ dependencies {
     implementation(libs.coilCompose)
     implementation(libs.coilNetworkOkhttp)
 
+    testImplementation(libs.junitJupiter)
+    testRuntimeOnly(libs.junitPlatformLauncher)
+
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeUiTestManifest)
 }
