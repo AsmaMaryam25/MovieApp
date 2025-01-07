@@ -91,6 +91,7 @@ dependencies {
     testImplementation(libs.mockitoCore)
     testImplementation(libs.mockitoKotlin)
     androidTestImplementation(libs.mockitoAndroid)
+    testImplementation(libs.kotlinxCoroutinesTest)
 
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeUiTestManifest)
