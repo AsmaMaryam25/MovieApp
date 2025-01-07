@@ -38,6 +38,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.watchlist.WatchlistViewModel.WatchlistUIModel
 import java.util.Locale
 import kotlin.String
@@ -53,7 +54,7 @@ fun WatchlistScreen(
     when (watchlistUIModel) {
         WatchlistUIModel.Empty -> EmptyScreen()
         WatchlistUIModel.Loading -> LoadingScreen()
-
+        WatchlistUIModel.NoConnection -> NoConnectionScreen()
         is WatchlistUIModel.Data -> WatchlistContent(
             onNavigateToDetailsScreen,
             modifier,
