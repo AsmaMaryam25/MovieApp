@@ -19,8 +19,14 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +46,7 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -150,6 +157,9 @@ private fun CreatePoster(
     posterWidth: Dp = 300.dp,
     collectionMovie: CollectionMovie
 ) {
+    var isClickAble by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -167,12 +177,19 @@ private fun CreatePoster(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = {
-                        onNavigateToDetailsScreen(
-                            collectionMovie.title,
-                            collectionMovie.id
+                    .clickable(enabled = isClickAble) {
+                        if(isClickAble){
+                            onNavigateToDetailsScreen(
+                                collectionMovie.title,
+                                collectionMovie.id
                         )
-                    }),
+                            isClickAble = false
+                            coroutineScope.launch {
+                                kotlinx.coroutines.delay(1000)
+                                isClickAble = true
+                            }
+                        }
+                    },
                 placeholder = ColorPainter(Color.Gray)
             )
         }
