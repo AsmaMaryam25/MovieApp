@@ -42,6 +42,7 @@ import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
+import com.example.blackbeard.utils.noDoubleClick
 
 @Composable
 fun SearchScreen(
@@ -142,7 +143,15 @@ private fun CreateSearchPoster(
     movie: Movie
 ) {
     Column(
-        modifier = modifier.padding(10.dp),
+        modifier = Modifier
+            .padding(10.dp)
+            .width(posterWidth)
+            .noDoubleClick {
+                onNavigateToDetailsScreen(
+                    movie.title,
+                    movie.id
+                )
+            },
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -159,15 +168,13 @@ private fun CreateSearchPoster(
                 modifier = Modifier
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
-                    .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = { onNavigateToDetailsScreen(movie.title, movie.id) }),
+                    .clip(shape = RoundedCornerShape(30.dp)),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
         Text(
             modifier = modifier
-                .width(posterWidth)
-                .clickable { onNavigateToDetailsScreen(movie.title, movie.id) },
+                .width(posterWidth),
             text = movie.title,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,

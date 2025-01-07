@@ -40,6 +40,7 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
+import com.example.blackbeard.utils.noDoubleClick
 
 
 @Composable
@@ -151,6 +152,14 @@ private fun CreatePoster(
     collectionMovie: CollectionMovie
 ) {
     Column(
+        modifier = Modifier
+            .width(posterWidth)
+            .noDoubleClick {
+                onNavigateToDetailsScreen(
+                    collectionMovie.title,
+                    collectionMovie.id
+                )
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
@@ -166,13 +175,7 @@ private fun CreatePoster(
                 modifier = Modifier
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
-                    .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = {
-                        onNavigateToDetailsScreen(
-                            collectionMovie.title,
-                            collectionMovie.id
-                        )
-                    }),
+                    .clip(shape = RoundedCornerShape(30.dp)),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
@@ -182,13 +185,7 @@ private fun CreatePoster(
             Text(
                 modifier = Modifier
                     .width(posterWidth)
-                    .padding(start = 35.dp, top = 15.dp, end = 35.dp)
-                    .clickable {
-                        onNavigateToDetailsScreen(
-                            collectionMovie.title,
-                            collectionMovie.id
-                        )
-                    },
+                    .padding(start = 35.dp, top = 15.dp, end = 35.dp),
                 text = collectionMovie.title,
                 style = TextStyle(
                     fontSize = 25.sp,

@@ -39,6 +39,7 @@ import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.favorite.FavoriteViewModel.FavoriteUIModel
+import com.example.blackbeard.utils.noDoubleClick
 import java.util.Locale
 
 @Composable
@@ -129,12 +130,12 @@ fun CreateFavCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = {
+                    .noDoubleClick {
                         onNavigateToDetailsScreen(
                             favoriteMovie.title,
                             favoriteMovie.id.toInt()
                         )
-                    }),
+                    },
                 placeholder = ColorPainter(Color.Gray)
             )
         }
@@ -150,12 +151,12 @@ fun CreateFavCard(
             modifier = modifier
                 .padding(vertical = 40.dp)
                 .weight(1f)
-                .clickable {
+                .noDoubleClick {
                     onNavigateToDetailsScreen(
                         favoriteMovie.title,
                         favoriteMovie.id.toInt()
                     )
-                }
+                },
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,

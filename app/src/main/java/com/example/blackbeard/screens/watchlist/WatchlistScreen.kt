@@ -39,6 +39,7 @@ import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.watchlist.WatchlistViewModel.WatchlistUIModel
+import com.example.blackbeard.utils.noDoubleClick
 import java.util.Locale
 import kotlin.String
 
@@ -130,12 +131,13 @@ fun CreateWatchlistCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = {
+
+                    .noDoubleClick {
                         onNavigateToDetailsScreen(
                             watchlistMovie.title,
                             watchlistMovie.id.toInt()
                         )
-                    }),
+                    },
                 placeholder = ColorPainter(Color.Gray)
             )
         }
@@ -151,12 +153,12 @@ fun CreateWatchlistCard(
             modifier = modifier
                 .padding(vertical = 40.dp)
                 .weight(1f)
-                .clickable {
+                .noDoubleClick {
                     onNavigateToDetailsScreen(
                         watchlistMovie.title,
                         watchlistMovie.id.toInt()
                     )
-                }
+                },
         )
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
