@@ -1,5 +1,6 @@
 package com.example.blackbeard.screens.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class HomeViewModel : ViewModel() {
 
@@ -39,6 +41,8 @@ class HomeViewModel : ViewModel() {
 
 
             } catch (e: TimeoutCancellationException) {
+                mutableHomeUIState.value = HomeUIModel.NoConnection
+            } catch (e: UnknownHostException){
                 mutableHomeUIState.value = HomeUIModel.NoConnection
             }
         }

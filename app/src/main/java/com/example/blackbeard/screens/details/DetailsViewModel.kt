@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
+import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class DetailsViewModel(val movieId: Int) : ViewModel() {
 
@@ -71,6 +73,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                             mutableDetailsUIState.value = DetailsUIModel.NoConnection
                         }
                     }
+            }  catch (e: UnknownHostException){
+                mutableDetailsUIState.value = DetailsUIModel.NoConnection
             }
         }
     }

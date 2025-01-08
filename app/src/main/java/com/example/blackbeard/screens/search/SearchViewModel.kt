@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
+import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -17,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class SearchViewModel() : ViewModel() {
 
@@ -72,6 +74,8 @@ class SearchViewModel() : ViewModel() {
                     }
                 }
 
+            }  catch (e: UnknownHostException){
+                mutableSearchUIState.value = SearchUIModel.NoConnection
             }
         }
     }
