@@ -22,9 +22,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,6 +45,7 @@ import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
@@ -164,6 +168,9 @@ private fun CreateSearchPoster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     movie: Movie
 ) {
+    var isClickAble by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier.padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -183,7 +190,19 @@ private fun CreateSearchPoster(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = { onNavigateToDetailsScreen(movie.title, movie.id) }),
+                    .clickable(enabled = isClickAble) {
+                        if (isClickAble) {
+                            onNavigateToDetailsScreen(
+                                movie.title,
+                                movie.id
+                            )
+                            isClickAble = false
+                            coroutineScope.launch {
+                                kotlinx.coroutines.delay(1000)
+                                isClickAble = true
+                            }
+                        }
+                    },
                 placeholder = ColorPainter(Color.Gray)
             )
         }

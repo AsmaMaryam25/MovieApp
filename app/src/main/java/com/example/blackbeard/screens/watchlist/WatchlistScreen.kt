@@ -22,6 +22,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,6 +45,7 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.watchlist.WatchlistViewModel.WatchlistUIModel
+import kotlinx.coroutines.launch
 import java.util.Locale
 import kotlin.String
 
@@ -113,6 +119,9 @@ fun CreateWatchlistCard(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     watchlistMovie: MovieItem
 ) {
+    var isClickAble by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
+
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -131,12 +140,19 @@ fun CreateWatchlistCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = {
-                        onNavigateToDetailsScreen(
-                            watchlistMovie.title,
-                            watchlistMovie.id.toInt()
-                        )
-                    }),
+                    .clickable(enabled = isClickAble){
+                        if(isClickAble) {
+                            onNavigateToDetailsScreen(
+                                watchlistMovie.title,
+                                watchlistMovie.id.toInt()
+                            )
+                            isClickAble = false
+                            coroutineScope.launch {
+                                kotlinx.coroutines.delay(1000)
+                                isClickAble = true
+                            }
+                        }
+                    },
                 placeholder = ColorPainter(Color.Gray)
             )
         }
