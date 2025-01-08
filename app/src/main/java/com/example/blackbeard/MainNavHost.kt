@@ -9,8 +9,8 @@ import androidx.navigation.toRoute
 import com.example.blackbeard.models.Route
 import com.example.blackbeard.screens.AboutScreen
 import com.example.blackbeard.screens.AdvancedSearchScreen
-import com.example.blackbeard.screens.SettingsScreen
 import com.example.blackbeard.screens.AppearanceScreen
+import com.example.blackbeard.screens.SettingsScreen
 import com.example.blackbeard.screens.details.DetailsScreen
 import com.example.blackbeard.screens.favorite.FavoriteScreen
 import com.example.blackbeard.screens.home.HomeScreen

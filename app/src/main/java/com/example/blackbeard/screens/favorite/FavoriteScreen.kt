@@ -38,6 +38,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.favorite.FavoriteViewModel.FavoriteUIModel
 import java.util.Locale
 
@@ -52,7 +53,7 @@ fun FavoriteScreen(
     when (favoriteUIModel) {
         FavoriteUIModel.Empty -> EmptyScreen()
         FavoriteUIModel.Loading -> LoadingScreen()
-
+        FavoriteUIModel.NoConnection -> NoConnectionScreen()
         is FavoriteUIModel.Data -> FavoriteContent(
             onNavigateToDetailsScreen,
             modifier,
