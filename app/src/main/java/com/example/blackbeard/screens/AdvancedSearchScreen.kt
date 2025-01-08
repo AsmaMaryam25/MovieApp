@@ -15,10 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.*
 
 @Composable
 fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier, showTopBar: () -> Unit) {
     showTopBar()
+
+    var title by remember { mutableStateOf("") }
+    var yearOfRelease by remember { mutableStateOf("") }
+    var director by remember { mutableStateOf("") }
+    var cast by remember { mutableStateOf("") }
+    var genre by remember { mutableStateOf("") }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -30,29 +38,28 @@ fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier, showTopBa
             verticalArrangement = Arrangement.spacedBy(70.dp)
         ) {
             TextField(
-
-                value = "",
-                onValueChange = {},
+                value = title,
+                onValueChange = { title = it },
                 label = { Text("Title") }
             )
             TextField(
-                value = "",
-                onValueChange = {},
+                value = yearOfRelease,
+                onValueChange = { yearOfRelease = it },
                 label = { Text("Year of Release") }
             )
             TextField(
-                value = "",
-                onValueChange = {},
+                value = director,
+                onValueChange = { director = it },
                 label = { Text("Director") }
             )
             TextField(
-                value = "",
-                onValueChange = {},
+                value = cast,
+                onValueChange = { cast = it },
                 label = { Text("Cast") }
             )
             TextField(
-                value = "",
-                onValueChange = {},
+                value = genre,
+                onValueChange = { genre = it },
                 label = { Text("Genre") }
             )
         }
@@ -69,7 +76,13 @@ fun AdvancedSearchScreen(query: String, modifier: Modifier = Modifier, showTopBa
             }
             Spacer(modifier = Modifier.width(60.dp))
             Button(
-                onClick = {},
+                onClick = {
+                    title = ""
+                    yearOfRelease = ""
+                    director = ""
+                    cast = ""
+                    genre = ""
+                },
                 modifier = Modifier.width(95.dp)
             ) {
                 Text("Clear")
