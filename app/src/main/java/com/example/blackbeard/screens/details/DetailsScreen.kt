@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -15,10 +17,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
@@ -48,6 +49,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -60,6 +63,8 @@ import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
+import java.text.NumberFormat
+import java.util.Currency
 import java.util.Locale
 
 @Composable
@@ -123,25 +128,52 @@ private fun MainContentLeftSide(
         }
     }
 }
-
+@OptIn(ExperimentalLayoutApi::class)
+@Preview(showBackground = true, device = Devices.PIXEL)
 @Composable
-private fun GenreContainer(genres: List<Genre>) {
-    LazyHorizontalGrid(rows = GridCells.Adaptive(minSize = 30.dp)) {
-        items(genres.size) {
-
+private fun GenreItemContainer(genres: List<Genre> = listOf(
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action"),
+    Genre(1, "Action")
+)) {
+    Box(
+        Modifier
+            .wrapContentSize()
+    ) {
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
+        ) {
+            genres.forEach { genre ->
+                GenreItem(genre)
+            }
         }
     }
 }
 
+@Preview(showBackground = true)
 @Composable
-private fun Genre(genre: Genre) {
+private fun GenreItem(genre: Genre = Genre(
+    1,
+    "Action"
+)) {
     Box(
         Modifier
-            .background(Color.Gray, shape = RoundedCornerShape(10.dp))
+            .wrapContentSize()
+            .background(Color.LightGray, shape = RoundedCornerShape(4.dp))
+            .padding(8.dp)
     ) {
         Text(
-            text = genre.name,
-            textAlign = TextAlign.Center
+            text = genre.name
         )
     }
 }
@@ -157,7 +189,7 @@ private fun MainContentRightSide(
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
+        verticalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterVertically),
         modifier = Modifier.padding(10.dp)
     ) {
         Text(
@@ -168,11 +200,7 @@ private fun MainContentRightSide(
             modifier = Modifier.fillMaxWidth()
         )
 
-        Text(
-            text = localMovie.genres.map { it.name }.joinToString(),
-            fontSize = 15.sp,
-            textAlign = TextAlign.Center,
-        )
+        GenreItemContainer(localMovie.genres)
         Text(
             text = localMovie.releaseDate.year.toString(),
             fontSize = 15.sp,
