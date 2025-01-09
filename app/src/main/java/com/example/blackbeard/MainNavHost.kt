@@ -58,10 +58,14 @@ fun MainNavHost(
                 onNavigateToAdvancedSearchScreen = {
                     navController.navigate(Route.AdvancedSearchScreen(it))
                 },
+                onNavigateToInterimSearchScreen = {
+                    navController.navigate("interimSearch")
+                },
                 modifier = Modifier.fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
-                })
+                }
+            )
         }
 
         composable<Route.SettingsScreen> { backStackEntry ->

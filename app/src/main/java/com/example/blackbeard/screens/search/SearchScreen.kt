@@ -51,6 +51,7 @@ import kotlinx.coroutines.launch
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onNavigateToAdvancedSearchScreen: (String) -> Unit,
+    onNavigateToInterimSearchScreen: () -> Unit,
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
 
@@ -65,12 +66,14 @@ fun SearchScreen(
         SearchUIModel.Empty -> SearchContent(
             modifier,
             searchQuery,
+            onNavigateToInterimSearchScreen,
             onNavigateToAdvancedSearchScreen,
             posterWidth,
             onNavigateToDetailsScreen,
             emptyList(),
             null,
-            searchViewModel
+            searchViewModel,
+            gridState
         )
 
         SearchUIModel.Loading -> LoadingScreen()
@@ -81,6 +84,7 @@ fun SearchScreen(
             SearchContent(
                 modifier,
                 searchQuery,
+                onNavigateToInterimSearchScreen,
                 onNavigateToAdvancedSearchScreen,
                 posterWidth,
                 onNavigateToDetailsScreen,
@@ -98,6 +102,7 @@ fun SearchScreen(
 private fun SearchContent(
     modifier: Modifier,
     searchQuery: MutableState<String>,
+    onNavigateToInterimSearchScreen: () -> Unit,
     onNavigateToAdvancedSearchScreen: (String) -> Unit,
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
@@ -114,7 +119,9 @@ private fun SearchContent(
             onSearchQueryChange = { query ->
                 searchViewModel.searchMovies(query, 1)
             },
-            onClickMenu = { onNavigateToAdvancedSearchScreen("Advanced Search") }
+            onClickMenu = { /* Handle menu click */ },
+            onCancel = { /* Handle cancel */ },
+            onSearchBarClick = onNavigateToInterimSearchScreen
         )
 
         LazyVerticalGrid(

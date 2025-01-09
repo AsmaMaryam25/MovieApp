@@ -1,5 +1,6 @@
 package com.example.blackbeard.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,7 +32,8 @@ fun SearchBar(
     onSearchQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     onClickMenu: (String) -> Unit = {},
-    onCancel: () -> Unit = {}
+    onCancel: () -> Unit = {},
+    onSearchBarClick: () -> Unit = {}
 ) {
     OutlinedTextField(
         value = searchQuery.value,
@@ -40,7 +42,8 @@ fun SearchBar(
         },
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable { onSearchBarClick() },
         placeholder = {
             Text(
                 "Search movie...",
