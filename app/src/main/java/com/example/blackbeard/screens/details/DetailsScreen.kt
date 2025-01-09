@@ -370,7 +370,10 @@ private fun DetailsContent(
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                             append("Revenue generated: ")
                         }
-                        append(localMovie.revenue.toString())
+                        val format: NumberFormat = NumberFormat.getCurrencyInstance()
+                        format.setMaximumFractionDigits(0)
+                        format.currency = Currency.getInstance("USD")
+                        append(format.format(localMovie.revenue))
                     },
                     fontSize = 15.sp
                 )
