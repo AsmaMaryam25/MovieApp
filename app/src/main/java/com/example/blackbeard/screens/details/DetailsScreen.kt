@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,8 +47,8 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -130,22 +129,8 @@ private fun MainContentLeftSide(
     }
 }
 @OptIn(ExperimentalLayoutApi::class)
-@Preview(showBackground = true, device = Devices.PIXEL)
 @Composable
-private fun GenreItemContainer(genres: List<Genre> = listOf(
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action"),
-    Genre(1, "Action")
-)) {
+private fun GenreItemContainer(genres: List<Genre>) {
     Box(
         Modifier
             .wrapContentSize()
@@ -161,12 +146,8 @@ private fun GenreItemContainer(genres: List<Genre> = listOf(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun GenreItem(genre: Genre = Genre(
-    1,
-    "Action"
-)) {
+private fun GenreItem(genre: Genre) {
     Box(
         Modifier
             .wrapContentSize()
@@ -417,7 +398,11 @@ private fun DetailsContent(
                 )
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(credits.cast.size) {
-                        Cast(Modifier, credits.cast[it])
+                        PersonPoster(
+                            name = credits.cast[it].name,
+                            description = credits.cast[it].character,
+                            profilePath = credits.cast[it].profilePath
+                        )
                     }
                 }
             }
@@ -433,7 +418,11 @@ private fun DetailsContent(
 
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(credits.crew.size) {
-                        Crew(Modifier, credits.crew[it])
+                        PersonPoster(
+                            name = credits.crew[it].name,
+                            description = credits.crew[it].job,
+                            profilePath = credits.crew[it].profilePath
+                        )
                     }
                 }
             }
@@ -483,20 +472,26 @@ private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) 
 }
 
 @Composable
-private fun Cast(modifier: Modifier, cast: Cast) {
+private fun PersonPoster(
+    modifier: Modifier = Modifier,
+    name: String,
+    profilePath: String?,
+    description: String
+    ) {
     Column(
-        Modifier.fillMaxHeight(),
+        Modifier
+            .width(130.dp)
+            .height(270.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Box(
             modifier = Modifier
-                .width(130.dp)
                 .aspectRatio(2 / 3f)
                 .clip(shape = RoundedCornerShape(30.dp))
                 .background(Color.Gray)
         ) {
             AsyncImage(
-                model = cast.profilePath,
+                model = profilePath,
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
@@ -505,52 +500,21 @@ private fun Cast(modifier: Modifier, cast: Cast) {
             )
         }
         Text(
-            text = cast.name,
+            text = name,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
-            modifier = modifier.width(100.dp),
+            modifier = modifier.fillMaxWidth(),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = cast.character,
+            text = description,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
-            modifier = modifier.width(100.dp),
-        )
-    }
-}
-
-@Composable
-private fun Crew(modifier: Modifier, crew: Crew) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Box(
-            modifier = Modifier
-                .width(130.dp)
-                .aspectRatio(2 / 3f)
-                .clip(shape = RoundedCornerShape(30.dp))
-                .background(Color.Gray)
-        ) {
-            AsyncImage(
-                model = crew.profilePath,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .clip(shape = RoundedCornerShape(30.dp)),
-                placeholder = ColorPainter(Color.Gray)
-            )
-        }
-        Text(
-            text = crew.name,
-            fontSize = 15.sp,
-            textAlign = TextAlign.Center,
-            modifier = modifier.width(100.dp),
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = crew.job,
-            fontSize = 15.sp,
-            textAlign = TextAlign.Center,
-            modifier = modifier.width(100.dp),
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            modifier = modifier.fillMaxWidth(),
         )
     }
 }
