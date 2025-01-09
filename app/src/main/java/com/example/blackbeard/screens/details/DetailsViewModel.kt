@@ -10,11 +10,9 @@ import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -39,28 +37,14 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 }
 
                 if (isInitiallyConnected) {
-                    val installationID = FirebaseInstallations.getInstance().id.await()
-                    getMovieDetails(installationID)
+                    getMovieDetails(FirebaseInstallations.getInstance().id.await())
                 } else {
                     mutableDetailsUIState.value = DetailsUIModel.NoConnection
                 }
             } catch (e: TimeoutCancellationException) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
 
-                initialConnectivityFlow
-                    .stateIn(
-                        viewModelScope,
-                        SharingStarted.WhileSubscribed(5000L),
-                        false
-                    )
-                    .collect { isConnected ->
-                        if (isConnected) {
-                            getMovieDetails()
-                        } else {
-                            mutableDetailsUIState.value = DetailsUIModel.NoConnection
-                        }
-                    }
-            }  catch (e: UnknownHostException){
+            } catch (e: UnknownHostException) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
             }
         }

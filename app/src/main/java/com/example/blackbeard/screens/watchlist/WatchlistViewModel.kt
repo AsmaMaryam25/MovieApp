@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.di.DataModule
-import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +45,7 @@ class WatchlistViewModel : ViewModel() {
 
             } catch (e: TimeoutCancellationException) {
                 mutableWatchlistUIState.value = WatchlistUIModel.NoConnection
-            } catch (e: UnknownHostException){
+            } catch (e: UnknownHostException) {
                 mutableWatchlistUIState.value = WatchlistUIModel.NoConnection
             }
         }
