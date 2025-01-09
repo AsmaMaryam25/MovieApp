@@ -1,5 +1,6 @@
 package com.example.blackbeard.screens.search
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,15 +10,23 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -41,17 +50,22 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
+import com.example.blackbeard.models.Category
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onNavigateToAdvancedSearchScreen: (String) -> Unit,
-    onNavigateToInterimSearchScreen: () -> Unit,
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
 
@@ -60,20 +74,16 @@ fun SearchScreen(
 
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
-    val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
+    val popularState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
 
     when (searchUIModel) {
         SearchUIModel.Empty -> SearchContent(
             modifier,
             searchQuery,
-            onNavigateToInterimSearchScreen,
-            onNavigateToAdvancedSearchScreen,
             posterWidth,
             onNavigateToDetailsScreen,
             emptyList(),
-            null,
-            searchViewModel,
-            gridState
+            searchViewModel
         )
 
         SearchUIModel.Loading -> LoadingScreen()
@@ -84,84 +94,158 @@ fun SearchScreen(
             SearchContent(
                 modifier,
                 searchQuery,
-                onNavigateToInterimSearchScreen,
-                onNavigateToAdvancedSearchScreen,
                 posterWidth,
                 onNavigateToDetailsScreen,
                 searchUIModel.collectionMovies,
-                searchUIModel.totalPages,
                 searchViewModel,
-                gridState
+                popularState
             )
         }
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
+@OptIn(ExperimentalLayoutApi::class, ExperimentalPagerApi::class)
 @Composable
 private fun SearchContent(
     modifier: Modifier,
     searchQuery: MutableState<String>,
-    onNavigateToInterimSearchScreen: () -> Unit,
-    onNavigateToAdvancedSearchScreen: (String) -> Unit,
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<Movie>,
-    totalPages: Int? = null,
     searchViewModel: SearchViewModel,
-    gridState: LazyGridState = rememberLazyGridState()
+    popularState: LazyGridState = rememberLazyGridState()
 ) {
     Column(
         modifier = modifier.fillMaxSize()
     ) {
+        var isSearchBarFocused by remember { mutableStateOf(false) }
+        val tabs = listOf("Recent", "Advance Search")
+        val coroutineScope = rememberCoroutineScope()
+        val pagerState = rememberPagerState()
+
         SearchBar(
             searchQuery = searchQuery,
             onSearchQueryChange = { query ->
                 searchViewModel.searchMovies(query, 1)
             },
-            onSearchBarClick = onNavigateToInterimSearchScreen
+            isSearchBarFocused = isSearchBarFocused,
+            onSearchBarFocusChange = { isFocused ->
+                isSearchBarFocused = isFocused
+            },
         )
 
-        LazyVerticalGrid(
-            state = gridState,
-            columns = GridCells.Adaptive(posterWidth)
-        ) {
+        if (!isSearchBarFocused) {
             if (collectionMovies.isEmpty()) {
-                item {
-                    Text(
-                        text = "No results found",
-                        modifier = Modifier.padding(10.dp)
-                    )
-                }
+                Text(
+                    text = "No results found",
+                    modifier = Modifier.padding(10.dp)
+                )
             } else {
-                items(collectionMovies.size) { index ->
-                    CreateSearchPoster(
-                        posterWidth = posterWidth,
-                        onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                        movie = collectionMovies[index]
-                    )
-                }
-            }
-
-            item(span = { GridItemSpan(2) }) {
-                if (searchViewModel.currentPage.intValue < (searchViewModel.totalPages.value
-                        ?: 0)
+                LazyVerticalGrid(
+                    state = popularState,
+                    columns = GridCells.Adaptive(posterWidth),
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    Button(
-                        onClick = {
-                            searchViewModel.searchMovies(
-                                searchQuery.value,
-                                searchViewModel.currentPage.intValue + 1
-                            )
-                        },
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 10.dp),
-                    ) {
-                        Text(text = "Load more")
+                    items(collectionMovies.size) { index ->
+                        CreateSearchPoster(
+                            posterWidth = posterWidth,
+                            onNavigateToDetailsScreen = onNavigateToDetailsScreen,
+                            movie = collectionMovies[index]
+                        )
                     }
                 }
             }
+        } else {
+            SearchTabs(
+                tabs = tabs,
+                pagerState = pagerState,
+                coroutineScope = coroutineScope
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+private fun SearchTabs(
+    tabs: List<String>,
+    pagerState: PagerState,
+    coroutineScope: CoroutineScope
+) {
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        TabContent(tabs, pagerState, coroutineScope)
+
+        HorizontalPager(
+            count = tabs.size,
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp)
+                .weight(1f)
+        ) { page ->
+            when (page) {
+                0 -> {
+                    Text("Feature in development", modifier = Modifier.fillMaxSize())
+                }
+
+                1 -> {
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalPagerApi::class)
+@Composable
+fun TabContent(
+    tabs: List<String>,
+    pagerState: PagerState,
+    coroutineScope: CoroutineScope
+) {
+
+    TabRow(
+        selectedTabIndex = pagerState.currentPage,
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+            .padding(horizontal = 12.dp),
+        contentColor = MaterialTheme.colorScheme.primary,
+        indicator = { tabPositions ->
+            Box(
+                modifier = Modifier
+                    .tabIndicatorOffset(tabPositions[pagerState.currentPage])
+                    .fillMaxWidth()
+                    .height(4.dp)
+                    .background(
+                        color = Color(0xFFFFD700),
+                        shape = RoundedCornerShape(topStartPercent = 50, topEndPercent = 50)
+                    )
+            )
+        },
+        divider = {}
+    ) {
+        tabs.forEachIndexed { index, title ->
+            Tab(
+                text = {
+                    Text(
+                        text = title,
+                        color = if (pagerState.currentPage == index) {
+                            MaterialTheme.colorScheme.onSurface
+                        } else {
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                        }
+                    )
+                },
+                selected = pagerState.currentPage == index,
+                onClick = {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(index)
+                    }
+                }
+            )
         }
     }
 }
@@ -173,9 +257,6 @@ private fun CreateSearchPoster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     movie: Movie
 ) {
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
-
     Column(
         modifier = modifier.padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -195,19 +276,7 @@ private fun CreateSearchPoster(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(enabled = isClickAble) {
-                        if (isClickAble) {
-                            onNavigateToDetailsScreen(
-                                movie.title,
-                                movie.id
-                            )
-                            isClickAble = false
-                            coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                isClickAble = true
-                            }
-                        }
-                    },
+                    .clickable(onClick = { onNavigateToDetailsScreen(movie.title, movie.id) }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
