@@ -1,11 +1,8 @@
 package com.example.blackbeard.screens.details
 
-import android.util.Log
-import android.util.Log.e
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
-import com.example.blackbeard.di.DataModule.movieRepository
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
@@ -13,16 +10,13 @@ import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
-import java.util.concurrent.CountDownLatch
 
 class DetailsViewModel(val movieId: Int) : ViewModel() {
 
@@ -113,8 +107,9 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 val newCurrentUserRatings = currentUserRatings.toMutableMap()
                 newCurrentUserRatings[installationID] = mapOf("rating" to rating)
 
-                if(currentUserRatings.containsKey(installationID)) {
-                    newRating = currentRating + rating - (currentUserRatings[installationID] as Map<*, *>)["rating"] as Double
+                if (currentUserRatings.containsKey(installationID)) {
+                    newRating =
+                        currentRating + rating - (currentUserRatings[installationID] as Map<*, *>)["rating"] as Double
                     newTotalRating = currentTotalRating
                 } else {
                     newRating = currentRating + rating

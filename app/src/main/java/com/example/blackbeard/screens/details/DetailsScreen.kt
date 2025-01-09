@@ -355,7 +355,11 @@ private fun DetailsContent(
 }
 
 @Composable
-private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel, installationID: String) {
+private fun CreateStars(
+    modifier: Modifier,
+    detailsViewModel: DetailsViewModel,
+    installationID: String
+) {
     val iconList = remember {
         mutableStateListOf(
             Icons.Outlined.StarOutline,

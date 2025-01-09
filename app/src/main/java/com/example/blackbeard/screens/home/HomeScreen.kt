@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -178,11 +177,11 @@ private fun CreatePoster(
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
                     .clickable(enabled = isClickAble) {
-                        if(isClickAble){
+                        if (isClickAble) {
                             onNavigateToDetailsScreen(
                                 collectionMovie.title,
                                 collectionMovie.id
-                        )
+                            )
                             isClickAble = false
                             coroutineScope.launch {
                                 kotlinx.coroutines.delay(1000)

@@ -138,8 +138,8 @@ fun CreateFavCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(enabled = isClickAble)  {
-                        if(isClickAble) {
+                    .clickable(enabled = isClickAble) {
+                        if (isClickAble) {
                             onNavigateToDetailsScreen(
                                 favoriteMovie.title,
                                 favoriteMovie.id.toInt()
