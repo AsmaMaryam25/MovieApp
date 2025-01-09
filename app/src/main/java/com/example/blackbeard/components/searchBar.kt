@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -29,7 +30,8 @@ fun SearchBar(
     searchQuery: MutableState<String>,
     onSearchQueryChange: (String) -> Unit,
     modifier: Modifier = Modifier,
-    onClickMenu: (String) -> Unit = {}
+    onClickMenu: (String) -> Unit = {},
+    onCancel: () -> Unit = {}
 ) {
     OutlinedTextField(
         value = searchQuery.value,
@@ -60,6 +62,16 @@ fun SearchBar(
                             imageVector = Icons.Default.Clear,
                             contentDescription = "Clear",
                             tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                } else {
+                    TextButton(onClick = {
+                        searchQuery.value = ""
+                        onCancel()
+                    }) {
+                        Text(
+                            text = "Cancel",
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
