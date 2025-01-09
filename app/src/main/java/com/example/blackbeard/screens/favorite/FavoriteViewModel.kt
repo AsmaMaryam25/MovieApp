@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class FavoriteViewModel : ViewModel() {
 
@@ -43,6 +45,8 @@ class FavoriteViewModel : ViewModel() {
 
 
             } catch (e: TimeoutCancellationException) {
+                mutableFavoriteUIState.value = FavoriteUIModel.NoConnection
+            } catch (e: UnknownHostException){
                 mutableFavoriteUIState.value = FavoriteUIModel.NoConnection
             }
         }
