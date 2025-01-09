@@ -64,6 +64,7 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import java.text.NumberFormat
+import java.time.LocalDate
 import java.util.Currency
 import java.util.Locale
 
@@ -324,7 +325,7 @@ private fun DetailsContent(
             HorizontalDivider()
         }
         item {
-            if (!localMovie.releaseDate.equals("")) {
+            if (localMovie.releaseDate != LocalDate.MIN) {
                 Text(
                     text = buildAnnotatedString {
                         withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
