@@ -86,7 +86,8 @@ fun DetailsScreen(
             detailsViewModel = detailsViewModel,
             isFavorite = detailsUIModel.isFavorite,
             isWatchList = detailsUIModel.isWatchlist,
-            averageRating = detailsUIModel.averageRating
+            averageRating = detailsUIModel.averageRating,
+            installationID = detailsUIModel.installationID
         )
     }
 }
@@ -101,7 +102,8 @@ private fun DetailsContent(
     detailsViewModel: DetailsViewModel,
     isFavorite: Boolean,
     isWatchList: Boolean,
-    averageRating: Double
+    averageRating: Double,
+    installationID: String
 ) {
 
     LaunchedEffect(Unit) {
@@ -134,7 +136,7 @@ private fun DetailsContent(
                         )
                     }
                     Row {
-                        CreateStars(Modifier, detailsViewModel)
+                        CreateStars(Modifier, detailsViewModel, installationID)
                     }
                 }
                 Column(
@@ -353,7 +355,7 @@ private fun DetailsContent(
 }
 
 @Composable
-private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) {
+private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel, installationID: String) {
     val iconList = remember {
         mutableStateListOf(
             Icons.Outlined.StarOutline,
@@ -379,7 +381,8 @@ private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) 
                             }
                             detailsViewModel.addRating(
                                 detailsViewModel.movieId.toString(),
-                                (i + 1).toDouble()
+                                (i + 1).toDouble(),
+                                installationID
                             )
                         }
                     }),
