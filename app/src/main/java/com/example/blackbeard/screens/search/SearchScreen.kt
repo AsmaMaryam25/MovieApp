@@ -119,8 +119,6 @@ private fun SearchContent(
             onSearchQueryChange = { query ->
                 searchViewModel.searchMovies(query, 1)
             },
-            onClickMenu = { /* Handle menu click */ },
-            onCancel = { /* Handle cancel */ },
             onSearchBarClick = onNavigateToInterimSearchScreen
         )
 

@@ -14,6 +14,7 @@ import com.example.blackbeard.screens.SettingsScreen
 import com.example.blackbeard.screens.details.DetailsScreen
 import com.example.blackbeard.screens.favorite.FavoriteScreen
 import com.example.blackbeard.screens.home.HomeScreen
+import com.example.blackbeard.screens.search.InterimSearchScreen
 import com.example.blackbeard.screens.search.SearchScreen
 import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
@@ -51,22 +52,21 @@ fun MainNavHost(
                 })
         }
 
-        composable<Route.SearchScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchScreen>()) }
-
+        composable<Route.SearchScreen> {
             SearchScreen(
-                onNavigateToAdvancedSearchScreen = {
-                    navController.navigate(Route.AdvancedSearchScreen(it))
-                },
                 onNavigateToInterimSearchScreen = {
+                    // This part absolutely must match your composable in the same graph
                     navController.navigate("interimSearch")
                 },
-                modifier = Modifier.fillMaxSize(),
+                onNavigateToAdvancedSearchScreen = { query ->
+                    navController.navigate(Route.AdvancedSearchScreen(query = query))
+                },
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 }
             )
         }
+
 
         composable<Route.SettingsScreen> { backStackEntry ->
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>()) }
@@ -124,6 +124,18 @@ fun MainNavHost(
                 query = backStackEntry.arguments?.getString("query")!!,
                 modifier = Modifier.fillMaxSize(),
                 showTopBar = showTopBar
+            )
+        }
+        composable("interimSearch") {
+            InterimSearchScreen(
+                onNavigateToRecentSearches = {
+                },
+                onNavigateToAdvancedSearch = {
+                    navController.navigate(Route.AdvancedSearchScreen(query = ""))
+                },
+                onCancelSearch = {
+                    navController.popBackStack()
+                }
             )
         }
     }
