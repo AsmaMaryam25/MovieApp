@@ -1,6 +1,5 @@
 package com.example.blackbeard.screens.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
@@ -42,7 +41,7 @@ class HomeViewModel : ViewModel() {
 
             } catch (e: TimeoutCancellationException) {
                 mutableHomeUIState.value = HomeUIModel.NoConnection
-            } catch (e: UnknownHostException){
+            } catch (e: UnknownHostException) {
                 mutableHomeUIState.value = HomeUIModel.NoConnection
             }
         }

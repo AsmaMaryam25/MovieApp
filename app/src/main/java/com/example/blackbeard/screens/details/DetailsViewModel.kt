@@ -5,16 +5,14 @@ import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
-import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
+import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -39,47 +37,20 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 }
 
                 if (isInitiallyConnected) {
-                    getMovieDetails()
+                    getMovieDetails(FirebaseInstallations.getInstance().id.await())
                 } else {
                     mutableDetailsUIState.value = DetailsUIModel.NoConnection
                 }
-
-                initialConnectivityFlow
-                    .stateIn(
-                        viewModelScope,
-                        SharingStarted.WhileSubscribed(5000L),
-                        isInitiallyConnected
-                    )
-                    .collect { isConnected ->
-                        if (isConnected) {
-                            getMovieDetails()
-                        } else {
-                            mutableDetailsUIState.value = DetailsUIModel.NoConnection
-                        }
-                    }
             } catch (e: TimeoutCancellationException) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
 
-                initialConnectivityFlow
-                    .stateIn(
-                        viewModelScope,
-                        SharingStarted.WhileSubscribed(5000L),
-                        false
-                    )
-                    .collect { isConnected ->
-                        if (isConnected) {
-                            getMovieDetails()
-                        } else {
-                            mutableDetailsUIState.value = DetailsUIModel.NoConnection
-                        }
-                    }
-            }  catch (e: UnknownHostException){
+            } catch (e: UnknownHostException) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
             }
         }
     }
 
-    private suspend fun getMovieDetails() {
+    private suspend fun getMovieDetails(installationID: String) {
         combine(
             movieRepository.getMovie(movieId),
             movieRepository.getCredits(movieId),
@@ -93,7 +64,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 videoLink,
                 favorites.any { it.id == movie.id.toString() },
                 watchlist.any { it.id == movie.id.toString() },
-                movieRepository.getAverageRating(movieId.toString())
+                movieRepository.getAverageRating(movieId.toString()),
+                installationID
             )
         }.collect { detailsUIModel ->
             mutableDetailsUIState.value = detailsUIModel
@@ -122,7 +94,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         }
     }
 
-    fun addRating(id: String, rating: Double) {
+    fun addRating(id: String, rating: Double, installationID: String) {
         viewModelScope.launch {
             val ratingsRef = firestore.collection("ratings").document(id)
 
@@ -131,10 +103,23 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 val currentData = snapshot.data
                 val currentRating = currentData?.get("rating") as Double
                 val currentTotalRating = currentData["totalRating"] as Double
+                val currentUserRatings = currentData["userRatings"] as Map<*, *>
 
-                val newRating = currentRating + rating
-                val newTotalRating = currentTotalRating + 1
+                var newRating: Double
+                var newTotalRating: Double
+                val newCurrentUserRatings = currentUserRatings.toMutableMap()
+                newCurrentUserRatings[installationID] = mapOf("rating" to rating)
+
+                if (currentUserRatings.containsKey(installationID)) {
+                    newRating =
+                        currentRating + rating - (currentUserRatings[installationID] as Map<*, *>)["rating"] as Double
+                    newTotalRating = currentTotalRating
+                } else {
+                    newRating = currentRating + rating
+                    newTotalRating = currentTotalRating + 1
+                }
                 val newAverageRating = newRating / newTotalRating
+
 
                 ratingsRef.update(
                     "rating",
@@ -142,14 +127,17 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                     "totalRating",
                     newTotalRating,
                     "averageRating",
-                    newAverageRating
+                    newAverageRating,
+                    "userRatings",
+                    newCurrentUserRatings
                 ).await()
                 updateAverageRating(newAverageRating)
             } else {
                 val initialData = mapOf(
                     "rating" to rating,
                     "totalRating" to 1.0,
-                    "averageRating" to rating
+                    "averageRating" to rating,
+                    "userRatings" to mapOf(installationID to mapOf("rating" to rating))
                 )
                 ratingsRef.set(initialData).await()
                 updateAverageRating(rating)
@@ -177,7 +165,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val videoLink: String? = null,
             val isFavorite: Boolean,
             val isWatchlist: Boolean,
-            val averageRating: Double
+            val averageRating: Double,
+            val installationID: String
         ) : DetailsUIModel()
     }
 }
