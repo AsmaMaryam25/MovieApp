@@ -85,6 +85,7 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.coilCompose)
     implementation(libs.coilNetworkOkhttp)
+    implementation(libs.firebaseInstallations)
 
     testImplementation(libs.junitJupiter)
     testRuntimeOnly(libs.junitPlatformLauncher)

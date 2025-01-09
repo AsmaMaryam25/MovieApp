@@ -41,36 +41,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 } else {
                     mutableDetailsUIState.value = DetailsUIModel.NoConnection
                 }
-
-                initialConnectivityFlow
-                    .stateIn(
-                        viewModelScope,
-                        SharingStarted.WhileSubscribed(5000L),
-                        isInitiallyConnected
-                    )
-                    .collect { isConnected ->
-                        if (isConnected) {
-                            getMovieDetails()
-                        } else {
-                            mutableDetailsUIState.value = DetailsUIModel.NoConnection
-                        }
-                    }
             } catch (e: TimeoutCancellationException) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
-
-                initialConnectivityFlow
-                    .stateIn(
-                        viewModelScope,
-                        SharingStarted.WhileSubscribed(5000L),
-                        false
-                    )
-                    .collect { isConnected ->
-                        if (isConnected) {
-                            getMovieDetails()
-                        } else {
-                            mutableDetailsUIState.value = DetailsUIModel.NoConnection
-                        }
-                    }
             }
         }
     }
