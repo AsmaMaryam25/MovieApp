@@ -248,11 +248,6 @@ private fun MainContentRightSide(
                     })
             )
         }
-        Spacer(
-            modifier = Modifier
-                .height(30.dp)
-                .fillMaxWidth()
-        )
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Icon(
                 imageVector = Icons.Filled.Star,
