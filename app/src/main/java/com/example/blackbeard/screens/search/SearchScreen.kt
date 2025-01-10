@@ -70,7 +70,7 @@ fun SearchScreen(
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
     val searchViewModel = viewModel<SearchViewModel>()
-    val searchUIModel = searchViewModel.searchUIState.collectAsState().value
+    val searchUIModel by searchViewModel.searchUIState.collectAsState()
     val recentSearches by searchViewModel.recentSearches
 
     val posterWidth = 170.dp
@@ -97,7 +97,7 @@ fun SearchScreen(
                 searchQuery,
                 posterWidth,
                 onNavigateToDetailsScreen,
-                searchUIModel.collectionMovies,
+                (searchUIModel as SearchUIModel.Data).collectionMovies,
                 searchViewModel,
                 popularState
             )
@@ -116,15 +116,15 @@ private fun SearchContent(
     searchViewModel: SearchViewModel,
     popularState: LazyGridState = rememberLazyGridState()
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    var isSearchBarFocused by remember { mutableStateOf(false) }
+    val tabs = listOf("Recent", "Advanced Search")
+    val pagerState = rememberPagerState()
+    val recentSearches by searchViewModel.recentSearches
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
-        var isSearchBarFocused by remember { mutableStateOf(false) }
-        val tabs = listOf("Recent", "Advanced Search")
-        val coroutineScope = rememberCoroutineScope()
-        val pagerState = rememberPagerState()
-        val recentSearches by searchViewModel.recentSearches
-
         SearchBar(
             searchQuery = searchQuery,
             onSearchQueryChange = { query ->

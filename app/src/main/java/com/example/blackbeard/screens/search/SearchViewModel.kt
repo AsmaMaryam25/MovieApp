@@ -94,7 +94,7 @@ class SearchViewModel() : ViewModel() {
         _recentSearches.value = _recentSearches.value.toMutableList().apply {
             if (!contains(query)) {
                 add(0, query)
-                if (size > 10) removeLast()
+                if (size > 10) removeAt(size - 1)
             }
         }
     }
