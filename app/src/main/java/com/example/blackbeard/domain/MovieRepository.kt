@@ -1,5 +1,6 @@
 package com.example.blackbeard.domain
 
+import com.example.blackbeard.R
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
 import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
@@ -131,13 +132,13 @@ class MovieRepository(
     }
 }
 
-private fun getImagePath(certification: String?): String {
+private fun getImageId(certification: String?): Int {
     return when (certification) {
-        "A" -> "det_tilladt_for_alle.png"
-        "7" -> "det_tilladt_for_alle__men_frar_des_b_rn_under_7__r.png"
-        "11" -> "tilladt_for_born_over_11r.png"
-        "15" -> "tilladt_for_b_rn_over_15__r.png"
-        else -> ""
+        "A" -> R.drawable.det_tilladt_for_alle
+        "7" -> R.drawable.det_tilladt_for_alle__men_frar_des_b_rn_under_7__r
+        "11" -> R.drawable.tilladt_for_born_over_11r
+        "15" -> R.drawable.tilladt_for_b_rn_over_15__r
+        else -> -1
     }
 }
 
@@ -257,12 +258,12 @@ fun CrewDao.mapToCrew() = Crew(
 
 fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
     rating = results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification,
-    imageName = getImagePath(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
+    imageResource = getImageId(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
 )
 
 fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
 
 fun ProviderDao.mapToStreamingService() = StreamingService(
-    logoPath = logoPath.orEmpty(),
+    logoPath = "https://image.tmdb.org/t/p/original/$logoPath",
     providerName = providerName.orEmpty()
 )

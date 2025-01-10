@@ -6,7 +6,6 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +19,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -51,18 +49,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
+import com.example.blackbeard.models.AgeRating
 import com.example.blackbeard.models.Cast
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.Crew
@@ -71,6 +67,7 @@ import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.models.ProductionCompany
 import com.example.blackbeard.models.ProductionCountry
 import com.example.blackbeard.models.SpokenLanguage
+import com.example.blackbeard.models.StreamingService
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
@@ -106,7 +103,9 @@ fun DetailsScreen(
             isWatchList = detailsUIModel.isWatchlist,
             averageRating = detailsUIModel.averageRating,
             genres = detailsUIModel.localMovie.genres,
-            onMovieRating = { rating -> detailsViewModel.addRating(movieId.toString(), rating) },
+            ageRating = detailsUIModel.ageRating,
+            streamingServices = detailsUIModel.streamingServices,
+            onMovieRating = { rating -> detailsViewModel.addRating(movieId.toString(), rating, detailsUIModel.installationID) },
             onWatchlistToggle = { detailsViewModel.toggleWatchlist(detailsUIModel.localMovie) },
             onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie)  }
         )
@@ -125,6 +124,8 @@ private fun MainContent(
     isFavorite: Boolean,
     isWatchList: Boolean,
     averageRating: Double,
+    streamingServices: List<StreamingService>,
+    ageRating: AgeRating,
     genres: List<Genre>,
     onMovieRating: (Double) -> Unit,
     onWatchlistToggle: () -> Unit,
@@ -132,6 +133,17 @@ private fun MainContent(
 ) {
 
     var shouldBeSticky by remember { mutableStateOf(true) }
+
+    val simpleContent = @Composable {
+        SimpleContent(
+            genres = genres,
+            title = localMovie.originalTitle,
+            overview = localMovie.overview,
+            posterPath = localMovie.posterPath,
+            ageRating = ageRating,
+            onTextExpand = { shouldBeSticky = !shouldBeSticky }
+        )
+    }
 
     LaunchedEffect(Unit) {
         setVideoLink(videoLink)
@@ -147,23 +159,11 @@ private fun MainContent(
         ) {
             if(shouldBeSticky) {
                 stickyHeader{
-                    SimpleContent(
-                        genres = genres,
-                        title = localMovie.originalTitle,
-                        overview = localMovie.overview,
-                        posterPath = localMovie.posterPath,
-                        onTextExpand = { shouldBeSticky = !shouldBeSticky }
-                    )
+                    simpleContent()
                 }
             } else {
                 item {
-                    SimpleContent(
-                        genres = genres,
-                        title = localMovie.title,
-                        overview = localMovie.overview,
-                        posterPath = localMovie.posterPath,
-                        onTextExpand = { shouldBeSticky = !shouldBeSticky }
-                    )
+                    simpleContent()
                 }
             }
 
@@ -173,6 +173,7 @@ private fun MainContent(
                     credits = credits,
                     userRatings = 10,
                     averageRating = averageRating,
+                    streamingServices = streamingServices,
                     onMovieRating = onMovieRating,
                     isFavorite = isFavorite,
                     isWatchList = isWatchList,
@@ -190,6 +191,7 @@ private fun SimpleContent(
     title: String,
     overview: String?,
     posterPath: String?,
+    ageRating: AgeRating,
     onTextExpand: () -> Unit
 ) {
     Column(
@@ -213,7 +215,12 @@ private fun SimpleContent(
                 .padding(top = 20.dp, bottom = 10.dp),
             title = title
         )
-        GenreItemContainer(genres)
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            AgeRatingIcon(ageRating = ageRating)
+            GenreItemContainer(genres)
+        }
         CollapsibleBodyText(
             text = overview,
             onTextExpand = onTextExpand
@@ -222,11 +229,51 @@ private fun SimpleContent(
 }
 
 @Composable
+private fun AgeRatingIcon(ageRating: AgeRating) {
+    if(ageRating.imageResource == -1) return;
+    Image(
+        modifier = Modifier.size(50.dp),
+        painter = painterResource(ageRating.imageResource),
+        contentDescription = "Age rating icon"
+    )
+}
+
+@Composable
+private fun StreamingServicesSection(streamingServices: List<StreamingService>) {
+    Text(
+        text = "Stream Services",
+        style = MaterialTheme.typography.titleMedium,
+        fontWeight = FontWeight.Bold
+    )
+    Row {
+        Text(
+            modifier = Modifier.weight(0.4f),
+            text = "See where you can see the movie on your favorite streaming services",
+            style = MaterialTheme.typography.titleSmall
+        )
+
+        LazyRow(
+            modifier = Modifier.weight(0.6f),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End),
+        ) {
+            items(streamingServices) { streamingService ->
+                AsyncImage(
+                    model = streamingService.logoPath,
+                    contentDescription = streamingService.providerName.plus(" logo")
+                )
+            }
+        }
+    }
+
+}
+
+@Composable
 private fun SecondaryContent(
     localMovie: LocalMovie,
     credits: Credits,
     userRatings: Int,
     averageRating: Double,
+    streamingServices: List<StreamingService>,
     isFavorite: Boolean,
     isWatchList: Boolean,
     onMovieRating: (Double) -> Unit,
@@ -234,6 +281,7 @@ private fun SecondaryContent(
     onBookmarkToggle: () -> Unit
 ) {
     val sections = listOf<@Composable () -> Unit>(
+        { StreamingServicesSection(streamingServices) },
         { SaveAndBookmarkSection(
             isFavorite = isFavorite,
             isWatchList = isWatchList,
