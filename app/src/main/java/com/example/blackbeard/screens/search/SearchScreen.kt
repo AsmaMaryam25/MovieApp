@@ -120,7 +120,7 @@ private fun SearchContent(
         modifier = modifier.fillMaxSize()
     ) {
         var isSearchBarFocused by remember { mutableStateOf(false) }
-        val tabs = listOf("Recent", "Advance Search")
+        val tabs = listOf("Recent", "Advanced Search")
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
         val recentSearches by searchViewModel.recentSearches
