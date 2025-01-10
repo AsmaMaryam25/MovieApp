@@ -1,6 +1,6 @@
 package com.example.blackbeard.models
 
-data class AgeRating (
+data class AgeRating(
     val rating: String?,
     val imageName: String
 )

@@ -88,9 +88,14 @@ class MovieRepository(
             ?.filter { it.official == true && it.type == "Trailer" && it.site == "YouTube" }
             ?.firstOrNull()?.key)
     }
+
     fun getStreamingServices(externalId: Int): Flow<List<StreamingService>?> = flow {
         try {
-            emit(remoteMovieDataSource.getStreamingServices(externalId.toString()).results?.getValue("DK")?.mapToStreamingServices())
+            emit(
+                remoteMovieDataSource.getStreamingServices(externalId.toString()).results?.getValue(
+                    "DK"
+                )?.mapToStreamingServices()
+            )
         } catch (e: NoSuchElementException) {
             emit(emptyList())
         }
@@ -114,7 +119,7 @@ class MovieRepository(
 
     suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
 
-    suspend fun getAverageRating(id: String): Double{
+    suspend fun getAverageRating(id: String): Double {
         val ratingsRef = firestore.collection("ratings").document(id)
         val snapshot = ratingsRef.get().await()
         return if (snapshot.exists()) {
