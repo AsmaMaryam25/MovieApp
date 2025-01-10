@@ -220,6 +220,7 @@ private fun SimpleContent(
         ) {
             AgeRatingIcon(ageRating = ageRating)
             GenreItemContainer(genres)
+            Box(Modifier.width(50.dp))
         }
         CollapsibleBodyText(
             text = overview,
@@ -636,8 +637,9 @@ private fun GenreItemContainer(genres: List<Genre>) {
 
     LazyRow(
         modifier = Modifier
-            .padding(vertical = 10.dp),
-        horizontalArrangement = Arrangement.spacedBy(5.dp)
+            .padding(vertical = 10.dp)
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
     ) {
         items(genres) { genre ->
             GenreItem(genre)
@@ -649,7 +651,6 @@ private fun GenreItemContainer(genres: List<Genre>) {
 private fun GenreItem(genre: Genre) {
     Box(
         Modifier
-            .wrapContentSize()
             .background(Color.Gray, shape = RoundedCornerShape(4.dp))
             .padding(4.dp)
     ) {
@@ -718,7 +719,7 @@ private fun PersonPoster(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxSize()
-                    .clip(shape = RoundedCornerShape(30.dp)),
+                    .clip(shape = RoundedCornerShape(12.dp)),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
