@@ -89,6 +89,9 @@ class MovieRepository(
             ?.filter { it.official == true && it.type == "Trailer" && it.site == "YouTube" }
             ?.firstOrNull()?.key)
     }
+    fun getStreamingServices(externalId: Int): Flow<StreamingServices> = flow {
+        emit(remoteMovieDataSource.getStreamingServices(externalId.toString()).mapToStreamingServices())
+    }
 
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
 
@@ -104,7 +107,7 @@ class MovieRepository(
 
     suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
 
-    suspend fun getAverageRating(id: String): Double {
+    suspend fun getAverageRating(id: String): Double{
         val ratingsRef = firestore.collection("ratings").document(id)
         val snapshot = ratingsRef.get().await()
         return if (snapshot.exists()) {
@@ -228,4 +231,16 @@ fun CrewDao.mapToCrew() = Crew(
     profilePath = "https://image.tmdb.org/t/p/original/${profilePath.orEmpty()}",
     department = department.orEmpty(),
     job = job.orEmpty()
+)
+
+fun StreamingDao.mapToStreamingservice() = StreamingService(
+    link = link?: "",
+    providerId = providerId ?: 0,
+    logoPath = logoPath ?: "",
+    providerName = providerName ?: "",
+    displayPriority = displayPriority ?: 0
+)
+
+fun StreamingservicesDao.mapToStreamingServices() = StreamingServices(
+    results = results?.map { it.mapToStreamingservice() } ?: emptyList()
 )

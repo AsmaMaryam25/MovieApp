@@ -5,6 +5,7 @@ import com.example.blackbeard.data.model.CreditsDao
 import com.example.blackbeard.data.model.MovieDao
 import com.example.blackbeard.data.model.QueryDao
 import com.example.blackbeard.data.model.VideosDao
+import com.example.blackbeard.data.model.StreamingservicesDao
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -55,4 +56,10 @@ interface MovieApiService {
         @Query("page") pageNum: Int,
         @Query("api_key") apiKey: String
     ): QueryDao
+
+    @GET("movie/{external_id}")
+    suspend fun getStreamingServices(
+        @Path("external_id") externalId: String,
+        @Query("api_key") apiKey: String
+    ): StreamingservicesDao
 }
