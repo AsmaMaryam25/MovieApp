@@ -120,7 +120,7 @@ private fun SearchContent(
                     horizontalArrangement = Arrangement.Center
                 ) {
                     collectionMovies.forEach { movie ->
-                        CreateSearchPoster(
+                        SearchPoster(
                             posterWidth = posterWidth,
                             onNavigateToDetailsScreen = onNavigateToDetailsScreen,
                             movie = movie
@@ -133,7 +133,7 @@ private fun SearchContent(
 }
 
 @Composable
-private fun CreateSearchPoster(
+private fun SearchPoster(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,

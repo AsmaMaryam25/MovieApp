@@ -94,7 +94,7 @@ private fun WatchlistContent(
             }
         } else {
             items(watchlist.size) { index ->
-                CreateWatchlistCard(
+                WishlistCard(
                     posterWidth,
                     onNavigateToDetailsScreen = onNavigateToDetailsScreen,
                     watchlistMovie = watchlist[index]
@@ -110,7 +110,7 @@ private fun WatchlistContent(
 }
 
 @Composable
-fun CreateWatchlistCard(
+fun WishlistCard(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,

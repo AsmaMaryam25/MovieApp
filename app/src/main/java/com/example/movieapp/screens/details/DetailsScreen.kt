@@ -137,7 +137,7 @@ private fun DetailsContent(
                         )
                     }
                     Row {
-                        CreateStars(Modifier, detailsViewModel)
+                        Stars(Modifier, detailsViewModel)
                     }
                 }
                 Column(
@@ -313,7 +313,7 @@ private fun DetailsContent(
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(5) {
-                        CreateCast(Modifier, credits.cast[it])
+                        Cast(Modifier, credits.cast[it])
                     }
                 }
             }
@@ -329,7 +329,7 @@ private fun DetailsContent(
             item {
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     items(5) {
-                        CreateCrew(Modifier, credits.crew[it])
+                        Crew(Modifier, credits.crew[it])
                     }
                 }
             }
@@ -338,7 +338,7 @@ private fun DetailsContent(
 }
 
 @Composable
-private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) {
+private fun Stars(modifier: Modifier, detailsViewModel: DetailsViewModel) {
     val iconList = remember {
         mutableStateListOf(
             Icons.Outlined.StarOutline,
@@ -374,7 +374,7 @@ private fun CreateStars(modifier: Modifier, detailsViewModel: DetailsViewModel) 
 }
 
 @Composable
-private fun CreateCast(modifier: Modifier, cast: Cast) {
+private fun Cast(modifier: Modifier, cast: Cast) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier
@@ -409,7 +409,7 @@ private fun CreateCast(modifier: Modifier, cast: Cast) {
 }
 
 @Composable
-private fun CreateCrew(modifier: Modifier, crew: Crew) {
+private fun Crew(modifier: Modifier, crew: Crew) {
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Box(
             modifier = Modifier

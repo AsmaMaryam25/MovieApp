@@ -93,7 +93,7 @@ private fun FavoriteContent(
             }
         } else {
             items(favorites.size) { index ->
-                CreateFavCard(
+                FavCard(
                     posterWidth,
                     onNavigateToDetailsScreen = onNavigateToDetailsScreen,
                     favoriteMovie = favorites[index]
@@ -109,7 +109,7 @@ private fun FavoriteContent(
 }
 
 @Composable
-fun CreateFavCard(
+fun FavCard(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,

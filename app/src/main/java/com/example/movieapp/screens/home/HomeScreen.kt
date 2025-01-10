@@ -77,7 +77,7 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.nowPlayingCollectionMovies)
+                Posters(onNavigateToDetailsScreen, homeUIModel.nowPlayingCollectionMovies)
             }
         }
 
@@ -87,7 +87,7 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.popularCollectionMovies)
+                Posters(onNavigateToDetailsScreen, homeUIModel.popularCollectionMovies)
             }
         }
 
@@ -97,7 +97,7 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.topRatedCollectionMovies)
+                Posters(onNavigateToDetailsScreen, homeUIModel.topRatedCollectionMovies)
             }
         }
 
@@ -107,14 +107,14 @@ private fun HomeContent(
 
         item {
             if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(onNavigateToDetailsScreen, homeUIModel.upcomingCollectionMovies)
+                Posters(onNavigateToDetailsScreen, homeUIModel.upcomingCollectionMovies)
             }
         }
     }
 }
 
 @Composable
-private fun CreatePoster(
+private fun Poster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     posterWidth: Dp = 300.dp,
     collectionMovie: CollectionMovie
@@ -197,7 +197,7 @@ fun TitleText(text: String, modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CreatePosters(
+fun Posters(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<CollectionMovie>
 ) {
@@ -212,7 +212,7 @@ fun CreatePosters(
         contentPadding = PaddingValues(start = 60.dp, end = 60.dp)
     ) {
         items(collectionMovies.size) { index ->
-            CreatePoster(onNavigateToDetailsScreen, 300.dp, collectionMovies[index])
+            Poster(onNavigateToDetailsScreen, 300.dp, collectionMovies[index])
         }
     }
 
