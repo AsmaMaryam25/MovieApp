@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.activityCompose)
     implementation(libs.datastorePreferences)
 
+    implementation(libs.uiToolingPreview)
+
     implementation(platform(libs.composeBom))
     implementation(libs.composeUi)
     implementation(libs.composeUiGraphics)
