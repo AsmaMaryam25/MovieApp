@@ -88,8 +88,12 @@ class MovieRepository(
             ?.filter { it.official == true && it.type == "Trailer" && it.site == "YouTube" }
             ?.firstOrNull()?.key)
     }
-    fun getStreamingServices(externalId: Int): Flow<StreamingServices> = flow {
-        emit(remoteMovieDataSource.getStreamingServices(externalId.toString()).mapToStreamingServices())
+    fun getStreamingServices(externalId: Int): Flow<List<StreamingService>?> = flow {
+        try {
+            emit(remoteMovieDataSource.getStreamingServices(externalId.toString()).results?.getValue("DK")?.mapToStreamingServices())
+        } catch (e: NoSuchElementException) {
+            emit(emptyList())
+        }
     }
 
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
@@ -251,14 +255,9 @@ fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
     imageName = getImagePath(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
 )
 
-fun StreamingDao.mapToStreamingService() = StreamingService(
-    link = link?: "",
-    providerId = providerId ?: 0,
-    logoPath = logoPath ?: "",
-    providerName = providerName ?: "",
-    displayPriority = displayPriority ?: 0
-)
+fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
 
-fun StreamingservicesDao.mapToStreamingServices() = StreamingServices(
-    results = results?.map { it.mapToStreamingService() } ?: emptyList()
+fun ProviderDao.mapToStreamingService() = StreamingService(
+    logoPath = logoPath.orEmpty(),
+    providerName = providerName.orEmpty()
 )

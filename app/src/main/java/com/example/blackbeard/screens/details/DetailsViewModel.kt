@@ -7,8 +7,7 @@ import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.AgeRating
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
-import com.example.blackbeard.models.Movie
-import com.example.blackbeard.models.StreamingServices
+import com.example.blackbeard.models.StreamingService
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.TimeoutCancellationException
@@ -72,7 +71,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val favorites = results[3] as List<MovieItem>
             val watchlist = results[4] as List<MovieItem>
             val ageRating = results[5] as AgeRating
-            val streamingServices = results[6] as StreamingServices
+            val streamingServices = results[6] as List<StreamingService>
 
             DetailsUIModel.Data(
                 movie,
@@ -186,7 +185,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val averageRating: Double,
             val installationID: String,
             val ageRating: AgeRating,
-            val streamingServices: StreamingServices
+            val streamingServices: List<StreamingService>
         ) : DetailsUIModel()
     }
 }

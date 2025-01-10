@@ -4,9 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class StreamingservicesDao (
-
+data class StreamingServicesDao(
+    @SerialName("id")
+    val id: Int? = 0,
     @SerialName("results")
-    val results: List<StreamingDao>? = emptyList()
-
+    val results: Map<String, CountryDao>? = emptyMap()
 )
