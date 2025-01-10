@@ -2,9 +2,13 @@ package com.example.blackbeard.screens.details
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.models.AgeRating
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
+import com.example.blackbeard.models.Movie
+import com.example.blackbeard.models.StreamingServices
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import com.google.firebase.installations.FirebaseInstallations
 import kotlinx.coroutines.TimeoutCancellationException
@@ -51,13 +55,25 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
     }
 
     private suspend fun getMovieDetails(installationID: String) {
-        combine(
+        val flows = listOf(
             movieRepository.getMovie(movieId),
             movieRepository.getCredits(movieId),
             movieRepository.getVideoLink(movieId),
             movieRepository.getFavorites(),
             movieRepository.getWatchlist(),
-        ) { movie, credits, videoLink, favorites, watchlist ->
+            movieRepository.getAgeRating(movieId),
+            movieRepository.getStreamingServices(movieId)
+        )
+
+        combine(flows) { results ->
+            val movie = results[0] as LocalMovie
+            val credits = results[1] as Credits
+            val videoLink = results[2] as String?
+            val favorites = results[3] as List<MovieItem>
+            val watchlist = results[4] as List<MovieItem>
+            val ageRating = results[5] as AgeRating
+            val streamingServices = results[6] as StreamingServices
+
             DetailsUIModel.Data(
                 movie,
                 credits,
@@ -65,7 +81,9 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 favorites.any { it.id == movie.id.toString() },
                 watchlist.any { it.id == movie.id.toString() },
                 movieRepository.getAverageRating(movieId.toString()),
-                installationID
+                installationID,
+                ageRating,
+                streamingServices
             )
         }.collect { detailsUIModel ->
             mutableDetailsUIState.value = detailsUIModel
@@ -166,7 +184,9 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val isFavorite: Boolean,
             val isWatchlist: Boolean,
             val averageRating: Double,
-            val installationID: String
+            val installationID: String,
+            val ageRating: AgeRating,
+            val streamingServices: StreamingServices
         ) : DetailsUIModel()
     }
 }
