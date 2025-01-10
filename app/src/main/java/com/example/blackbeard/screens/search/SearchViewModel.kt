@@ -1,5 +1,7 @@
 package com.example.blackbeard.screens.search
 
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class SearchViewModel() : ViewModel() {
 
@@ -23,6 +26,11 @@ class SearchViewModel() : ViewModel() {
     val searchUIState: StateFlow<SearchUIModel> = mutableSearchUIState
     var popularMovies: List<CollectionMovie> = emptyList()
     val initialConnectivityFlow: Flow<Boolean> = isConnected
+    var currentPage = mutableIntStateOf(1)
+        private set
+
+    var totalPages = mutableStateOf<Int?>(null)
+
 
     init {
         viewModelScope.launch {
@@ -65,6 +73,8 @@ class SearchViewModel() : ViewModel() {
                     }
                 }
 
+            } catch (e: UnknownHostException) {
+                mutableSearchUIState.value = SearchUIModel.NoConnection
             }
         }
     }
@@ -73,19 +83,39 @@ class SearchViewModel() : ViewModel() {
         mutableSearchUIState.value = SearchUIModel.Loading
         movieRepository.getPopularMovies().collect { popular ->
             popularMovies = popular
-            mutableSearchUIState.value = SearchUIModel.Data(popular)
+            mutableSearchUIState.value = SearchUIModel.Data(popular, 1)
         }
     }
 
-    fun searchMovies(query: String) {
+    fun searchMovies(query: String, pageNum: Int) {
         viewModelScope.launch {
+            if (query.isBlank()) {
+                mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
+                currentPage.intValue = 1
+                totalPages.value = 0
+                return@launch
+            }
+
+            val currentMovies =
+                (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies ?: emptyList()
+
             mutableSearchUIState.value = SearchUIModel.Loading
-            movieRepository.searchMovies(query).collect { searchResults ->
-                mutableSearchUIState.value = if (searchResults.isEmpty()) {
-                    SearchUIModel.Data(popularMovies)
+
+            movieRepository.searchMovies(query, pageNum).collect { searchResults ->
+                val updatedMovies =
+                    if (pageNum == 1) {
+                        searchResults.movies
+                    } else {
+                        currentMovies + searchResults.movies
+                    }
+
+                mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
+                    SearchUIModel.Empty
                 } else {
-                    SearchUIModel.Data(searchResults)
+                    SearchUIModel.Data(updatedMovies, searchResults.totalPages)
                 }
+                totalPages.value = searchResults.totalPages
+                currentPage.intValue = pageNum
             }
         }
     }
@@ -95,7 +125,8 @@ class SearchViewModel() : ViewModel() {
         data object Loading : SearchUIModel()
         data object NoConnection : SearchUIModel()
         data class Data(
-            val collectionMovies: List<Movie>
+            val collectionMovies: List<Movie>,
+            val totalPages: Int?
         ) : SearchUIModel()
     }
 }

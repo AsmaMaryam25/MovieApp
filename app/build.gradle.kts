@@ -87,6 +87,14 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.coilCompose)
     implementation(libs.coilNetworkOkhttp)
+    implementation(libs.firebaseInstallations)
+
+    testImplementation(libs.junitJupiter)
+    testRuntimeOnly(libs.junitPlatformLauncher)
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoKotlin)
+    androidTestImplementation(libs.mockitoAndroid)
+    testImplementation(libs.kotlinxCoroutinesTest)
 
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeUiTestManifest)

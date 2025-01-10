@@ -3,6 +3,7 @@ package com.example.blackbeard.di
 import android.annotation.SuppressLint
 import android.content.Context
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
+import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
 import com.example.blackbeard.domain.MovieRepository
@@ -35,16 +36,21 @@ object DataModule {
     @SuppressLint("StaticFieldLeak")
     private lateinit var localWatchlistMovieDataSource: WatchListMovieDataSource
 
+    @SuppressLint("StaticFieldLeak")
+    private lateinit var localThemeDataSource: ThemeDataSource
+
     lateinit var movieRepository: MovieRepository
 
     fun initialize(context: Context) {
         localFavoriteMovieDataSource = FavoriteMovieDataSource(context)
         localWatchlistMovieDataSource = WatchListMovieDataSource(context)
+        localThemeDataSource = ThemeDataSource(context)
         val firestore = FirebaseFirestore.getInstance()
         movieRepository = MovieRepository(
             remoteMovieDataSource,
             localFavoriteMovieDataSource,
             localWatchlistMovieDataSource,
+            localThemeDataSource,
             firestore
         )
     }

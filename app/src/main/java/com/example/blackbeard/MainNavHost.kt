@@ -23,7 +23,6 @@ fun MainNavHost(
     onRouteChanged: (Route) -> Unit,
     modifier: Modifier = Modifier,
     showTopBar: () -> Unit,
-    toggleDarkTheme: () -> Unit,
     setVideoLink: (String?) -> Unit
 ) {
     NavHost(
@@ -99,7 +98,6 @@ fun MainNavHost(
 
             AppearanceScreen(
                 showTopBar = showTopBar,
-                toggleDarkTheme = toggleDarkTheme,
                 modifier = Modifier.fillMaxSize()
             )
         }

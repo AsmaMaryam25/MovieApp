@@ -1,6 +1,7 @@
 package com.example.blackbeard.domain
 
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
+import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
 import com.example.blackbeard.data.model.*
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
@@ -16,6 +17,7 @@ class MovieRepository(
     private val remoteMovieDataSource: RemoteMovieDataSource,
     private val localFavoriteMovieDataSource: FavoriteMovieDataSource,
     private val localWatchlistMovieDataSource: WatchListMovieDataSource,
+    private val localThemeDataSource: ThemeDataSource,
     val firestore: FirebaseFirestore
 ) {
     val movieGenres = mapOf(
@@ -60,9 +62,14 @@ class MovieRepository(
             ?.map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) } ?: emptyList())
     }
 
-    fun searchMovies(query: String): Flow<List<SearchMovie>> = flow {
-        emit(remoteMovieDataSource.searchMovies(query).results
-            ?.map { it.mapToMovie() } ?: emptyList())
+    fun searchMovies(query: String, pageNum: Int): Flow<MovieSearchResult> = flow {
+        val response = remoteMovieDataSource.searchMovies(query, pageNum)
+
+        val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
+
+        val totalPages = response.totalPages
+
+        emit(MovieSearchResult(movies, totalPages))
     }
 
     fun getMovie(externalId: Int): Flow<LocalMovie> = flow {
@@ -82,6 +89,18 @@ class MovieRepository(
             ?.firstOrNull()?.key)
     }
 
+    fun getStreamingServices(externalId: Int): Flow<List<StreamingService>?> = flow {
+        try {
+            emit(
+                remoteMovieDataSource.getStreamingServices(externalId.toString()).results?.getValue(
+                    "DK"
+                )?.mapToStreamingServices()
+            )
+        } catch (e: NoSuchElementException) {
+            emit(emptyList())
+        }
+    }
+
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
 
     suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) =
@@ -92,6 +111,14 @@ class MovieRepository(
     suspend fun toggleWatchlist(id: String?, title: String, posterPath: String?, rating: Double) =
         localWatchlistMovieDataSource.toggleWatchlist(id, title, posterPath, rating)
 
+    fun getTheme() = localThemeDataSource.isDarkModeEnabled()
+
+    fun getAgeRating(externalId: Int): Flow<AgeRating> = flow {
+        emit(remoteMovieDataSource.getReleaseDates(externalId.toString()).mapToAgeRating())
+    }
+
+    suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
+
     suspend fun getAverageRating(id: String): Double {
         val ratingsRef = firestore.collection("ratings").document(id)
         val snapshot = ratingsRef.get().await()
@@ -101,6 +128,16 @@ class MovieRepository(
         } else {
             0.0
         }
+    }
+}
+
+private fun getImagePath(certification: String?): String {
+    return when (certification) {
+        "A" -> "det_tilladt_for_alle.png"
+        "7" -> "det_tilladt_for_alle__men_frar_des_b_rn_under_7__r.png"
+        "11" -> "tilladt_for_born_over_11r.png"
+        "15" -> "tilladt_for_b_rn_over_15__r.png"
+        else -> ""
     }
 }
 
@@ -216,4 +253,16 @@ fun CrewDao.mapToCrew() = Crew(
     profilePath = "https://image.tmdb.org/t/p/original/${profilePath.orEmpty()}",
     department = department.orEmpty(),
     job = job.orEmpty()
+)
+
+fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
+    rating = results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification,
+    imageName = getImagePath(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
+)
+
+fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
+
+fun ProviderDao.mapToStreamingService() = StreamingService(
+    logoPath = logoPath.orEmpty(),
+    providerName = providerName.orEmpty()
 )

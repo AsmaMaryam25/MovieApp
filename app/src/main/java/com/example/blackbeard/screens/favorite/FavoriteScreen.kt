@@ -22,6 +22,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -38,7 +43,9 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.favorite.FavoriteViewModel.FavoriteUIModel
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 @Composable
@@ -52,7 +59,7 @@ fun FavoriteScreen(
     when (favoriteUIModel) {
         FavoriteUIModel.Empty -> EmptyScreen()
         FavoriteUIModel.Loading -> LoadingScreen()
-
+        FavoriteUIModel.NoConnection -> NoConnectionScreen()
         is FavoriteUIModel.Data -> FavoriteContent(
             onNavigateToDetailsScreen,
             modifier,
@@ -111,6 +118,8 @@ fun CreateFavCard(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     favoriteMovie: MovieItem
 ) {
+    var isClickAble by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically
@@ -129,12 +138,19 @@ fun CreateFavCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(onClick = {
-                        onNavigateToDetailsScreen(
-                            favoriteMovie.title,
-                            favoriteMovie.id.toInt()
-                        )
-                    }),
+                    .clickable(enabled = isClickAble) {
+                        if (isClickAble) {
+                            onNavigateToDetailsScreen(
+                                favoriteMovie.title,
+                                favoriteMovie.id.toInt()
+                            )
+                            isClickAble = false
+                            coroutineScope.launch {
+                                kotlinx.coroutines.delay(1000)
+                                isClickAble = true
+                            }
+                        }
+                    },
                 placeholder = ColorPainter(Color.Gray)
             )
         }
