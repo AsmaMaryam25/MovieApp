@@ -62,15 +62,16 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
     onNavigateToAdvancedSearchScreen: (String) -> Unit,
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
-
     val searchViewModel = viewModel<SearchViewModel>()
     val searchUIModel = searchViewModel.searchUIState.collectAsState().value
+    val recentSearches by searchViewModel.recentSearches
 
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
@@ -122,6 +123,7 @@ private fun SearchContent(
         val tabs = listOf("Recent", "Advance Search")
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
+        val recentSearches by searchViewModel.recentSearches
 
         SearchBar(
             searchQuery = searchQuery,
@@ -160,7 +162,8 @@ private fun SearchContent(
             SearchTabs(
                 tabs = tabs,
                 pagerState = pagerState,
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                recentSearches = recentSearches
             )
         }
     }
@@ -171,7 +174,8 @@ private fun SearchContent(
 private fun SearchTabs(
     tabs: List<String>,
     pagerState: PagerState,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    recentSearches: List<String>
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -188,7 +192,17 @@ private fun SearchTabs(
         ) { page ->
             when (page) {
                 0 -> {
-                    Text("Feature in development", modifier = Modifier.fillMaxSize())
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        recentSearches.forEach { search ->
+                            Text(
+                                text = search,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .clickable { /* Handle recent search click */ }
+                            )
+                        }
+                    }
                 }
 
                 1 -> {

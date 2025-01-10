@@ -1,5 +1,7 @@
 package com.example.blackbeard.screens.search
 
+import android.annotation.SuppressLint
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -84,6 +86,19 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
+    private val _recentSearches = mutableStateOf<List<String>>(emptyList())
+    val recentSearches: State<List<String>> = _recentSearches
+
+    @SuppressLint("NewApi")
+    fun addRecentSearch(query: String) {
+        _recentSearches.value = _recentSearches.value.toMutableList().apply {
+            if (!contains(query)) {
+                add(0, query)
+                if (size > 10) removeLast()
+            }
+        }
+    }
+
     fun searchMovies(query: String, pageNum: Int) {
         viewModelScope.launch {
             if (query.isBlank()) {
@@ -92,6 +107,8 @@ class SearchViewModel() : ViewModel() {
                 totalPages.value = 0
                 return@launch
             }
+
+            addRecentSearch(query)
 
             val currentMovies =
                 (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies ?: emptyList()
