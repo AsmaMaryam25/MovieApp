@@ -1,6 +1,5 @@
 package com.example.blackbeard.screens.search
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,16 +12,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -42,6 +36,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -50,7 +45,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
-import com.example.blackbeard.models.Category
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
@@ -131,6 +125,11 @@ private fun SearchContent(
             isSearchBarFocused = isSearchBarFocused,
             onSearchBarFocusChange = { isFocused ->
                 isSearchBarFocused = isFocused
+                if (isFocused) {
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(0)
+                    }
+                }
             },
         )
 
@@ -173,14 +172,24 @@ private fun SearchTabs(
     pagerState: PagerState,
     coroutineScope: CoroutineScope
 ) {
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TabContent(tabs, pagerState, coroutineScope)
+        TabContent(tabs, pagerState, coroutineScope, onTabSelected = { index ->
+            if (index == 1) {
+                keyboardController?.hide()
+            } else {
+                keyboardController?.show()
+            }
+        })
 
         HorizontalPager(
             count = tabs.size,
             state = pagerState,
+            userScrollEnabled = false,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(8.dp)
@@ -204,7 +213,8 @@ private fun SearchTabs(
 fun TabContent(
     tabs: List<String>,
     pagerState: PagerState,
-    coroutineScope: CoroutineScope
+    coroutineScope: CoroutineScope,
+    onTabSelected: (Int) -> Unit
 ) {
 
     TabRow(
@@ -245,6 +255,7 @@ fun TabContent(
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
                     }
+                    onTabSelected(index)
                 }
             )
         }
@@ -292,7 +303,7 @@ private fun CreateSearchPoster(
                 placeholder = ColorPainter(Color.Gray)
             )
         }
-            Text(
+        Text(
             modifier = modifier
                 .width(posterWidth)
                 .clickable { onNavigateToDetailsScreen(movie.title, movie.id) },
