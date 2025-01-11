@@ -57,6 +57,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
@@ -84,6 +85,7 @@ import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import java.time.LocalDate
 import java.util.Locale
+import androidx.compose.runtime.livedata.observeAsState
 
 @Composable
 fun DetailsScreen(
@@ -118,7 +120,8 @@ fun DetailsScreen(
             streamingServices = detailsUIModel.streamingServices,
             onMovieRating = { rating -> detailsViewModel.addRating(movieId.toString(), rating, detailsUIModel.installationID) },
             onWatchlistToggle = { detailsViewModel.toggleWatchlist(detailsUIModel.localMovie) },
-            onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie)  }
+            onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie)  },
+            voterCountLiveData = detailsViewModel.getVoterCount(movieId.toString(), detailsUIModel.installationID)
         )
     }
 
@@ -140,8 +143,11 @@ private fun MainContent(
     genres: List<Genre>,
     onMovieRating: (Double) -> Unit,
     onWatchlistToggle: () -> Unit,
-    onFavoriteToggle: () -> Unit
+    onFavoriteToggle: () -> Unit,
+    voterCountLiveData: LiveData<Int>
 ) {
+
+    val voterCount by voterCountLiveData.observeAsState(0)
 
     var shouldBeSticky by remember { mutableStateOf(true) }
 
@@ -189,7 +195,8 @@ private fun MainContent(
                     isFavorite = isFavorite,
                     isWatchList = isWatchList,
                     onFavoriteToggle = onFavoriteToggle,
-                    onBookmarkToggle = onWatchlistToggle
+                    onBookmarkToggle = onWatchlistToggle,
+                    voterCount = voterCount
                 )
             }
         }
@@ -295,7 +302,8 @@ private fun SecondaryContent(
     isWatchList: Boolean,
     onMovieRating: (Double) -> Unit,
     onFavoriteToggle: () -> Unit,
-    onBookmarkToggle: () -> Unit
+    onBookmarkToggle: () -> Unit,
+    voterCount: Int
 ) {
     val sections = listOf<@Composable () -> Unit>(
         { StreamingServicesSection(streamingServices) },
@@ -305,7 +313,7 @@ private fun SecondaryContent(
             onBookmarkToggle = onBookmarkToggle,
             onFavoriteToggle = onFavoriteToggle
         ) },
-        { MovieRatingSection(userRatings = 159, averageRating = averageRating, onMovieRating = onMovieRating) },
+        { MovieRatingSection(userRatings = voterCount, averageRating = averageRating, onMovieRating = onMovieRating) },
         { CastSection(credits.cast) },
         { CrewSection(credits.crew) },
         { MovieDetailsSection(

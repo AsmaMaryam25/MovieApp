@@ -1,5 +1,7 @@
 package com.example.blackbeard.screens.details
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.data.model.MovieItem
@@ -160,6 +162,21 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 updateAverageRating(rating)
             }
         }
+    }
+
+    fun getVoterCount(id: String, installationID: String): LiveData<Int> {
+        val voterCount = MutableLiveData<Int>()
+        viewModelScope.launch {
+            val ratingsRef = firestore.collection("ratings").document(id)
+
+            val snapshot = ratingsRef.get().await()
+            if (snapshot.exists()) {
+                val currentData = snapshot.data
+                val currentUserRatings = currentData?.get("userRatings") as? Map<*, *> ?: emptyMap<Any, Any>()
+                voterCount.postValue(currentUserRatings.size)
+            }
+        }
+        return voterCount
     }
 
     private fun updateAverageRating(newAverageRating: Double) {

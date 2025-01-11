@@ -23,6 +23,7 @@ coilCompose = "3.0.1"
 coilNetworkOkhttp = "3.0.1"
 kotlin = "2.0.21"
 agp = "8.1.4"
+runtimeLivedata = "1.7.6"
 uiToolingPreview = "1.7.6"
 
 [libraries]
@@ -57,6 +58,7 @@ coilCompose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref =
 coilNetworkOkhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 composeUiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeUiTestManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+runtimeLivedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
 
 [plugins]
