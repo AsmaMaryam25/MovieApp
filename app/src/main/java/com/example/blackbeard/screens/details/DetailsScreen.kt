@@ -28,7 +28,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.Bookmark
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -327,6 +329,7 @@ private fun SaveAndBookmarkSection(
     onFavoriteToggle: () -> Unit,
     onBookmarkToggle: () -> Unit
 ) {
+
     var isFavorited by remember { mutableStateOf(isFavorite) }
     var isWatchListed by remember { mutableStateOf(isWatchList) }
 
@@ -353,26 +356,26 @@ private fun SaveAndBookmarkSection(
             horizontalArrangement = Arrangement.End
         ) {
             Icon(
-                imageVector = if (isFavorited) Icons.Filled.Favorite else Icons.Outlined.Favorite,
+                imageVector = if (isFavorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                 contentDescription = "Favorite",
                 modifier = Modifier
                     .padding(5.dp)
                     .size(40.dp)
                     .clickable {
-                        onFavoriteToggle.invoke()
                         isFavorited = !isFavorited
+                        onFavoriteToggle.invoke()
                     },
                 tint = Color(0xFFA20321)
             )
             Icon(
-                imageVector = if(isWatchListed) Icons.Filled.Bookmark else Icons.Outlined.Bookmark,
+                imageVector = if(isWatchListed) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                 contentDescription = "Watchlist",
                 modifier = Modifier
                     .padding(5.dp)
                     .size(40.dp)
                     .clickable {
-                        onBookmarkToggle.invoke()
                         isWatchListed = !isWatchListed
+                        onBookmarkToggle.invoke()
                     },
                 tint = Color(0xFF0000FF)
             )
