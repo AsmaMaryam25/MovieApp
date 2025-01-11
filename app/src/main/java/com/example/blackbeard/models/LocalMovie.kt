@@ -25,3 +25,29 @@ data class LocalMovie(
     val avgRating: Double = 0.0,
     val category: MovieCategory = MovieCategory.NOW_PLAYING
 ) : Movie
+
+fun isReleaseDateInvalid(releaseDate: LocalDate) = releaseDate == LocalDate.MIN
+fun isBudgetInvalid(budget: Int) = budget <= 0
+fun isProductionCompaniesInvalid(productionCompanies: List<ProductionCompany>) = productionCompanies.isEmpty()
+fun isProductionCountriesInvalid(productionCountries: List<ProductionCountry>) = productionCountries.isEmpty()
+fun isRevenueInvalid(revenue: Int) = revenue <= 0
+fun isRuntimeInvalid(runtime: Int?) = runtime == null
+fun isSpokenLanguagesInvalid(spokenLanguages: List<SpokenLanguage>) = spokenLanguages.isEmpty()
+
+fun isDetailsInvalid(
+    releaseDate: LocalDate,
+    budget: Int,
+    productionCompanies: List<ProductionCompany>,
+    productionCountries: List<ProductionCountry>,
+    revenue: Int,
+    runtime: Int?,
+    spokenLanguages: List<SpokenLanguage>
+): Boolean {
+    return isReleaseDateInvalid(releaseDate) &&
+            isBudgetInvalid(budget) &&
+            isProductionCompaniesInvalid(productionCompanies) &&
+            isProductionCountriesInvalid(productionCountries) &&
+            isRevenueInvalid(revenue) &&
+            isRuntimeInvalid(runtime) &&
+            isSpokenLanguagesInvalid(spokenLanguages)
+}
