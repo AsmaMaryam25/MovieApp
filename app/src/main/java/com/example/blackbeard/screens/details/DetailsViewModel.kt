@@ -164,7 +164,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
         }
     }
 
-    fun getVoterCount(id: String, installationID: String): LiveData<Int> {
+    fun getVoterCount(id: String): LiveData<Int> {
         val voterCount = MutableLiveData<Int>()
         viewModelScope.launch {
             val ratingsRef = firestore.collection("ratings").document(id)
@@ -172,7 +172,8 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val snapshot = ratingsRef.get().await()
             if (snapshot.exists()) {
                 val currentData = snapshot.data
-                val currentUserRatings = currentData?.get("userRatings") as? Map<*, *> ?: emptyMap<Any, Any>()
+                val currentUserRatings =
+                    currentData?.get("userRatings") as? Map<*, *> ?: emptyMap<Any, Any>()
                 voterCount.postValue(currentUserRatings.size)
             }
         }
