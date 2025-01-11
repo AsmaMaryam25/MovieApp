@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class WatchlistViewModel : ViewModel() {
 
@@ -43,6 +44,8 @@ class WatchlistViewModel : ViewModel() {
 
 
             } catch (e: TimeoutCancellationException) {
+                mutableWatchlistUIState.value = WatchlistUIModel.NoConnection
+            } catch (e: UnknownHostException) {
                 mutableWatchlistUIState.value = WatchlistUIModel.NoConnection
             }
         }

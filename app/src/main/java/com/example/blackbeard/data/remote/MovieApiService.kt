@@ -4,6 +4,8 @@ import com.example.blackbeard.data.model.CollectionDao
 import com.example.blackbeard.data.model.CreditsDao
 import com.example.blackbeard.data.model.MovieDao
 import com.example.blackbeard.data.model.QueryDao
+import com.example.blackbeard.data.model.ReleaseDatesDao
+import com.example.blackbeard.data.model.StreamingServicesDao
 import com.example.blackbeard.data.model.VideosDao
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -28,6 +30,12 @@ interface MovieApiService {
         @Path("external_id") externalId: String,
         @Query("api_key") apiKey: String,
     ): VideosDao
+
+    @GET("movie/{external_id}/release_dates")
+    suspend fun getReleaseDates(
+        @Path("external_id") externalId: String,
+        @Query("api_key") apiKey: String
+    ): ReleaseDatesDao
 
     @GET("movie/now_playing")
     suspend fun getNowPlayingMovies(
@@ -55,4 +63,10 @@ interface MovieApiService {
         @Query("page") pageNum: Int,
         @Query("api_key") apiKey: String
     ): QueryDao
+
+    @GET("movie/{external_id}/watch/providers")
+    suspend fun getStreamingServices(
+        @Path("external_id") externalId: String,
+        @Query("api_key") apiKey: String
+    ): StreamingServicesDao
 }

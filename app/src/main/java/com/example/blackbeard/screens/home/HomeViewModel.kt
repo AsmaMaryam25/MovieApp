@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class HomeViewModel : ViewModel() {
 
@@ -39,6 +40,8 @@ class HomeViewModel : ViewModel() {
 
 
             } catch (e: TimeoutCancellationException) {
+                mutableHomeUIState.value = HomeUIModel.NoConnection
+            } catch (e: UnknownHostException) {
                 mutableHomeUIState.value = HomeUIModel.NoConnection
             }
         }

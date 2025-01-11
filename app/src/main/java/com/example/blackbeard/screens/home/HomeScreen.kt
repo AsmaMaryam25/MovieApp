@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -161,6 +160,9 @@ private fun CreatePoster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovie: CollectionMovie
 ) {
+    var isClickAble by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         Modifier.width(300.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -177,12 +179,19 @@ private fun CreatePoster(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = {
-                        onNavigateToDetailsScreen(
-                            collectionMovie.title,
-                            collectionMovie.id
-                        )
-                    }),
+                    .clickable(enabled = isClickAble) {
+                        if (isClickAble) {
+                            onNavigateToDetailsScreen(
+                                collectionMovie.title,
+                                collectionMovie.id
+                            )
+                            isClickAble = false
+                            coroutineScope.launch {
+                                kotlinx.coroutines.delay(1000)
+                                isClickAble = true
+                            }
+                        }
+                    },
                 placeholder = ColorPainter(Color.Gray)
             )
         }
