@@ -252,21 +252,27 @@ private fun AgeRatingIcon(ageRating: AgeRating) {
 
 @Composable
 private fun StreamingServicesSection(streamingServices: List<StreamingService>) {
-    Text(
-        text = "Stream Services",
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
-    )
-    Row {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        if(streamingServices.isEmpty()) {
+            Text(
+                text = "There are no streaming services available for this title",
+                style = MaterialTheme.typography.titleMedium
+            )
+            return@Column
+        }
+
         Text(
-            modifier = Modifier.weight(0.4f),
-            text = "See where you can see the movie on your favorite streaming services",
-            style = MaterialTheme.typography.titleSmall
+            text = "Watch from these streaming services",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
         )
 
         LazyRow(
-            modifier = Modifier.weight(0.6f),
-            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.End),
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.Start),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             items(streamingServices) { streamingService ->
                 AsyncImage(
@@ -276,7 +282,6 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
             }
         }
     }
-
 }
 
 @Composable
