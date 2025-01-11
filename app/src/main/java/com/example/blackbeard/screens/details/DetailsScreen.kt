@@ -244,6 +244,12 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
+        Text(
+            text = "Watch from these streaming services",
+            style = MaterialTheme.typography.titleMedium,
+            fontWeight = FontWeight.Bold
+        )
+
         if(streamingServices.isEmpty()) {
             Text(
                 text = "There are no streaming services available for this title",
@@ -251,12 +257,6 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
             )
             return@Column
         }
-
-        Text(
-            text = "Watch from these streaming services",
-            style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
-        )
 
         LazyRow(
             modifier = Modifier.fillMaxWidth(),
