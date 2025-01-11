@@ -88,6 +88,7 @@ dependencies {
     implementation(libs.coilCompose)
     implementation(libs.coilNetworkOkhttp)
     implementation(libs.firebaseInstallations)
+    implementation (libs.runtimeLivedata)
 
     testImplementation(libs.junitJupiter)
     testRuntimeOnly(libs.junitPlatformLauncher)

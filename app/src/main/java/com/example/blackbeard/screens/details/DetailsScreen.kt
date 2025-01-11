@@ -32,9 +32,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.Bookmark
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -44,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -62,6 +61,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
@@ -71,7 +71,6 @@ import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.Crew
 import com.example.blackbeard.models.Genre
 import com.example.blackbeard.models.LocalMovie
-import com.example.blackbeard.models.MovieCategory
 import com.example.blackbeard.models.ProductionCompany
 import com.example.blackbeard.models.ProductionCountry
 import com.example.blackbeard.models.SpokenLanguage
@@ -110,7 +109,6 @@ fun DetailsScreen(
         DetailsViewModel.DetailsUIModel.Loading -> LoadingScreen()
         DetailsViewModel.DetailsUIModel.NoConnection -> NoConnectionScreen()
         is DetailsViewModel.DetailsUIModel.Data -> MainContent(
-            modifier = modifier,
             localMovie = detailsUIModel.localMovie,
             credits = detailsUIModel.credits,
             setVideoLink = setVideoLink,
@@ -121,9 +119,18 @@ fun DetailsScreen(
             genres = detailsUIModel.localMovie.genres,
             ageRating = detailsUIModel.ageRating,
             streamingServices = detailsUIModel.streamingServices,
-            onMovieRating = { rating -> detailsViewModel.addRating(movieId.toString(), rating, detailsUIModel.installationID) },
+            onMovieRating = { rating ->
+                detailsViewModel.addRating(
+                    movieId.toString(),
+                    rating,
+                    detailsUIModel.installationID
+                )
+            },
             onWatchlistToggle = { detailsViewModel.toggleWatchlist(detailsUIModel.localMovie) },
-            onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie)  }
+            onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie) },
+            voterCountLiveData = detailsViewModel.getVoterCount(
+                movieId.toString(),
+            )
         )
     }
 
@@ -132,7 +139,6 @@ fun DetailsScreen(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun MainContent(
-    modifier: Modifier = Modifier,
     localMovie: LocalMovie,
     credits: Credits,
     setVideoLink: (String?) -> Unit,
@@ -145,8 +151,11 @@ private fun MainContent(
     genres: List<Genre>,
     onMovieRating: (Double) -> Unit,
     onWatchlistToggle: () -> Unit,
-    onFavoriteToggle: () -> Unit
+    onFavoriteToggle: () -> Unit,
+    voterCountLiveData: LiveData<Int>
 ) {
+
+    val voterCount by voterCountLiveData.observeAsState(0)
 
     var shouldBeSticky by remember { mutableStateOf(true) }
 
@@ -173,8 +182,8 @@ private fun MainContent(
         LazyColumn(
             modifier = Modifier.fillMaxSize()
         ) {
-            if(shouldBeSticky) {
-                stickyHeader{
+            if (shouldBeSticky) {
+                stickyHeader {
                     simpleContent()
                 }
             } else {
@@ -187,14 +196,14 @@ private fun MainContent(
                 SecondaryContent(
                     localMovie = localMovie,
                     credits = credits,
-                    userRatings = 10,
                     averageRating = averageRating,
                     streamingServices = streamingServices,
                     onMovieRating = onMovieRating,
                     isFavorite = isFavorite,
                     isWatchList = isWatchList,
                     onFavoriteToggle = onFavoriteToggle,
-                    onBookmarkToggle = onWatchlistToggle
+                    onBookmarkToggle = onWatchlistToggle,
+                    voterCount = voterCount
                 )
             }
         }
@@ -249,7 +258,7 @@ private fun SimpleContent(
 
 @Composable
 private fun AgeRatingIcon(ageRating: AgeRating) {
-    if(ageRating.imageResource == -1) return;
+    if (ageRating.imageResource == -1) return
     Image(
         modifier = Modifier.size(50.dp),
         painter = painterResource(ageRating.imageResource),
@@ -295,41 +304,52 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
 private fun SecondaryContent(
     localMovie: LocalMovie,
     credits: Credits,
-    userRatings: Int,
     averageRating: Double,
     streamingServices: List<StreamingService>,
     isFavorite: Boolean,
     isWatchList: Boolean,
     onMovieRating: (Double) -> Unit,
     onFavoriteToggle: () -> Unit,
-    onBookmarkToggle: () -> Unit
+    onBookmarkToggle: () -> Unit,
+    voterCount: Int
 ) {
     val sections = listOf<@Composable () -> Unit>(
         { StreamingServicesSection(streamingServices) },
-        { SaveAndBookmarkSection(
-            isFavorite = isFavorite,
-            isWatchList = isWatchList,
-            onBookmarkToggle = onBookmarkToggle,
-            onFavoriteToggle = onFavoriteToggle
-        ) },
-        { MovieRatingSection(userRatings = 159, averageRating = averageRating, onMovieRating = onMovieRating) },
+        {
+            SaveAndBookmarkSection(
+                isFavorite = isFavorite,
+                isWatchList = isWatchList,
+                onBookmarkToggle = onBookmarkToggle,
+                onFavoriteToggle = onFavoriteToggle
+            )
+        },
+        {
+            MovieRatingSection(
+                userRatings = voterCount,
+                averageRating = averageRating,
+                onMovieRating = onMovieRating
+            )
+        },
         { CastSection(credits.cast) },
         { CrewSection(credits.crew) },
-        { MovieDetailsSection(
-            runtime = localMovie.runtime,
-            revenue = localMovie.revenue,
-            releaseDate = localMovie.releaseDate,
-            budget = localMovie.budget,
-            spokenLanguages = localMovie.spokenLanguages,
-            productionCountries = localMovie.productionCountries,
-            productionCompanies = localMovie.productionCompanies
-        ) }
+        {
+            MovieDetailsSection(
+                runtime = localMovie.runtime,
+                revenue = localMovie.revenue,
+                releaseDate = localMovie.releaseDate,
+                budget = localMovie.budget,
+                spokenLanguages = localMovie.spokenLanguages,
+                productionCountries = localMovie.productionCountries,
+                productionCompanies = localMovie.productionCompanies
+            )
+        }
     )
 
-    Column (
+    Column(
         Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colorScheme.background,
+            .background(
+                MaterialTheme.colorScheme.background,
                 shape = RoundedCornerShape(topStart = 6.dp, topEnd = 6.dp)
             )
             .padding(top = 16.dp, start = 14.dp, end = 14.dp, bottom = 16.dp)
@@ -390,7 +410,7 @@ private fun SaveAndBookmarkSection(
                 tint = Color(0xFFA20321)
             )
             Icon(
-                imageVector = if(isWatchListed) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                imageVector = if (isWatchListed) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                 contentDescription = "Watchlist",
                 modifier = Modifier
                     .padding(5.dp)
@@ -432,7 +452,11 @@ private fun CrewSection(crew: List<Crew>) {
 }
 
 @Composable
-private fun MovieRatingSection(userRatings: Int, averageRating: Double, onMovieRating: (Double) -> Unit) {
+private fun MovieRatingSection(
+    userRatings: Int,
+    averageRating: Double,
+    onMovieRating: (Double) -> Unit
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -480,7 +504,11 @@ private fun MovieRatingSection(userRatings: Int, averageRating: Double, onMovieR
 
 
 @Composable
-private fun SecondaryContentSection(modifier: Modifier = Modifier, header: String, content: @Composable () -> Unit) {
+private fun SecondaryContentSection(
+    modifier: Modifier = Modifier,
+    header: String,
+    content: @Composable () -> Unit
+) {
     Text(
         header,
         style = MaterialTheme.typography.titleMedium,
@@ -538,20 +566,20 @@ private fun MovieDetailsSection(
         header = "Details"
     ) {
         val format: NumberFormat = NumberFormat.getCurrencyInstance()
-        format.setMaximumFractionDigits(0)
+        format.maximumFractionDigits = 0
         format.currency = Currency.getInstance("USD")
 
         // No detail data available
         if (isDetailsInvalid(
-            releaseDate = releaseDate,
-            spokenLanguages = spokenLanguages,
-            productionCountries = productionCountries,
-            productionCompanies = productionCompanies,
-            budget = budget,
-            revenue = revenue,
-            runtime = runtime,
-        )
-            ) {
+                releaseDate = releaseDate,
+                spokenLanguages = spokenLanguages,
+                productionCountries = productionCountries,
+                productionCompanies = productionCompanies,
+                budget = budget,
+                revenue = revenue,
+                runtime = runtime,
+            )
+        ) {
             Text(
                 text = "No details available",
                 modifier = Modifier.fillMaxWidth(),
@@ -562,27 +590,50 @@ private fun MovieDetailsSection(
         }
 
         val details = listOf<@Composable () -> Unit>(
-            { if(!isReleaseDateInvalid(releaseDate)) MovieDetailSingleLine("Release Date", releaseDate.toString()) },
-            { if(!isRuntimeInvalid(runtime)) MovieDetailSingleLine("Runtime", "$runtime minutes") },
-            { if(!isRevenueInvalid(revenue)) MovieDetailSingleLine("Revenue",  format.format(revenue)) },
-            { if(!isBudgetInvalid(budget))  MovieDetailSingleLine("Budget",  format.format(budget)) },
-            { if(!isProductionCompaniesInvalid(productionCompanies)) MovieDetailMultiLine(
-                "Production Company",
-                "Production Companies",
-                productionCompanies.map { it.name })
+            {
+                if (!isReleaseDateInvalid(releaseDate)) MovieDetailSingleLine(
+                    "Release Date",
+                    releaseDate.toString()
+                )
             },
-            { if(!isProductionCountriesInvalid(productionCountries)) MovieDetailMultiLine(
-                "Production Country",
-                "Production Countries",
-                productionCountries.map { it.name })
+            {
+                if (!isRuntimeInvalid(runtime)) MovieDetailSingleLine(
+                    "Runtime",
+                    "$runtime minutes"
+                )
             },
-            { if(!isSpokenLanguagesInvalid(spokenLanguages)) MovieDetailMultiLine(
-                "Language",
-                "Languages",
-                spokenLanguages.map { it.name })
+            {
+                if (!isRevenueInvalid(revenue)) MovieDetailSingleLine(
+                    "Revenue",
+                    format.format(revenue)
+                )
+            },
+            {
+                if (!isBudgetInvalid(budget)) MovieDetailSingleLine(
+                    "Budget",
+                    format.format(budget)
+                )
+            },
+            {
+                if (!isProductionCompaniesInvalid(productionCompanies)) MovieDetailMultiLine(
+                    "Production Company",
+                    "Production Companies",
+                    productionCompanies.map { it.name })
+            },
+            {
+                if (!isProductionCountriesInvalid(productionCountries)) MovieDetailMultiLine(
+                    "Production Country",
+                    "Production Countries",
+                    productionCountries.map { it.name })
+            },
+            {
+                if (!isSpokenLanguagesInvalid(spokenLanguages)) MovieDetailMultiLine(
+                    "Language",
+                    "Languages",
+                    spokenLanguages.map { it.name })
             },
 
-        )
+            )
 
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -599,30 +650,38 @@ private fun MovieDetailSingleLine(header: String, data: String) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = header,
-            style = MaterialTheme.typography.titleSmall)
+        Text(
+            text = header,
+            style = MaterialTheme.typography.titleSmall
+        )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data,
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall)
+            style = MaterialTheme.typography.titleSmall
+        )
     }
 }
 
 @Composable
-private fun MovieDetailMultiLine(singleItemHeader: String,
-                                 multiItemHeader: String,
-                                 data: List<String>) {
+private fun MovieDetailMultiLine(
+    singleItemHeader: String,
+    multiItemHeader: String,
+    data: List<String>
+) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(text = if(data.size > 1) multiItemHeader else singleItemHeader,
-            style = MaterialTheme.typography.titleSmall)
+        Text(
+            text = if (data.size > 1) multiItemHeader else singleItemHeader,
+            style = MaterialTheme.typography.titleSmall
+        )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data.joinToString("\n"),
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall)
+            style = MaterialTheme.typography.titleSmall
+        )
     }
 }
 
@@ -668,8 +727,10 @@ private fun BackgroundPoster(posterPath: String? = "") {
 }
 
 @Composable
-private fun MoviePoster(modifier: Modifier = Modifier,
-                        posterPath: String?) {
+private fun MoviePoster(
+    modifier: Modifier = Modifier,
+    posterPath: String?
+) {
     Box(
         modifier = modifier
             .aspectRatio(2 / 3f)
@@ -707,7 +768,7 @@ private fun CollapsibleBodyText(
                 expandedState = !expandedState
             }
     ) {
-        if(text.isNullOrEmpty()) {
+        if (text.isNullOrEmpty()) {
             Text(
                 text = "No overview available",
                 modifier = Modifier.fillMaxWidth(),
@@ -715,16 +776,17 @@ private fun CollapsibleBodyText(
                 color = Color.White,
                 style = MaterialTheme.typography.titleMedium
             )
-           return@Column
+            return@Column
         }
         Text(
-            text = if(!showReadMoreButtonState) text.dropLast(readMore.length).plus(readMore) else text?: "",
+            text = if (!showReadMoreButtonState) text.dropLast(readMore.length)
+                .plus(readMore) else text,
             textAlign = TextAlign.Center,
             color = Color.White,
             overflow = TextOverflow.Clip,
             maxLines = maxLines,
             onTextLayout = { textLayoutResult ->
-                if (textLayoutResult.lineCount > minimumLineLength-1) {
+                if (textLayoutResult.lineCount > minimumLineLength - 1) {
                     if (textLayoutResult.hasVisualOverflow) {
                         showReadMoreButtonState = true
                     }
@@ -767,7 +829,7 @@ private fun GenreItem(genre: Genre) {
 @Composable
 private fun RatingStars(modifier: Modifier = Modifier, onMovieRating: (Double) -> Unit) {
     val iconList = remember {
-        mutableStateListOf (
+        mutableStateListOf(
             R.drawable.chest_closed,
             R.drawable.chest_closed,
             R.drawable.chest_closed,
@@ -804,7 +866,7 @@ private fun PersonPoster(
     name: String,
     profilePath: String?,
     description: String
-    ) {
+) {
     Column(
         Modifier
             .width(80.dp)
