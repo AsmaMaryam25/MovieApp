@@ -244,6 +244,14 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
     Column(
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
+        if(streamingServices.isEmpty()) {
+            Text(
+                text = "There are no streaming services available for this title",
+                style = MaterialTheme.typography.titleMedium
+            )
+            return@Column
+        }
+
         Text(
             text = "Watch from these streaming services",
             style = MaterialTheme.typography.titleMedium,
