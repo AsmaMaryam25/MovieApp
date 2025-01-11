@@ -66,10 +66,19 @@ import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.Crew
 import com.example.blackbeard.models.Genre
 import com.example.blackbeard.models.LocalMovie
+import com.example.blackbeard.models.MovieCategory
 import com.example.blackbeard.models.ProductionCompany
 import com.example.blackbeard.models.ProductionCountry
 import com.example.blackbeard.models.SpokenLanguage
 import com.example.blackbeard.models.StreamingService
+import com.example.blackbeard.models.isBudgetInvalid
+import com.example.blackbeard.models.isDetailsInvalid
+import com.example.blackbeard.models.isProductionCompaniesInvalid
+import com.example.blackbeard.models.isProductionCountriesInvalid
+import com.example.blackbeard.models.isReleaseDateInvalid
+import com.example.blackbeard.models.isRevenueInvalid
+import com.example.blackbeard.models.isRuntimeInvalid
+import com.example.blackbeard.models.isSpokenLanguagesInvalid
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
@@ -298,6 +307,7 @@ private fun SecondaryContent(
             runtime = localMovie.runtime,
             revenue = localMovie.revenue,
             releaseDate = localMovie.releaseDate,
+            budget = localMovie.budget,
             spokenLanguages = localMovie.spokenLanguages,
             productionCountries = localMovie.productionCountries,
             productionCompanies = localMovie.productionCompanies
@@ -388,6 +398,15 @@ private fun CrewSection(crew: List<Crew>) {
     SecondaryContentSection(
         header = "Crew"
     ) {
+        if (crew.isEmpty()) {
+            Text(
+                text = "No crew members available",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium
+            )
+            return@SecondaryContentSection
+        }
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(crew) { crewMember ->
                 PersonPoster(
@@ -470,6 +489,15 @@ private fun CastSection(cast: List<Cast>) {
     SecondaryContentSection(
         header = "Cast"
     ) {
+        if (cast.isEmpty()) {
+            Text(
+                text = "No cast members available",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium
+            )
+            return@SecondaryContentSection
+        }
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             items(cast) { castMember ->
                 PersonPoster(
@@ -489,6 +517,7 @@ private fun MovieDetailsSection(
     releaseDate: LocalDate,
     runtime: Int?,
     revenue: Int,
+    budget: Int,
     productionCompanies: List<ProductionCompany>,
     productionCountries: List<ProductionCountry>,
     spokenLanguages: List<SpokenLanguage>,
@@ -500,42 +529,89 @@ private fun MovieDetailsSection(
         format.setMaximumFractionDigits(0)
         format.currency = Currency.getInstance("USD")
 
-        val leftSide = listOf<@Composable () -> Unit>(
-            { Text(text = "Release Date", style = MaterialTheme.typography.titleSmall) },
-            { Text(text = "Runtime", style = MaterialTheme.typography.titleSmall)},
-            { Text(text = "Revenue", style = MaterialTheme.typography.titleSmall)},
-            { Text(text = if (productionCompanies.size > 1) "Production Companies" else "Production Company", style = MaterialTheme.typography.titleSmall) },
-            { Text(text = if (productionCountries.size > 1) "Production Countries" else "Production Country", style = MaterialTheme.typography.titleSmall) },
-            { Text(text = if(spokenLanguages.size > 1) "Languages" else "Language", style = MaterialTheme.typography.titleSmall) }
+        // No detail data available
+        if (isDetailsInvalid(
+            releaseDate = releaseDate,
+            spokenLanguages = spokenLanguages,
+            productionCountries = productionCountries,
+            productionCompanies = productionCompanies,
+            budget = budget,
+            revenue = revenue,
+            runtime = runtime,
         )
+            ) {
+            Text(
+                text = "No details available",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.titleMedium
+            )
+            return@SecondaryContentSection
+        }
 
-        val rightSide = listOf<@Composable () -> Unit>(
-            { Text(text = releaseDate.toString(), textAlign = TextAlign.Right, style = MaterialTheme.typography.titleSmall) },
-            { Text(text = "$runtime minutes", textAlign = TextAlign.Right, style = MaterialTheme.typography.titleSmall) },
-            { Text(text = format.format(revenue), textAlign = TextAlign.Right, style = MaterialTheme.typography.titleSmall) },
-            { Text(text = productionCompanies.joinToString("\n") { it.name }, textAlign = TextAlign.Right, style = MaterialTheme.typography.titleSmall) },
-            { Text(text = productionCountries.joinToString("\n") { it.name }, textAlign = TextAlign.Right, style = MaterialTheme.typography.titleSmall) },
-            { Text(text = spokenLanguages.joinToString("\n") { it.name }, textAlign = TextAlign.Right, style = MaterialTheme.typography.titleSmall) },
+        val details = listOf<@Composable () -> Unit>(
+            { if(!isReleaseDateInvalid(releaseDate)) MovieDetailSingleLine("Release Date", releaseDate.toString()) },
+            { if(!isRuntimeInvalid(runtime)) MovieDetailSingleLine("Runtime", "$runtime minutes") },
+            { if(!isRevenueInvalid(revenue)) MovieDetailSingleLine("Revenue",  format.format(revenue)) },
+            { if(!isBudgetInvalid(budget))  MovieDetailSingleLine("Budget",  format.format(budget)) },
+            { if(!isProductionCompaniesInvalid(productionCompanies)) MovieDetailMultiLine(
+                "Production Company",
+                "Production Companies",
+                productionCompanies.map { it.name })
+            },
+            { if(!isProductionCountriesInvalid(productionCountries)) MovieDetailMultiLine(
+                "Production Country",
+                "Production Countries",
+                productionCountries.map { it.name })
+            },
+            { if(!isSpokenLanguagesInvalid(spokenLanguages)) MovieDetailMultiLine(
+                "Language",
+                "Languages",
+                spokenLanguages.map { it.name })
+            },
 
         )
-
-        val pairedList = leftSide.zip(rightSide)
 
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            pairedList.forEach { (leftItem, rightItem) ->
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    leftItem()
-                    Spacer(modifier = Modifier.weight(1f))
-                    rightItem()
-                }
+            details.forEach { movieDetail ->
+                movieDetail()
             }
         }
     }
+}
 
+@Composable
+private fun MovieDetailSingleLine(header: String, data: String) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = header,
+            style = MaterialTheme.typography.titleSmall)
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = data,
+            textAlign = TextAlign.Right,
+            style = MaterialTheme.typography.titleSmall)
+    }
+}
+
+@Composable
+private fun MovieDetailMultiLine(singleItemHeader: String,
+                                 multiItemHeader: String,
+                                 data: List<String>) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Text(text = if(data.size > 1) multiItemHeader else singleItemHeader,
+            style = MaterialTheme.typography.titleSmall)
+        Spacer(modifier = Modifier.weight(1f))
+        Text(
+            text = data.joinToString("\n"),
+            textAlign = TextAlign.Right,
+            style = MaterialTheme.typography.titleSmall)
+    }
 }
 
 @Composable
@@ -546,7 +622,7 @@ private fun MovieTitle(
     Box(Modifier.wrapContentSize()) {
         Text(
             modifier = modifier,
-            text = title,
+            text = title.ifEmpty { "Title not available" },
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = 20.sp,
@@ -618,8 +694,18 @@ private fun CollapsibleBodyText(
                 expandedState = !expandedState
             }
     ) {
+        if(text.isNullOrEmpty()) {
+            Text(
+                text = "No overview available",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium
+            )
+           return@Column
+        }
         Text(
-            text = if(!showReadMoreButtonState) text?.dropLast(readMore.length).plus(readMore) else text?: "",
+            text = if(!showReadMoreButtonState) text.dropLast(readMore.length).plus(readMore) else text?: "",
             textAlign = TextAlign.Center,
             color = Color.White,
             overflow = TextOverflow.Clip,
