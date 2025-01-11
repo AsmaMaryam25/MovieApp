@@ -1,5 +1,6 @@
 package com.example.blackbeard.screens.details
 
+import android.R.attr.x
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -9,6 +10,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -16,10 +19,12 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -207,10 +212,10 @@ private fun SimpleContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            .padding(bottom = 20.dp)
+            .fillMaxWidth()
 
     ) {
-        Spacer(Modifier.height(50.dp))
         Row(Modifier.fillMaxWidth()) {
             Spacer(modifier = Modifier.weight(.2f))
             MoviePoster(
@@ -227,11 +232,13 @@ private fun SimpleContent(
             title = title
         )
         Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp)
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             AgeRatingIcon(ageRating = ageRating)
             GenreItemContainer(genres)
-            Box(Modifier.width(50.dp))
         }
         CollapsibleBodyText(
             text = overview,
@@ -246,7 +253,7 @@ private fun AgeRatingIcon(ageRating: AgeRating) {
     Image(
         modifier = Modifier.size(50.dp),
         painter = painterResource(ageRating.imageResource),
-        contentDescription = "Age rating icon"
+        contentDescription = "Age rating icon for ${ageRating.rating}"
     )
 }
 
@@ -630,7 +637,7 @@ private fun MovieTitle(
             text = title.ifEmpty { "Title not available" },
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
-            fontSize = 20.sp,
+            fontSize = 25.sp,
             color = Color.White
         )
     }
@@ -694,6 +701,7 @@ private fun CollapsibleBodyText(
     Column(
         modifier = Modifier
             .fillMaxHeight()
+            .padding(start = 20.dp, end = 20.dp)
             .clickable {
                 //onTextExpand.invoke()
                 expandedState = !expandedState
@@ -726,13 +734,12 @@ private fun CollapsibleBodyText(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenreItemContainer(genres: List<Genre>) {
 
     LazyRow(
-        modifier = Modifier
-            .padding(vertical = 10.dp)
-            .fillMaxWidth(),
+        modifier = Modifier.padding(vertical = 10.dp).fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
     ) {
         items(genres) { genre ->
@@ -746,11 +753,13 @@ private fun GenreItem(genre: Genre) {
     Box(
         Modifier
             .background(Color.Gray, shape = RoundedCornerShape(4.dp))
-            .padding(4.dp)
+            .padding(horizontal = 8.dp, vertical = 2.dp)
+            .wrapContentSize()
     ) {
         Text(
             text = genre.name,
-            color = Color.White
+            color = Color.White,
+            fontSize = 15.sp,
         )
     }
 }
