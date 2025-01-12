@@ -7,6 +7,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -53,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -354,6 +356,10 @@ private fun SecondaryContent(
             )
             .padding(top = 16.dp, start = 14.dp, end = 14.dp, bottom = 16.dp)
             .zIndex(1f)
+            .pointerInput(Unit) {
+                // Intercept touch events to prevent clicks from propagating
+                detectTapGestures(onTap = { /* Do nothing */ })
+            }
     ) {
         sections.forEachIndexed { index, section ->
             if (index > 0) {
