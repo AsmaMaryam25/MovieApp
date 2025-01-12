@@ -62,6 +62,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             movieRepository.getVideoLink(movieId),
             movieRepository.getFavorites(),
             movieRepository.getWatchlist(),
+            movieRepository.getMovieRating(movieId.toString(), installationID),
             movieRepository.getAgeRating(movieId),
             movieRepository.getStreamingServices(movieId)
         )
@@ -72,8 +73,9 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val videoLink = results[2] as String?
             val favorites = results[3] as List<MovieItem>
             val watchlist = results[4] as List<MovieItem>
-            val ageRating = results[5] as AgeRating
-            val streamingServices = results[6] as List<StreamingService>
+            val movieRating = results[5] as Double?
+            val ageRating = results[6] as AgeRating
+            val streamingServices = results[7] as List<StreamingService>
 
             DetailsUIModel.Data(
                 movie,
@@ -83,6 +85,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 watchlist.any { it.id == movie.id.toString() },
                 movieRepository.getAverageRating(movieId.toString()),
                 installationID,
+                movieRating,
                 ageRating,
                 streamingServices
             )
@@ -202,6 +205,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
             val isWatchlist: Boolean,
             val averageRating: Double,
             val installationID: String,
+            val movieRating: Double?,
             val ageRating: AgeRating,
             val streamingServices: List<StreamingService>
         ) : DetailsUIModel()
