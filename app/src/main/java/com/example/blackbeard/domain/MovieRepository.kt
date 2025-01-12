@@ -227,6 +227,7 @@ fun ProductionCountryDao.mapToProductionCountry() = ProductionCountry(
 )
 
 fun SpokenLanguageDao.mapToSpokenLanguage() = SpokenLanguage(
+    englishName = englishName.orEmpty(),
     iso6391 = iso6391.orEmpty(),
     name = name.orEmpty()
 )
