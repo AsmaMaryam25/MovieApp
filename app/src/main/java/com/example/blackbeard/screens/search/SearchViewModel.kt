@@ -134,6 +134,10 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
+    fun clearRecentSearches() {
+        _recentSearches.value = emptyList()
+    }
+
     sealed class SearchUIModel {
         data object Empty : SearchUIModel()
         data object Loading : SearchUIModel()

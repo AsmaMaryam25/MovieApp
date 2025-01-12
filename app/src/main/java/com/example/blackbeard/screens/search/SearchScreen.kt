@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,13 +22,20 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.NorthWest
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -163,7 +171,9 @@ private fun SearchContent(
                 tabs = tabs,
                 pagerState = pagerState,
                 coroutineScope = coroutineScope,
-                recentSearches = recentSearches
+                recentSearches = recentSearches,
+                onRecentSearchClick = { searchQuery.value = it },
+                onClearRecentSearches = { searchViewModel.clearRecentSearches() }
             )
         }
     }
@@ -175,7 +185,9 @@ private fun SearchTabs(
     tabs: List<String>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    recentSearches: List<String>
+    recentSearches: List<String>,
+    onRecentSearchClick: (String) -> Unit,
+    onClearRecentSearches: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -193,14 +205,40 @@ private fun SearchTabs(
             when (page) {
                 0 -> {
                     Column(modifier = Modifier.fillMaxSize()) {
-                        recentSearches.forEach { search ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Text(
-                                text = search,
+                                    text = "\t",
+                            )
+                            TextButton(onClick = onClearRecentSearches) {
+                                Text(text = "Clear All")
+                            }
+                        }
+                        recentSearches.forEach { search ->
+                            Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)
-                                    .clickable { /* Handle recent search click */ }
-                            )
+                                    .clickable { onRecentSearchClick(search) },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = search,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.NorthWest,
+                                    contentDescription = "Use search",
+                                    modifier = Modifier
+                                        .padding(start = 8.dp)
+                                        .clickable { onRecentSearchClick(search) }
+                                )
+                            }
                         }
                     }
                 }
