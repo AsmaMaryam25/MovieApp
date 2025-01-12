@@ -90,6 +90,7 @@ import com.example.blackbeard.models.isSpokenLanguagesInvalid
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
+import com.example.blackbeard.utils.TimeUtils
 import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.floor
@@ -627,7 +628,7 @@ private fun MovieDetailsSection(
             {
                 if (!isRuntimeInvalid(runtime)) MovieDetailSingleLine(
                     "Runtime",
-                    "$runtime minutes"
+                    TimeUtils.convertMinutesToHoursAndMinutes(runtime ?: 0)
                 )
             },
             {
