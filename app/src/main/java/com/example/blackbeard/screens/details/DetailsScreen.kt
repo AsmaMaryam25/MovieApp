@@ -57,9 +57,14 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -67,6 +72,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
+import com.example.blackbeard.components.ExpandableText
 import com.example.blackbeard.models.AgeRating
 import com.example.blackbeard.models.Cast
 import com.example.blackbeard.models.Credits
@@ -251,10 +257,20 @@ private fun SimpleContent(
             AgeRatingIcon(ageRating = ageRating)
             GenreItemContainer(genres)
         }
+        ExpandableText(
+            text = overview ?: "",
+            collapsedMaxLine = 3,
+            fontSize = 14.sp,
+            style = TextStyle(color = Color.White),
+            showLessText = "",
+            onTextExpand = onTextExpand
+        )
+        /*
         CollapsibleBodyText(
             text = overview,
             onTextExpand = onTextExpand
         )
+         */
     }
 }
 
