@@ -1,6 +1,5 @@
 package com.example.blackbeard.screens.details
 
-import android.R.attr.x
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -20,12 +18,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -96,6 +92,7 @@ import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import java.time.LocalDate
 import java.util.Locale
+import kotlin.math.floor
 
 @Composable
 fun DetailsScreen(
@@ -134,6 +131,7 @@ fun DetailsScreen(
                     detailsUIModel.installationID
                 )
             },
+            movieRating = detailsUIModel.movieRating,
             onWatchlistToggle = { detailsViewModel.toggleWatchlist(detailsUIModel.localMovie) },
             onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie) },
             voterCountLiveData = detailsViewModel.getVoterCount(
@@ -156,6 +154,7 @@ private fun MainContent(
     averageRating: Double,
     streamingServices: List<StreamingService>,
     ageRating: AgeRating,
+    movieRating: Double?,
     genres: List<Genre>,
     onMovieRating: (Double) -> Unit,
     onWatchlistToggle: () -> Unit,
@@ -209,6 +208,7 @@ private fun MainContent(
                     onMovieRating = onMovieRating,
                     isFavorite = isFavorite,
                     isWatchList = isWatchList,
+                    movieRating = movieRating,
                     onFavoriteToggle = onFavoriteToggle,
                     onBookmarkToggle = onWatchlistToggle,
                     voterCount = voterCount
@@ -326,6 +326,7 @@ private fun SecondaryContent(
     streamingServices: List<StreamingService>,
     isFavorite: Boolean,
     isWatchList: Boolean,
+    movieRating: Double?,
     onMovieRating: (Double) -> Unit,
     onFavoriteToggle: () -> Unit,
     onBookmarkToggle: () -> Unit,
@@ -344,6 +345,7 @@ private fun SecondaryContent(
         {
             MovieRatingSection(
                 userRatings = voterCount,
+                movieRating = movieRating,
                 averageRating = averageRating,
                 onMovieRating = onMovieRating
             )
@@ -476,6 +478,7 @@ private fun CrewSection(crew: List<Crew>) {
 @Composable
 private fun MovieRatingSection(
     userRatings: Int,
+    movieRating: Double?,
     averageRating: Double,
     onMovieRating: (Double) -> Unit
 ) {
@@ -512,7 +515,10 @@ private fun MovieRatingSection(
                         fontWeight = FontWeight.Bold,
                         color = Color.DarkGray
                     )
-                    RatingStars(onMovieRating = onMovieRating)
+                    RatingStars(
+                        movieRating = movieRating,
+                        onMovieRating = onMovieRating
+                    )
                     Text(
                         text = "Average: " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
@@ -849,15 +855,22 @@ private fun GenreItem(genre: Genre) {
 }
 
 @Composable
-private fun RatingStars(modifier: Modifier = Modifier, onMovieRating: (Double) -> Unit) {
+private fun RatingStars(
+    modifier: Modifier = Modifier,
+    movieRating: Double?,
+    onMovieRating: (Double) -> Unit
+) {
+    val movieRatingFloor = floor(movieRating ?: 0.0).toInt()
+
     val iconList = remember {
-        mutableStateListOf(
-            R.drawable.chest_closed,
-            R.drawable.chest_closed,
-            R.drawable.chest_closed,
-            R.drawable.chest_closed,
-            R.drawable.chest_closed
-        )
+        mutableStateListOf<Int>().apply {
+            repeat(movieRatingFloor) {
+                add(R.drawable.chest_open)
+            }
+            repeat(5 - movieRatingFloor) {
+                add(R.drawable.chest_closed)
+            }
+        }
     }
     Row {
         for (i in 0 until 5) {

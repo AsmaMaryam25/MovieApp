@@ -130,6 +130,32 @@ class MovieRepository(
             0.0
         }
     }
+
+    fun getMovieRating(movieId: String, userId: String): Flow<Double?> = flow {
+        emit(getRating(movieId, userId))
+    }
+
+    private suspend fun getRating(movieId: String, userId: String): Double? {
+        return try {
+            val document = firestore
+                .collection("ratings")
+                .document(movieId.toString())
+                .get()
+                .await()
+
+            if (document.exists()) {
+                val userRatings = document.get("userRatings") as? Map<*, *>
+                val userRating = userRatings?.get(userId) as? Map<*, *>
+                val rating = userRating?.get("rating") as? Double
+                rating
+            } else {
+                null
+            }
+        } catch (exception: Exception) {
+            println("Error getting user rating: $exception")
+            null
+        }
+    }
 }
 
 private fun getImageId(certification: String?): Int {
