@@ -14,11 +14,11 @@ data class LocalMovie(
     override val originalTitle: String = "",
     override val popularity: Double = 0.0,
     override val video: Boolean = false,
-    val budget: Int = 0,
+    val budget: Long = 0,
     val genres: List<Genre> = emptyList(),
     val productionCompanies: List<ProductionCompany> = emptyList(),
     val productionCountries: List<ProductionCountry> = emptyList(),
-    val revenue: Int = 0,
+    val revenue: Long = 0,
     val runtime: Int? = null,
     val spokenLanguages: List<SpokenLanguage> = emptyList(),
     val status: String = "",
@@ -27,23 +27,19 @@ data class LocalMovie(
 ) : Movie
 
 fun isReleaseDateInvalid(releaseDate: LocalDate) = releaseDate == LocalDate.MIN
-fun isBudgetInvalid(budget: Int) = budget <= 0
-fun isProductionCompaniesInvalid(productionCompanies: List<ProductionCompany>) =
-    productionCompanies.isEmpty()
-
-fun isProductionCountriesInvalid(productionCountries: List<ProductionCountry>) =
-    productionCountries.isEmpty()
-
-fun isRevenueInvalid(revenue: Int) = revenue <= 0
+fun isBudgetInvalid(budget: Long) = budget <= 0
+fun isProductionCompaniesInvalid(productionCompanies: List<ProductionCompany>) = productionCompanies.isEmpty()
+fun isProductionCountriesInvalid(productionCountries: List<ProductionCountry>) = productionCountries.isEmpty()
+fun isRevenueInvalid(revenue: Long) = revenue <= 0
 fun isRuntimeInvalid(runtime: Int?) = runtime == null
 fun isSpokenLanguagesInvalid(spokenLanguages: List<SpokenLanguage>) = spokenLanguages.isEmpty()
 
 fun isDetailsInvalid(
     releaseDate: LocalDate,
-    budget: Int,
+    budget: Long,
     productionCompanies: List<ProductionCompany>,
     productionCountries: List<ProductionCountry>,
-    revenue: Int,
+    revenue: Long,
     runtime: Int?,
     spokenLanguages: List<SpokenLanguage>
 ): Boolean {

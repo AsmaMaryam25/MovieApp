@@ -578,8 +578,8 @@ private fun CastSection(cast: List<Cast>) {
 private fun MovieDetailsSection(
     releaseDate: LocalDate,
     runtime: Int?,
-    revenue: Int,
-    budget: Int,
+    revenue: Long,
+    budget: Long,
     productionCompanies: List<ProductionCompany>,
     productionCountries: List<ProductionCountry>,
     spokenLanguages: List<SpokenLanguage>,
