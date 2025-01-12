@@ -630,7 +630,7 @@ private fun MovieDetailsSection(
                 if (!isSpokenLanguagesInvalid(spokenLanguages)) MovieDetailMultiLine(
                     "Language",
                     "Languages",
-                    spokenLanguages.map { it.name })
+                    spokenLanguages.map { it.englishName })
             },
 
             )
