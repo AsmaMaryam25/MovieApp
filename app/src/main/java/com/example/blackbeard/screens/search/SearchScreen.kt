@@ -25,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.NorthWest
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -173,7 +174,8 @@ private fun SearchContent(
                 coroutineScope = coroutineScope,
                 recentSearches = recentSearches,
                 onRecentSearchClick = { searchQuery.value = it },
-                onClearRecentSearches = { searchViewModel.clearRecentSearches() }
+                onClearRecentSearches = { searchViewModel.clearRecentSearches() },
+                onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) }
             )
         }
     }
@@ -187,7 +189,8 @@ private fun SearchTabs(
     coroutineScope: CoroutineScope,
     recentSearches: List<String>,
     onRecentSearchClick: (String) -> Unit,
-    onClearRecentSearches: () -> Unit
+    onClearRecentSearches: () -> Unit,
+    onRemoveRecentSearch: (String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -213,7 +216,7 @@ private fun SearchTabs(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                    text = "\t",
+                                text = "\t"
                             )
                             TextButton(onClick = onClearRecentSearches) {
                                 Text(text = "Clear All")
@@ -227,6 +230,13 @@ private fun SearchTabs(
                                     .clickable { onRecentSearchClick(search) },
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Remove search",
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .clickable { onRemoveRecentSearch(search) }
+                                )
                                 Text(
                                     text = search,
                                     modifier = Modifier.weight(1f)

@@ -138,6 +138,12 @@ class SearchViewModel() : ViewModel() {
         _recentSearches.value = emptyList()
     }
 
+    fun removeRecentSearch(query: String) {
+        _recentSearches.value = _recentSearches.value.toMutableList().apply {
+            remove(query)
+        }
+    }
+
     sealed class SearchUIModel {
         data object Empty : SearchUIModel()
         data object Loading : SearchUIModel()
