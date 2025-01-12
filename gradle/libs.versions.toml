@@ -1,5 +1,6 @@
 [versions]
 firebaseBom = "33.6.0"
+firebaseInstallations = "18.0.0"
 junitJupiter = "5.7.1"
 kotlinxCoroutinesTest = "1.10.1"
 materialIconsExtended = "1.7.5"
@@ -22,11 +23,14 @@ coilCompose = "3.0.1"
 coilNetworkOkhttp = "3.0.1"
 kotlin = "2.0.21"
 agp = "8.1.4"
+runtimeLivedata = "1.7.6"
+uiToolingPreview = "1.7.6"
 
 [libraries]
 firebaseAnalytics = { module = "com.google.firebase:firebase-analytics" }
 firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebaseFirestoreKtx = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebaseInstallations = { module = "com.google.firebase:firebase-installations", version.ref = "firebaseInstallations" }
 junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
 junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
 kotlinxCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
@@ -54,6 +58,8 @@ coilCompose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref =
 coilNetworkOkhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 composeUiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeUiTestManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+runtimeLivedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
+uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

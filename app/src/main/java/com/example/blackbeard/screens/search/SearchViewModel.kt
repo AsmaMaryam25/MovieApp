@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class SearchViewModel() : ViewModel() {
 
@@ -72,6 +73,8 @@ class SearchViewModel() : ViewModel() {
                     }
                 }
 
+            } catch (e: UnknownHostException) {
+                mutableSearchUIState.value = SearchUIModel.NoConnection
             }
         }
     }

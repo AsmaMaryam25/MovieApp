@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import java.net.UnknownHostException
 
 class FavoriteViewModel : ViewModel() {
 
@@ -43,6 +44,8 @@ class FavoriteViewModel : ViewModel() {
 
 
             } catch (e: TimeoutCancellationException) {
+                mutableFavoriteUIState.value = FavoriteUIModel.NoConnection
+            } catch (e: UnknownHostException) {
                 mutableFavoriteUIState.value = FavoriteUIModel.NoConnection
             }
         }

@@ -69,6 +69,8 @@ dependencies {
     implementation(libs.activityCompose)
     implementation(libs.datastorePreferences)
 
+    implementation(libs.uiToolingPreview)
+
     implementation(platform(libs.composeBom))
     implementation(libs.composeUi)
     implementation(libs.composeUiGraphics)
@@ -85,6 +87,8 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.coilCompose)
     implementation(libs.coilNetworkOkhttp)
+    implementation(libs.firebaseInstallations)
+    implementation (libs.runtimeLivedata)
 
     testImplementation(libs.junitJupiter)
     testRuntimeOnly(libs.junitPlatformLauncher)

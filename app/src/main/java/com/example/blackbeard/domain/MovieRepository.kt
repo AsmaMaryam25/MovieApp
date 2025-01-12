@@ -1,5 +1,6 @@
 package com.example.blackbeard.domain
 
+import com.example.blackbeard.R
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
 import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
@@ -69,7 +70,6 @@ class MovieRepository(
 
         val totalPages = response.totalPages
 
-        // Emit the result as MovieSearchResult
         emit(MovieSearchResult(movies, totalPages))
     }
 
@@ -90,6 +90,18 @@ class MovieRepository(
             ?.firstOrNull()?.key)
     }
 
+    fun getStreamingServices(externalId: Int): Flow<List<StreamingService>?> = flow {
+        try {
+            emit(
+                remoteMovieDataSource.getStreamingServices(externalId.toString()).results?.getValue(
+                    "DK"
+                )?.mapToStreamingServices()
+            )
+        } catch (e: NoSuchElementException) {
+            emit(emptyList())
+        }
+    }
+
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
 
     suspend fun toggleFavorite(id: String?, title: String, posterPath: String?, rating: Double) =
@@ -102,6 +114,10 @@ class MovieRepository(
 
     fun getTheme() = localThemeDataSource.isDarkModeEnabled()
 
+    fun getAgeRating(externalId: Int): Flow<AgeRating> = flow {
+        emit(remoteMovieDataSource.getReleaseDates(externalId.toString()).mapToAgeRating())
+    }
+
     suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
 
     suspend fun getAverageRating(id: String): Double {
@@ -113,6 +129,16 @@ class MovieRepository(
         } else {
             0.0
         }
+    }
+}
+
+private fun getImageId(certification: String?): Int {
+    return when (certification) {
+        "A" -> R.drawable.det_tilladt_for_alle
+        "7" -> R.drawable.det_tilladt_for_alle__men_frar_des_b_rn_under_7__r
+        "11" -> R.drawable.tilladt_for_born_over_11r
+        "15" -> R.drawable.tilladt_for_b_rn_over_15__r
+        else -> -1
     }
 }
 
@@ -228,4 +254,16 @@ fun CrewDao.mapToCrew() = Crew(
     profilePath = "https://image.tmdb.org/t/p/original/${profilePath.orEmpty()}",
     department = department.orEmpty(),
     job = job.orEmpty()
+)
+
+fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
+    rating = results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification,
+    imageResource = getImageId(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
+)
+
+fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
+
+fun ProviderDao.mapToStreamingService() = StreamingService(
+    logoPath = "https://image.tmdb.org/t/p/original/$logoPath",
+    providerName = providerName.orEmpty()
 )

@@ -15,7 +15,7 @@ data class MovieDao(
     val belongsToCollection: CollectionDao? = CollectionDao(),
 
     @SerialName("budget")
-    val budget: Int? = 0,
+    val budget: Long? = 0,
 
     @SerialName("genres")
     val genreDaos: List<GenreDao>? = emptyList(),
@@ -54,7 +54,7 @@ data class MovieDao(
     val releaseDate: String? = "",
 
     @SerialName("revenue")
-    val revenue: Int? = 0,
+    val revenue: Long? = 0,
 
     @SerialName("runtime")
     val runtime: Int? = 0,
