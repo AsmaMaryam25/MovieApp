@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -35,17 +36,21 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.models.CollectionMovie
+import com.example.blackbeard.models.Genre
+import com.example.blackbeard.models.MovieCategory
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 
 @Composable
@@ -153,18 +158,18 @@ private fun HomeContent(
 @Composable
 private fun CreatePoster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    posterWidth: Dp = 300.dp,
     collectionMovie: CollectionMovie
 ) {
     var isClickAble by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
 
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+        Modifier.width(300.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(5.dp)
     ) {
         Box(
             modifier = Modifier
-                .width(posterWidth)
                 .aspectRatio(2 / 3f)
                 .clip(shape = RoundedCornerShape(30.dp))
                 .background(Color.Gray)
@@ -173,9 +178,7 @@ private fun CreatePoster(
                 model = collectionMovie.posterPath,
                 contentDescription = null,
                 modifier = Modifier
-                    .width(posterWidth)
-                    .aspectRatio(2 / 3f)
-                    .clip(shape = RoundedCornerShape(30.dp))
+                    .fillMaxWidth()
                     .clickable(enabled = isClickAble) {
                         if (isClickAble) {
                             onNavigateToDetailsScreen(
@@ -193,12 +196,12 @@ private fun CreatePoster(
             )
         }
         Column(
-            modifier = Modifier.height(152.dp)
+            modifier = Modifier.height(152.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Text(
                 modifier = Modifier
-                    .width(posterWidth)
-                    .padding(start = 35.dp, top = 15.dp, end = 35.dp)
+                    .fillMaxWidth()
                     .clickable {
                         onNavigateToDetailsScreen(
                             collectionMovie.title,
@@ -216,24 +219,21 @@ private fun CreatePoster(
                 fontWeight = FontWeight.Bold
             )
             Text(
-                modifier = Modifier
-                    .width(posterWidth),
+                modifier = Modifier.fillMaxWidth(),
                 text = collectionMovie.genres.joinToString { it.name },
                 style = TextStyle(
                     textAlign = TextAlign.Center
                 ),
             )
             Text(
-                modifier = Modifier
-                    .width(posterWidth),
+                modifier = Modifier.fillMaxWidth(),
                 text = collectionMovie.releaseDate.year.toString(),
                 style = TextStyle(
                     textAlign = TextAlign.Center
                 ),
             )
             Text(
-                modifier = Modifier
-                    .width(posterWidth),
+                modifier = Modifier.fillMaxWidth(),
                 text = collectionMovie.overview ?: "No overview available",
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,
@@ -271,7 +271,7 @@ fun CreatePosters(
         contentPadding = PaddingValues(start = 60.dp, end = 60.dp)
     ) {
         items(collectionMovies.size) { index ->
-            CreatePoster(onNavigateToDetailsScreen, 300.dp, collectionMovies[index])
+            CreatePoster(onNavigateToDetailsScreen, collectionMovies[index])
         }
     }
 }
