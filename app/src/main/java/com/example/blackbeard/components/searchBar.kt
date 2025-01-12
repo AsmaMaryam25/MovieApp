@@ -31,9 +31,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun SearchBar(
     searchQuery: MutableState<String>,
-    onSearchQueryChange: (String) -> Unit,
+    onSearchQueryChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isSearchBarFocused: Boolean,
+    currentTabIndex: Int,
     onSearchBarFocusChange: (Boolean) -> Unit,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -97,7 +98,11 @@ fun SearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    onSearchQueryChange(searchQuery.value)
+                    if (currentTabIndex == 0) {
+                        onSearchQueryChange(searchQuery.value,false)
+                    } else {
+                        onSearchQueryChange(searchQuery.value,true)
+                    }
                 }
             )
         )

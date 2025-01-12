@@ -53,9 +53,6 @@ fun MainNavHost(
 
         composable<Route.SearchScreen> {
             SearchScreen(
-                onNavigateToAdvancedSearchScreen = { query ->
-                    navController.navigate(Route.AdvancedSearchScreen(query = query))
-                },
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 }
@@ -109,16 +106,6 @@ fun MainNavHost(
                 showTopBar = showTopBar,
                 modifier = Modifier.fillMaxSize(),
                 setVideoLink = setVideoLink
-            )
-        }
-
-        composable<Route.AdvancedSearchScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
-
-            AdvancedSearchScreen(
-                query = backStackEntry.arguments?.getString("query")!!,
-                modifier = Modifier.fillMaxSize(),
-                showTopBar = showTopBar
             )
         }
     }

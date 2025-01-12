@@ -73,6 +73,22 @@ class MovieRepository(
         emit(MovieSearchResult(movies, totalPages))
     }
 
+    fun advanceSearchMovies(query: String, pageNum: Int): Flow<MovieSearchResult> = flow {
+        val response = remoteMovieDataSource.searchMovies(query, pageNum)
+        val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
+
+        val totalPages = response.totalPages
+
+        emit(MovieSearchResult(movies, totalPages))
+    }
+
+    fun discoverMovies(genreStr: String?, ratingGte : String?, pageNum: Int): Flow<MovieSearchResult> = flow {
+        val response = remoteMovieDataSource.discoverMovies(genreStr, ratingGte, pageNum)
+        val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
+        val totalPages = response.totalPages
+        emit(MovieSearchResult(movies, totalPages))
+    }
+
     fun getMovie(externalId: Int): Flow<LocalMovie> = flow {
         emit(
             remoteMovieDataSource.getMovie(externalId.toString())
@@ -207,6 +223,8 @@ fun SearchMovieDao.mapToMovie() = SearchMovie(
     originalTitle = originalTitle.orEmpty(),
     popularity = popularity ?: 0.0,
     video = video == true,
+    voteAverage = voteAverage ?: 0.0,
+    genres = genreIds,
 )
 
 fun GenreDao.mapToGenre() = Genre(

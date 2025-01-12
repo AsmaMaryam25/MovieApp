@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -59,7 +60,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAdvancedSearchScreen: (String) -> Unit,
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
 
@@ -113,15 +113,21 @@ private fun SearchContent(
         modifier = modifier.fillMaxSize()
     ) {
         var isSearchBarFocused by remember { mutableStateOf(false) }
-        val tabs = listOf("Recent", "Advance Search")
+        val tabs = listOf("Recent", "Advanced Search")
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
+        val selectedItems = remember { mutableStateMapOf<Int, List<String>>() }
 
         SearchBar(
             searchQuery = searchQuery,
-            onSearchQueryChange = { query ->
-                searchViewModel.searchMovies(query, 1)
+            onSearchQueryChange = { query, searchType ->
+                if(searchType){
+                    searchViewModel.advanceSearchMovies(query, 1, selectedItems.toMap())
+                }else{
+                    searchViewModel.searchMovies(query, 1)
+                }
             },
+            currentTabIndex = pagerState.currentPage,
             isSearchBarFocused = isSearchBarFocused,
             onSearchBarFocusChange = { isFocused ->
                 isSearchBarFocused = isFocused
@@ -159,7 +165,10 @@ private fun SearchContent(
             SearchTabs(
                 tabs = tabs,
                 pagerState = pagerState,
-                coroutineScope = coroutineScope
+                coroutineScope = coroutineScope,
+                searchQuery = searchQuery,
+                searchViewModel = searchViewModel,
+                selectedItems = selectedItems
             )
         }
     }
@@ -170,7 +179,10 @@ private fun SearchContent(
 private fun SearchTabs(
     tabs: List<String>,
     pagerState: PagerState,
-    coroutineScope: CoroutineScope
+    searchQuery: MutableState<String>,
+    coroutineScope: CoroutineScope,
+    searchViewModel: SearchViewModel,
+    selectedItems: MutableMap<Int, List<String>>
 ) {
 
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -201,7 +213,9 @@ private fun SearchTabs(
                 }
 
                 1 -> {
-                    AdvanceSearch()
+                    AdvanceSearch(searchQuery,
+                        searchViewModel,
+                        selectedItems = selectedItems)
                 }
             }
         }

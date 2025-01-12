@@ -19,6 +19,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -27,17 +28,34 @@ import androidx.compose.ui.unit.dp
 import com.example.blackbeard.models.Category
 
 @Composable
-fun AdvanceSearch() {
-    val categories = listOf(
-        Category("TMDb Rating", listOf("9+", "8+", "7+", "6+")),
-        Category("Popular Genres", listOf("Comedy", "Horror", "Romance", "Thriller")),
-        Category("Decade", listOf("2020's", "2010's", "2000's", "1990's", "1980's")),
-        Category("Keywords", listOf("Anime", "B-Movie", "Cult Film", "Superhero")),
-        Category("Runtime", listOf("30min or less", "1 hour or less", "1 to 2 hours"))
-    )
+fun AdvanceSearch(searchQuery: MutableState<String>,
+                  searchViewModel: SearchViewModel,
+                  selectedItems: MutableMap<Int, List<String>>) {
 
-    val selectedItems = remember { mutableSetOf<String>() }
-    val textColor = if (isSystemInDarkTheme()) Color.White else Color.Black
+    val categories = listOf(
+        Category(
+            "Rating",
+            listOf("9+", "8+", "7+", "6+"),
+            listOf("9", "8", "7", "6")
+        ),
+        Category(
+            "Popular Genres",
+            listOf("Action", "Adventure", "Horror", "Romance", "Comedy", "Crime", "Drama", "Fantasy", "Science Fiction", "Western", "Documentary"),
+            listOf("28", "12", "27", "10749", "35", "80", "18", "14", "878", "37", "99")
+        ),
+        /*
+        Category(
+            "Decade",
+            listOf("2020's", "2010's", "2000's", "1990's", "1980's"),
+            listOf("2020", "2010", "2000", "1990", "1980")
+        ),
+        Category(
+            "Runtime",
+            listOf("30min or less", "1 hour or less", "1 to 2 hours"),
+            listOf("30", "60", "120")
+        )
+        */
+    )
 
     Column(
         modifier = Modifier.fillMaxSize()
@@ -48,16 +66,19 @@ fun AdvanceSearch() {
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 4.dp)
         ) {
-            categories.forEach { category ->
+            categories.forEachIndexed { index, category ->
                 CategorySection(
+                    index = index,
                     category = category,
                     selectedItems = selectedItems,
-                    onItemSelected = { item ->
-                        if (selectedItems.contains(item)) {
-                            selectedItems.remove(item)
+                    onItemSelected = { categoryIndex, item ->
+                        val currentSelected = selectedItems[categoryIndex] ?: emptyList()
+                        val updatedSelected = if (currentSelected.contains(item)) {
+                            currentSelected - item
                         } else {
-                            selectedItems.add(item)
+                            currentSelected + item
                         }
+                        selectedItems[categoryIndex] = updatedSelected
                     }
                 )
             }
@@ -70,7 +91,13 @@ fun AdvanceSearch() {
                     color = Color(0xFFFFD700),
                     shape = RoundedCornerShape(10)
                 )
-                .clickable {}
+                .clickable {
+                    searchViewModel.advanceSearchMovies(
+                    searchQuery.value,
+                    1,
+                    selectedItems.toMap()
+                )
+                }
                 .padding(16.dp), // Inner padding for the text
             contentAlignment = Alignment.Center
         ) {
@@ -85,9 +112,10 @@ fun AdvanceSearch() {
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CategorySection(
+    index: Int,
     category: Category,
-    selectedItems: Set<String>,
-    onItemSelected: (String) -> Unit
+    selectedItems: Map<Int, List<String>>,
+    onItemSelected: (Int, String) -> Unit
 ) {
     Column(
         modifier = Modifier.padding(vertical = 4.dp)
@@ -102,12 +130,13 @@ fun CategorySection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            items(category.items.size) { index ->
-                val item = category.items[index]
+            items(category.items.size) { itemIndex ->
+                val displayItem = category.displayItems[itemIndex]
+                val item = category.items[itemIndex]
                 CategoryItem(
-                    item = item,
-                    isSelected = selectedItems.contains(item),
-                    onSelected = onItemSelected
+                    displayItem = displayItem,
+                    isSelected = selectedItems[index]?.contains(item) == true,
+                    onSelected = { onItemSelected(index, item) }
                 )
             }
         }
@@ -116,18 +145,20 @@ fun CategorySection(
 
 @Composable
 fun CategoryItem(
-    item: String,
+    displayItem: String,
     isSelected: Boolean,
-    onSelected: (String) -> Unit
+    onSelected: () -> Unit
 ) {
     FilterChip(
         selected = isSelected,
-        onClick = { onSelected(item) },
+        onClick = { onSelected() },
         colors = FilterChipDefaults.filterChipColors(
-            selectedContainerColor = Color(0xFFFFD700),
-            selectedLabelColor = Color.Black
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
         ),
-        label = { Text(text = item) },
+        label = { Text(text = displayItem) },
         modifier = Modifier.padding(end = 8.dp)
     )
 }

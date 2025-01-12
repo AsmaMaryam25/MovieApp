@@ -7,11 +7,13 @@ data class SearchMovie(
     override val title: String,
     override val overview: String?,
     override val posterPath: String?,
+    val genres: List<Int>? = emptyList(),
     override val backdropPath: String?,
     override val releaseDate: LocalDate,
     override val adult: Boolean,
     override val originalLanguage: String,
     override val originalTitle: String,
     override val popularity: Double,
-    override val video: Boolean
+    override val video: Boolean,
+    val voteAverage: Double,
 ) : Movie

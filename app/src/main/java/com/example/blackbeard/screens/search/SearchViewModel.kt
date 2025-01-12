@@ -120,6 +120,106 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
+    fun advanceSearchMovies(query: String, pageNum: Int, selectedItems: Map<Int, List<String>>) {
+        viewModelScope.launch {
+            mutableSearchUIState.value = SearchUIModel.Loading
+            if (query.isBlank()) {
+                var ratingGte: String? = null
+                var genreStr: String? = null
+                for (i in selectedItems.keys) {
+                    selectedItems[i]?.let { list ->
+                        if (list.isNotEmpty()) {
+                            if (i == 0) {
+                                ratingGte = getSmallestRating(list)
+                            }
+                            else if (i == 1) {
+                                genreStr = convertListToString(list)
+                            }
+                        }
+                    }
+                }
+                movieRepository.discoverMovies(genreStr, ratingGte, pageNum).collect { searchResults ->
+                    val filteredMovies = searchResults.movies
+
+                    val updatedMovies = if (pageNum == 1) {
+                        filteredMovies
+                    } else {
+                        val currentMovies =
+                            (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies
+                                ?: emptyList()
+                        currentMovies + filteredMovies
+                    }
+
+                    mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
+                        SearchUIModel.Empty
+                    } else {
+                        SearchUIModel.Data(updatedMovies, searchResults.totalPages)
+                    }
+
+                    totalPages.value = searchResults.totalPages
+                    currentPage.intValue = pageNum
+                }
+            } else {
+                movieRepository.advanceSearchMovies(query, pageNum).collect { searchResults ->
+                    val filteredMovies = searchResults.movies.filter { movie ->
+                        selectedItems.all { (categoryIndex, selectedValues) ->
+                            when (categoryIndex) {
+                                0 -> {
+                                    selectedValues.any { selectedValue ->
+                                        val selectedRating = selectedValue.toDoubleOrNull() ?: 0.0
+                                        movie.voteAverage >= selectedRating
+                                    }
+                                }
+
+                                1 -> {
+                                    selectedValues.any { selectedValue ->
+                                        val selectedGenreId = selectedValue.toIntOrNull()
+                                        movie.genres?.contains(selectedGenreId) == true
+                                    }
+                                }
+
+                                else -> true
+                            }
+                        }
+                    }
+
+                    val updatedMovies = if (pageNum == 1) {
+                        filteredMovies
+                    } else {
+                        val currentMovies =
+                            (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies
+                                ?: emptyList()
+                        currentMovies + filteredMovies
+                    }
+
+                    mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
+                        SearchUIModel.Empty
+                    } else {
+                        SearchUIModel.Data(updatedMovies, searchResults.totalPages)
+                    }
+
+                    totalPages.value = searchResults.totalPages
+                    currentPage.intValue = pageNum
+                }
+            }
+        }
+    }
+
+
+    private fun convertListToString(list: List<String>): String {
+        return if (list.isEmpty())
+            ""
+        else
+            list.joinToString("|")
+    }
+
+    private fun getSmallestRating(list: List<String>): String {
+        return if (list.isEmpty())
+            ""
+        else
+            list.minByOrNull { it.toDoubleOrNull() ?: Double.MAX_VALUE } ?: ""
+    }
+
     sealed class SearchUIModel {
         data object Empty : SearchUIModel()
         data object Loading : SearchUIModel()

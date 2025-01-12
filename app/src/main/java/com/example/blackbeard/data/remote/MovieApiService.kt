@@ -64,6 +64,14 @@ interface MovieApiService {
         @Query("api_key") apiKey: String
     ): QueryDao
 
+    @GET("discover/movie")
+    suspend fun discoverMovies(
+        @Query("with_genres") withGenres: String?,
+        @Query("vote_average.gte") voteAverageGte: String?,
+        @Query("page") pageNum: Int,
+        @Query("api_key") apiKey: String
+    ): QueryDao
+
     @GET("movie/{external_id}/watch/providers")
     suspend fun getStreamingServices(
         @Path("external_id") externalId: String,
