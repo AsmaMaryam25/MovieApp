@@ -258,8 +258,18 @@ private fun SimpleContent(
             AgeRatingIcon(ageRating = ageRating)
             GenreItemContainer(genres)
         }
+        if (overview.isNullOrEmpty()) {
+            Text(
+                text = "No overview available",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium
+            )
+            return@Column
+        }
         ExpandableText(
-            text = overview ?: "",
+            text = overview,
             collapsedMaxLine = 3,
             fontSize = 14.sp,
             style = TextStyle(color = Color.White),
