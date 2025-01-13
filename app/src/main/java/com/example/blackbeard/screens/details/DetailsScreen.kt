@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -94,6 +96,7 @@ import com.example.blackbeard.utils.TimeUtils
 import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.floor
+
 
 @Composable
 fun DetailsScreen(
@@ -293,7 +296,8 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
         Text(
             text = "Watch from these streaming services",
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+
         )
 
         if(streamingServices.isEmpty()) {
@@ -415,7 +419,7 @@ private fun SaveAndBookmarkSection(
             modifier = Modifier.weight(0.4f),
             text = "Add the movie to your favorites and watchlist",
             style = MaterialTheme.typography.titleSmall,
-            color = Color.DarkGray
+
         )
 
         Row(
@@ -504,7 +508,6 @@ private fun MovieRatingSection(
                 Text(
                     modifier = Modifier.weight(0.4f),
                     text = "Give your opinion on the movie by rating it",
-                    color = Color.DarkGray,
                     style = MaterialTheme.typography.titleSmall
                 )
                 Column(
@@ -514,7 +517,6 @@ private fun MovieRatingSection(
                     Text(
                         text = "Users ($userRatings)",
                         fontWeight = FontWeight.Bold,
-                        color = Color.DarkGray
                     )
                     RatingStars(
                         movieRating = movieRating,
@@ -523,7 +525,6 @@ private fun MovieRatingSection(
                     Text(
                         text = "Average: " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
-                        color = Color.DarkGray
                     )
                 }
             }
