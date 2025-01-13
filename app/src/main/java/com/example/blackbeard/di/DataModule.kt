@@ -5,6 +5,7 @@ import android.content.Context
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
 import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
+import com.example.blackbeard.data.remote.RemoteFirebaseDataSource
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
 import com.example.blackbeard.domain.MovieRepository
 import com.google.firebase.firestore.FirebaseFirestore
@@ -30,6 +31,8 @@ object DataModule {
 
     private val remoteMovieDataSource = RemoteMovieDataSource(retrofit)
 
+    private val remoteFirebaseDataSource = RemoteFirebaseDataSource()
+
     @SuppressLint("StaticFieldLeak")
     private lateinit var localFavoriteMovieDataSource: FavoriteMovieDataSource
 
@@ -48,10 +51,10 @@ object DataModule {
         val firestore = FirebaseFirestore.getInstance()
         movieRepository = MovieRepository(
             remoteMovieDataSource,
+            remoteFirebaseDataSource,
             localFavoriteMovieDataSource,
             localWatchlistMovieDataSource,
-            localThemeDataSource,
-            firestore
+            localThemeDataSource
         )
     }
 }
