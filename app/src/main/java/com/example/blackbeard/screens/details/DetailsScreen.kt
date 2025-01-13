@@ -229,7 +229,7 @@ private fun SimpleContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
+            .padding(bottom = 20.dp)
             .fillMaxWidth()
 
     ) {
