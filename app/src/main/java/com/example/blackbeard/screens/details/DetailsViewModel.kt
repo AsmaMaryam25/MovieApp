@@ -121,9 +121,9 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
     }
 
     fun getVoterCount(id: String): LiveData<Int> {
-        var voterCount = MutableLiveData<Int>()
+        val voterCount = MutableLiveData<Int>()
         viewModelScope.launch {
-            voterCount = movieRepository.getVoterCount(id)
+            movieRepository.getVoterCount(id, voterCount)
         }
         return voterCount
     }

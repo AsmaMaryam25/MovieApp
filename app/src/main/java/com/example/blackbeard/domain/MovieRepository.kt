@@ -136,8 +136,8 @@ class MovieRepository(
         remoteFirebaseDataSource.addRating(id, rating, installationID)
     }
 
-    suspend fun getVoterCount(id: String): MutableLiveData<Int> {
-        return remoteFirebaseDataSource.getVoterCount(id)
+    suspend fun getVoterCount(id: String, voterCount: MutableLiveData<Int>) {
+        return remoteFirebaseDataSource.getVoterCount(id, voterCount)
     }
 
     suspend fun getInstallationID(): String {

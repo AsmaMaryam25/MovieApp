@@ -78,8 +78,7 @@ class RemoteFirebaseDataSource {
         }
     }
 
-    suspend fun getVoterCount(id: String): MutableLiveData<Int> {
-        val voterCount = MutableLiveData<Int>()
+    suspend fun getVoterCount(id: String, voterCount: MutableLiveData<Int>, ) {
         val ratingsRef = firestore.collection("ratings").document(id)
 
         val snapshot = ratingsRef.get().await()
@@ -88,8 +87,9 @@ class RemoteFirebaseDataSource {
             val currentUserRatings =
                 currentData?.get("userRatings") as? Map<*, *> ?: emptyMap<Any, Any>()
             voterCount.postValue(currentUserRatings.size)
+        } else {
+            voterCount.postValue(0)
         }
-        return voterCount
     }
 
     suspend fun getAverageRating(id: String): Double {
