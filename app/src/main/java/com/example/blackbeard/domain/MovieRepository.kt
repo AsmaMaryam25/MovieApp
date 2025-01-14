@@ -73,15 +73,6 @@ class MovieRepository(
         emit(MovieSearchResult(movies, totalPages))
     }
 
-    fun advanceSearchMovies(query: String, pageNum: Int): Flow<MovieSearchResult> = flow {
-        val response = remoteMovieDataSource.searchMovies(query, pageNum)
-        val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
-
-        val totalPages = response.totalPages
-
-        emit(MovieSearchResult(movies, totalPages))
-    }
-
     fun discoverMovies(
         genreStr: String?,
         ratingGte: String?,

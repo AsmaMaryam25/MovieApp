@@ -181,7 +181,7 @@ class SearchViewModel() : ViewModel() {
                 mutableSearchUIState.value = SearchUIModel.Loading
 
 
-                movieRepository.advanceSearchMovies(query, pageNum).collect { searchResults ->
+                movieRepository.searchMovies(query, pageNum).collect { searchResults ->
                     val filteredMovies = searchResults.movies.filter { movie ->
                         selectedItems.all { (categoryIndex, selectedValues) ->
                             when (categoryIndex) {
