@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Blackbeard</string>
-    <string name="watch_from_streaming_services">Watch from these streaming services</string>"
-    <string name="there_are_no_streaming_services_available_for_this_title">"There are no streaming services available for this title"</string>
+    <string name="watch_from_streaming_services">
+        Watch from these streaming services</string>"
+    <string name="there_are_no_streaming_services_available_for_this_title">
+        "There are no streaming services available for this title"</string>
+    <string name="favorite_and_Watchlist">"Favorite &amp; Watchlist"</string>
+    <string name="add_to_favorites_and_watchlist">
+        Add the movie to your favorites and watchlist</string>
+    <string name="crew">Crew</string>
 
 </resources>
