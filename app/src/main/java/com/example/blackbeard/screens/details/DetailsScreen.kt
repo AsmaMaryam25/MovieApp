@@ -412,7 +412,7 @@ private fun SaveAndBookmarkSection(
     var isWatchListed by remember { mutableStateOf(isWatchList) }
 
     Text(
-        text = "Favorite & Watchlist",
+        text = stringResource(id= R.string.favorite_and_Watchlist),
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold
     )
@@ -424,7 +424,7 @@ private fun SaveAndBookmarkSection(
 
         Text(
             modifier = Modifier.weight(0.4f),
-            text = "Add the movie to your favorites and watchlist",
+            text = stringResource(id= R.string.add_to_favorites_and_watchlist),
             style = MaterialTheme.typography.titleSmall,
             color = Color.DarkGray
         )
