@@ -1,20 +1,33 @@
 <resources>
+    <!-- Application name -->
     <string name="app_name">Blackbeard</string>
-    <string name="watch_from_streaming_services">
-        Watch from these streaming services</string>"
-    <string name="there_are_no_streaming_services_available_for_this_title">
-        "There are no streaming services available for this title"</string>
-    <string name="favorite_and_Watchlist">"Favorite &amp; Watchlist"</string>
-    <string name="add_to_favorites_and_watchlist">
-        Add the movie to your favorites and watchlist</string>
+
+    <!-- DetailScreen start -->
+    <!-- Streaming services section -->
+    <string name="watch_from_streaming_services">Watch from these streaming services</string>
+    <string name="there_are_no_streaming_services_available_for_this_title">There are no streaming services available for this title</string>
+
+    <!-- Favorites and Watchlist section -->
+    <string name="favorite_and_Watchlist">Favorite &amp; Watchlist</string>
+    <string name="add_to_favorites_and_watchlist">Add the movie to your favorites and watchlist</string>
+
+    <!-- Crew section -->
     <string name="crew">Crew</string>
     <string name="no_crew_available">No crew members available</string>
+
+    <!-- Rating section -->
     <string name="rating">Rating</string>
     <string name="give_opinion">Give your opinion on the movie by rating it</string>
+
+    <!-- Users section -->
     <string name="users">Users</string>
     <string name="average">Average</string>
+
+    <!-- Cast section -->
     <string name="cast">Cast</string>
     <string name="no_cast_available">No cast members available</string>
+
+    <!-- Details section -->
     <string name="no_details_available">No details available</string>
     <string name="release_date">Release Date</string>
     <string name="runtime">Runtime</string>
@@ -26,8 +39,15 @@
     <string name="production_countries">Production Countries</string>
     <string name="language">Language</string>
     <string name="languages">Languages</string>
+
+    <!-- Miscellaneous -->
     <string name="title_not_available">Title not available</string>
     <string name="read_more">… Read more</string>
     <string name="no_overview_available">No overview available</string>
+    <!-- DetailScreen end -->
+
+    <!-- AboutScreen start -->
+    <string name="version">"Version 1.0.0"</string>
+
 
 </resources>
