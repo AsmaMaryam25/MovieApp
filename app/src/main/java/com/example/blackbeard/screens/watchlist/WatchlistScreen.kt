@@ -43,7 +43,6 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
-import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.watchlist.WatchlistViewModel.WatchlistUIModel
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -60,7 +59,6 @@ fun WatchlistScreen(
     when (watchlistUIModel) {
         WatchlistUIModel.Empty -> EmptyScreen()
         WatchlistUIModel.Loading -> LoadingScreen()
-        WatchlistUIModel.NoConnection -> NoConnectionScreen()
         is WatchlistUIModel.Data -> WatchlistContent(
             onNavigateToDetailsScreen,
             modifier,
@@ -124,7 +122,9 @@ fun CreateWatchlistCard(
 
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
     ) {
         Box(
             modifier = Modifier
@@ -165,28 +165,43 @@ fun CreateWatchlistCard(
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold,
-            modifier = modifier
-                .padding(vertical = 40.dp)
-                .weight(1f)
-                .clickable {
-                    onNavigateToDetailsScreen(
-                        watchlistMovie.title,
-                        watchlistMovie.id.toInt()
-                    )
-                }
+            modifier = if(watchlistMovie.rating != 69.0) {
+                modifier
+                    .padding(vertical = 40.dp)
+                    .weight(1f)
+                    .clickable {
+                        onNavigateToDetailsScreen(
+                            watchlistMovie.title,
+                            watchlistMovie.id.toInt()
+                        )
+                    }
+            } else {
+                modifier
+                    .padding(vertical = 40.dp, horizontal = 20.dp)
+                    .weight(1f)
+                    .clickable {
+                        onNavigateToDetailsScreen(
+                            watchlistMovie.title,
+                            watchlistMovie.id.toInt()
+                        )
+                    }
+            }
         )
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(0.5f)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = "Rating",
-                modifier = modifier.size(24.dp)
-            )
-            Text(
-                text = String.format(Locale.getDefault(), "%.2f", watchlistMovie.rating),
-            )
+
+        if(watchlistMovie.rating != 69.0) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(0.5f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = "Rating",
+                    modifier = modifier.size(24.dp)
+                )
+                Text(
+                    text = String.format(Locale.getDefault(), "%.2f", watchlistMovie.rating),
+                )
+            }
         }
     }
 }
