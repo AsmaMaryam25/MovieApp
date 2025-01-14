@@ -54,6 +54,9 @@
     <string name="dark_mode">Dark Mode</string>
     <!-- ApperanceScreen end -->
 
+    <!-- EmptyScreen start -->
+    <string name="empty">Empty</string>
+    <!-- EmptyScreen end -->
 
 
 </resources>
