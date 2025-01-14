@@ -1,6 +1,7 @@
 package com.example.blackbeard.screens.search
 
-import android.annotation.SuppressLint
+import android.content.Context
+import RecentSearchDataSource
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,11 @@ class SearchViewModel() : ViewModel() {
         private set
 
     var totalPages = mutableStateOf<Int?>(null)
+
+    private val recentSearchDataSource = RecentSearchDataSource(context)
+
+    private val _recentSearches = mutableStateOf<List<String>>(emptyList())
+    val recentSearches: State<List<String>> = _recentSearches
 
 
     init {
@@ -86,19 +92,6 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
-    private val _recentSearches = mutableStateOf<List<String>>(emptyList())
-    val recentSearches: State<List<String>> = _recentSearches
-
-    @SuppressLint("NewApi")
-    fun addRecentSearch(query: String) {
-        _recentSearches.value = _recentSearches.value.toMutableList().apply {
-            if (!contains(query)) {
-                add(0, query)
-                if (size > 10) removeAt(size - 1)
-            }
-        }
-    }
-
     fun searchMovies(query: String, pageNum: Int) {
         viewModelScope.launch {
             if (query.isBlank()) {
@@ -134,13 +127,34 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
-    fun clearRecentSearches() {
-        _recentSearches.value = emptyList()
+    init {
+        loadRecentSearches()
+    }
+
+    private fun loadRecentSearches() {
+        viewModelScope.launch {
+            _recentSearches.value = recentSearchDataSource.getRecentSearches().first()
+        }
+    }
+
+    fun addRecentSearch(query: String) {
+        viewModelScope.launch {
+            recentSearchDataSource.addRecentSearch(query)
+            loadRecentSearches()
+        }
     }
 
     fun removeRecentSearch(query: String) {
-        _recentSearches.value = _recentSearches.value.toMutableList().apply {
-            remove(query)
+        viewModelScope.launch {
+            recentSearchDataSource.removeRecentSearch(query)
+            loadRecentSearches()
+        }
+    }
+
+    fun clearRecentSearches() {
+        viewModelScope.launch {
+            recentSearchDataSource.clearRecentSearches()
+            loadRecentSearches()
         }
     }
 
