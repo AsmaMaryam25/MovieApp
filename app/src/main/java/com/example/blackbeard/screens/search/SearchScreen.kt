@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.blackbeard.R
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
@@ -124,7 +126,7 @@ private fun SearchContent(
             if (collectionMovies.isEmpty()) {
                 item {
                     Text(
-                        text = "No results found",
+                        text = stringResource(id = R.string.no_results_found),
                         modifier = Modifier.padding(10.dp)
                     )
                 }
@@ -153,7 +155,7 @@ private fun SearchContent(
                             .fillMaxWidth()
                             .padding(horizontal = 10.dp),
                     ) {
-                        Text(text = "Load more")
+                        Text(text = stringResource(id = R.string.load_more))
                     }
                 }
             }
