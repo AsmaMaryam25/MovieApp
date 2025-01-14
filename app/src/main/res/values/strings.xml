@@ -8,5 +8,7 @@
     <string name="add_to_favorites_and_watchlist">
         Add the movie to your favorites and watchlist</string>
     <string name="crew">Crew</string>
+    <string name="no_crew_available">No crew members available</string>
+    <string name="rating">Rating</string>
 
 </resources>
