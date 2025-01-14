@@ -73,6 +73,13 @@
 
     <!-- FavoriteScreen start -->
     <string name="no_favorites">No favorites yet</string>
+    <!-- FavoriteScreen end -->
+
+    <!-- HomeScreen start -->
+    <string name="upcoming">Upcoming</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="popular">Popular</string>
+    <string name="now_playing">Now Playing</string>
 
 
 </resources>
