@@ -19,18 +19,12 @@ import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.ArrowForward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.NorthWest
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -59,7 +53,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
-import com.example.blackbeard.models.Category
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
@@ -76,13 +69,12 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onNavigateToAdvancedSearchScreen: (String) -> Unit,
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
 
     val searchViewModel = viewModel<SearchViewModel>()
     val searchUIModel = searchViewModel.searchUIState.collectAsState().value
-    val recentSearches = searchViewModel.recentSearches.collectAsState().value
+    searchViewModel.recentSearches.collectAsState().value
 
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
@@ -144,10 +136,9 @@ private fun SearchContent(
     searchViewModel: SearchViewModel,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    var isSearchBarFocused by remember { mutableStateOf(false) }
-    val tabs = listOf("Recent", "Advanced Search")
-    val pagerState = rememberPagerState()
+    rememberCoroutineScope()
+    listOf("Recent", "Advanced Search")
+    rememberPagerState()
     val recentSearches = searchViewModel.recentSearches.collectAsState().value
 
     Column(
@@ -159,7 +150,7 @@ private fun SearchContent(
         val pagerState = rememberPagerState()
 
         // Determine which list to use based on searchType
-        val currentMovies : List<Any> = if (searchViewModel.searchType.value) {
+        val currentMovies: List<Any> = if (searchViewModel.searchType.value) {
             collectionSearchMovies
         } else {
             collectionMovies
@@ -171,7 +162,11 @@ private fun SearchContent(
             onSearchQueryChange = { query, typeOfSearch ->
                 searchViewModel.searchType.value = typeOfSearch
                 if (searchViewModel.searchType.value) {
-                    searchViewModel.advanceSearchMovies(query, 1, searchViewModel.selectedItems.toMap())
+                    searchViewModel.advanceSearchMovies(
+                        query,
+                        1,
+                        searchViewModel.selectedItems.toMap()
+                    )
                 } else {
                     searchViewModel.searchMovies(query, 1)
                 }
@@ -247,8 +242,7 @@ private fun SearchContent(
                 recentSearches = recentSearches,
                 onRecentSearchClick = { searchQuery.value = it },
                 onClearRecentSearches = { searchViewModel.clearRecentSearches() },
-                onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) }
-                coroutineScope = coroutineScope,
+                onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) },
                 searchQuery = searchQuery,
                 searchViewModel = searchViewModel,
             )
@@ -265,9 +259,8 @@ private fun SearchTabs(
     recentSearches: List<String>,
     onRecentSearchClick: (String) -> Unit,
     onClearRecentSearches: () -> Unit,
-    onRemoveRecentSearch: (String) -> Unit
+    onRemoveRecentSearch: (String) -> Unit,
     searchQuery: MutableState<String>,
-    coroutineScope: CoroutineScope,
     searchViewModel: SearchViewModel,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -432,7 +425,7 @@ private fun CreateSearchPoster(
                 .background(Color.Gray)
         ) {
             AsyncImage(
-                model = if(searchViewModel.searchType.value) (movie as SearchMovie).posterPath else (movie as Movie).posterPath,
+                model = if (searchViewModel.searchType.value) (movie as SearchMovie).posterPath else (movie as Movie).posterPath,
                 contentDescription = null,
                 modifier = Modifier
                     .width(posterWidth)
@@ -441,8 +434,8 @@ private fun CreateSearchPoster(
                     .clickable(enabled = isClickAble) {
                         if (isClickAble) {
                             onNavigateToDetailsScreen(
-                                if(searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
-                                if(searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
+                                if (searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
+                                if (searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
                             )
                             isClickAble = false
                             coroutineScope.launch {
@@ -457,11 +450,13 @@ private fun CreateSearchPoster(
         Text(
             modifier = modifier
                 .width(posterWidth)
-                .clickable { onNavigateToDetailsScreen(
-                    if(searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
-                    if(searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
-                ) },
-            text = if(searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
+                .clickable {
+                    onNavigateToDetailsScreen(
+                        if (searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
+                        if (searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
+                    )
+                },
+            text = if (searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             lineHeight = 15.sp

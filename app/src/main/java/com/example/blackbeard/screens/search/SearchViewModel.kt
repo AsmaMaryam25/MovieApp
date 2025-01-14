@@ -137,7 +137,9 @@ class SearchViewModel() : ViewModel() {
     fun advanceSearchMovies(query: String, pageNum: Int, selectedItems: Map<Int, List<String>>) {
         viewModelScope.launch {
             if (query.isBlank()) {
-                val currentMovies = (mutableSearchUIState.value as? SearchUIModel.AdvanceSearchData)?.collectionMovies ?: emptyList()
+                val currentMovies =
+                    (mutableSearchUIState.value as? SearchUIModel.AdvanceSearchData)?.collectionMovies
+                        ?: emptyList()
 
                 mutableSearchUIState.value = SearchUIModel.Loading
                 var ratingGte: String? = null
@@ -152,27 +154,30 @@ class SearchViewModel() : ViewModel() {
                         }
                     }
                 }
-                movieRepository.discoverMovies(genreStr, ratingGte, pageNum).collect { searchResults ->
-                    val filteredMovies = searchResults.movies
+                movieRepository.discoverMovies(genreStr, ratingGte, pageNum)
+                    .collect { searchResults ->
+                        val filteredMovies = searchResults.movies
 
-                    val updatedMovies = if (pageNum == 1) {
-                        filteredMovies
-                    } else {
-                        currentMovies + filteredMovies
+                        val updatedMovies = if (pageNum == 1) {
+                            filteredMovies
+                        } else {
+                            currentMovies + filteredMovies
+                        }
+
+                        mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
+                            SearchUIModel.Empty
+                        } else {
+                            SearchUIModel.AdvanceSearchData(updatedMovies, searchResults.totalPages)
+                        }
+
+                        totalPages.value = searchResults.totalPages
+                        currentPage.intValue = pageNum
                     }
-
-                    mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
-                        SearchUIModel.Empty
-                    } else {
-                        SearchUIModel.AdvanceSearchData(updatedMovies, searchResults.totalPages)
-                    }
-
-                    totalPages.value = searchResults.totalPages
-                    currentPage.intValue = pageNum
-                }
             } else {
 
-                val currentMovies = (mutableSearchUIState.value as? SearchUIModel.AdvanceSearchData)?.collectionMovies ?: emptyList()
+                val currentMovies =
+                    (mutableSearchUIState.value as? SearchUIModel.AdvanceSearchData)?.collectionMovies
+                        ?: emptyList()
                 mutableSearchUIState.value = SearchUIModel.Loading
 
 
@@ -223,9 +228,10 @@ class SearchViewModel() : ViewModel() {
     }
 
     private fun getSmallestRating(list: List<String>): String {
-        return if (list.isEmpty()) "" else list.minByOrNull { it.toDoubleOrNull() ?: Double.MAX_VALUE } ?: ""
+        return if (list.isEmpty()) "" else list.minByOrNull {
+            it.toDoubleOrNull() ?: Double.MAX_VALUE
+        } ?: ""
     }
-}
 
     init {
         viewModelScope.launch {
@@ -267,3 +273,4 @@ class SearchViewModel() : ViewModel() {
             val totalPages: Int?
         ) : SearchUIModel()
     }
+}

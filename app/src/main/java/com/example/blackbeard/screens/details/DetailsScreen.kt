@@ -1,6 +1,5 @@
 package com.example.blackbeard.screens.details
 
-import android.R.attr.x
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -20,12 +18,10 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -57,14 +53,10 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -295,7 +287,7 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
             fontWeight = FontWeight.Bold
         )
 
-        if(streamingServices.isEmpty()) {
+        if (streamingServices.isEmpty()) {
             Text(
                 text = "There are no streaming services available for this title",
                 style = MaterialTheme.typography.titleMedium
@@ -823,7 +815,9 @@ private fun CollapsibleBodyText(
 private fun GenreItemContainer(genres: List<Genre>) {
 
     LazyRow(
-        modifier = Modifier.padding(vertical = 10.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
     ) {
         items(genres) { genre ->

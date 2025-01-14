@@ -28,7 +28,7 @@ class RemoteMovieDataSource(private val retrofit: Retrofit) {
     suspend fun searchMovies(query: String, pageNum: Int) =
         movieApi.searchMovies(query, pageNum, apiKey)
 
-    suspend fun discoverMovies(genreStr: String?, ratingGte : String?, pageNum: Int) =
+    suspend fun discoverMovies(genreStr: String?, ratingGte: String?, pageNum: Int) =
         movieApi.discoverMovies(genreStr, ratingGte, pageNum, apiKey)
 
     suspend fun getStreamingServices(externalId: String) =

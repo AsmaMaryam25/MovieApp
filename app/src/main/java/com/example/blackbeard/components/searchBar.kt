@@ -78,7 +78,7 @@ fun SearchBar(
                     if (searchQuery.value.isNotEmpty()) {
                         IconButton(
                             onClick = {
-                            searchQuery.value = ""
+                                searchQuery.value = ""
                             }
                         ) {
                             Icon(

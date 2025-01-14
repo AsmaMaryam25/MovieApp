@@ -2,7 +2,6 @@ package com.example.blackbeard.screens.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.runtime.MutableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,6 +18,7 @@ import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +29,7 @@ import com.example.blackbeard.models.Category
 fun AdvanceSearch(
     searchQuery: MutableState<String>,
     searchViewModel: SearchViewModel,
-    updateSearchType : () -> Unit,
+    updateSearchType: () -> Unit,
 ) {
     val categories = listOf(
         Category(
@@ -39,7 +39,19 @@ fun AdvanceSearch(
         ),
         Category(
             "Popular Genres",
-            listOf("Action", "Adventure", "Horror", "Romance", "Comedy", "Crime", "Drama", "Fantasy", "Science Fiction", "Western", "Documentary"),
+            listOf(
+                "Action",
+                "Adventure",
+                "Horror",
+                "Romance",
+                "Comedy",
+                "Crime",
+                "Drama",
+                "Fantasy",
+                "Science Fiction",
+                "Western",
+                "Documentary"
+            ),
             listOf("28", "12", "27", "10749", "35", "80", "18", "14", "878", "37", "99")
         ),
         Category(
@@ -69,7 +81,8 @@ fun AdvanceSearch(
                     category = category,
                     selectedItems = searchViewModel.selectedItems,
                     onItemSelected = { categoryIndex, item ->
-                        val currentSelected = searchViewModel.selectedItems[categoryIndex] ?: emptyList()
+                        val currentSelected =
+                            searchViewModel.selectedItems[categoryIndex] ?: emptyList()
                         val updatedSelected = if (currentSelected.contains(item)) {
                             currentSelected - item
                         } else {
