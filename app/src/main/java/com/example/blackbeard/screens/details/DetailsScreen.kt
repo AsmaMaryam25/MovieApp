@@ -633,44 +633,44 @@ private fun MovieDetailsSection(
         val details = listOf<@Composable () -> Unit>(
             {
                 if (!isReleaseDateInvalid(releaseDate)) MovieDetailSingleLine(
-                    "Release Date",
+                    stringResource(id = R.string.release_date),
                     releaseDate.toString()
                 )
             },
             {
                 if (!isRuntimeInvalid(runtime)) MovieDetailSingleLine(
-                    "Runtime",
+                    stringResource(id = R.string.runtime),
                     TimeUtils.convertMinutesToHoursAndMinutes(runtime ?: 0)
                 )
             },
             {
                 if (!isRevenueInvalid(revenue)) MovieDetailSingleLine(
-                    "Revenue",
+                    stringResource(id = R.string.revenue),
                     format.format(revenue)
                 )
             },
             {
                 if (!isBudgetInvalid(budget)) MovieDetailSingleLine(
-                    "Budget",
+                    stringResource(id = R.string.budget),
                     format.format(budget)
                 )
             },
             {
                 if (!isProductionCompaniesInvalid(productionCompanies)) MovieDetailMultiLine(
-                    "Production Company",
-                    "Production Companies",
+                    stringResource(id = R.string.production_company),
+                    stringResource(id = R.string.production_companies),
                     productionCompanies.map { it.name })
             },
             {
                 if (!isProductionCountriesInvalid(productionCountries)) MovieDetailMultiLine(
-                    "Production Country",
-                    "Production Countries",
+                    stringResource(id = R.string.production_country),
+                    stringResource(id = R.string.production_countries),
                     productionCountries.map { it.name })
             },
             {
                 if (!isSpokenLanguagesInvalid(spokenLanguages)) MovieDetailMultiLine(
-                    "Language",
-                    "Languages",
+                    stringResource(id = R.string.language),
+                    stringResource(id = R.string.languages),
                     spokenLanguages.map { it.englishName })
             },
 
