@@ -83,10 +83,18 @@ fun AdvanceSearch(
                     onItemSelected = { categoryIndex, item ->
                         val currentSelected =
                             searchViewModel.selectedItems[categoryIndex] ?: emptyList()
-                        val updatedSelected = if (currentSelected.contains(item)) {
-                            currentSelected - item
+                        val updatedSelected = if (category.title == "Rating") {
+                            if (currentSelected.contains(item)) {
+                                emptyList()
+                            } else {
+                                listOf(item)
+                            }
                         } else {
-                            currentSelected + item
+                            if (currentSelected.contains(item)) {
+                                currentSelected - item
+                            } else {
+                                currentSelected + item
+                            }
                         }
                         searchViewModel.selectedItems[categoryIndex] = updatedSelected
                     }
