@@ -464,11 +464,11 @@ private fun SaveAndBookmarkSection(
 @Composable
 private fun CrewSection(crew: List<Crew>) {
     SecondaryContentSection(
-        header = "Crew"
+        header = stringResource(id = R.string.crew)
     ) {
         if (crew.isEmpty()) {
             Text(
-                text = "No crew members available",
+                text = stringResource(id = R.string.no_crew_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium
@@ -502,7 +502,7 @@ private fun MovieRatingSection(
             Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Rating",
+                text = stringResource(id = R.string.rating),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold
             )
