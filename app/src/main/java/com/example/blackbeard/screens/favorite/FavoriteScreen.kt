@@ -163,7 +163,7 @@ fun CreateFavCard(
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold,
-            modifier = if(favoriteMovie.rating != 69.0) {
+            modifier = if (favoriteMovie.rating != 69.0) {
                 modifier
                     .padding(vertical = 40.dp)
                     .weight(1f)
@@ -185,21 +185,21 @@ fun CreateFavCard(
                     }
             }
         )
-        if(favoriteMovie.rating != 69.0) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(0.5f)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.chest_closed),
-                contentDescription = "Rating",
-                modifier = modifier.size(24.dp),
-                tint = Color.Unspecified
-            )
-            Text(
-                text = String.format(Locale.getDefault(), "%.2f", favoriteMovie.rating),
-            )
-        }
+        if (favoriteMovie.rating != 69.0) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(0.5f)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.chest_closed),
+                    contentDescription = "Rating",
+                    modifier = modifier.size(24.dp),
+                    tint = Color.Unspecified
+                )
+                Text(
+                    text = String.format(Locale.getDefault(), "%.2f", favoriteMovie.rating),
+                )
             }
+        }
     }
 }

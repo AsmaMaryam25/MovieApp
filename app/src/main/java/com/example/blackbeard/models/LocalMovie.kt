@@ -28,8 +28,12 @@ data class LocalMovie(
 
 fun isReleaseDateInvalid(releaseDate: LocalDate) = releaseDate == LocalDate.MIN
 fun isBudgetInvalid(budget: Long) = budget <= 0
-fun isProductionCompaniesInvalid(productionCompanies: List<ProductionCompany>) = productionCompanies.isEmpty()
-fun isProductionCountriesInvalid(productionCountries: List<ProductionCountry>) = productionCountries.isEmpty()
+fun isProductionCompaniesInvalid(productionCompanies: List<ProductionCompany>) =
+    productionCompanies.isEmpty()
+
+fun isProductionCountriesInvalid(productionCountries: List<ProductionCountry>) =
+    productionCountries.isEmpty()
+
 fun isRevenueInvalid(revenue: Long) = revenue <= 0
 fun isRuntimeInvalid(runtime: Int?) = runtime == null
 fun isSpokenLanguagesInvalid(spokenLanguages: List<SpokenLanguage>) = spokenLanguages.isEmpty()

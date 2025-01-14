@@ -165,7 +165,7 @@ fun CreateWatchlistCard(
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold,
-            modifier = if(watchlistMovie.rating != 69.0) {
+            modifier = if (watchlistMovie.rating != 69.0) {
                 modifier
                     .padding(vertical = 40.dp)
                     .weight(1f)
@@ -188,7 +188,7 @@ fun CreateWatchlistCard(
             }
         )
 
-        if(watchlistMovie.rating != 69.0) {
+        if (watchlistMovie.rating != 69.0) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(0.5f)
