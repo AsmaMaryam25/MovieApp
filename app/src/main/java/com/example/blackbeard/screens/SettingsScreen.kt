@@ -19,9 +19,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight.Companion.Bold
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.blackbeard.R
 
 @Composable
 fun SettingsScreen(
@@ -56,12 +58,12 @@ fun SettingsScreen(
                     )
                     Column {
                         Text(
-                            text = "Appearance",
+                            text = stringResource(id = R.string.appearance),
                             fontSize = 20.sp,
                             fontWeight = Bold,
                         )
                         Text(
-                            text = "Customize the look and feel of your app experience",
+                            text = stringResource(id = R.string.customize_look_and_app_experience),
                             fontSize = 15.sp,
                         )
                     }
@@ -100,7 +102,7 @@ fun SettingsScreen(
                             fontWeight = Bold,
                         )
                         Text(
-                            text = "Customize the look and feel of your app experience",
+                            text = stringResource(id = R.string.customize_look_and_app_experience),
                             fontSize = 15.sp,
                         )
                     }
