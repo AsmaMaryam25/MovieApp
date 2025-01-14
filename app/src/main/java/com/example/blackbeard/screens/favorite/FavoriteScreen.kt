@@ -43,7 +43,6 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
-import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.favorite.FavoriteViewModel.FavoriteUIModel
 import kotlinx.coroutines.launch
 import java.util.Locale
@@ -59,7 +58,6 @@ fun FavoriteScreen(
     when (favoriteUIModel) {
         FavoriteUIModel.Empty -> EmptyScreen()
         FavoriteUIModel.Loading -> LoadingScreen()
-        FavoriteUIModel.NoConnection -> NoConnectionScreen()
         is FavoriteUIModel.Data -> FavoriteContent(
             onNavigateToDetailsScreen,
             modifier,
@@ -122,7 +120,9 @@ fun CreateFavCard(
     val coroutineScope = rememberCoroutineScope()
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(horizontal = 20.dp)
     ) {
         Box(
             modifier = Modifier
@@ -163,16 +163,29 @@ fun CreateFavCard(
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold,
-            modifier = modifier
-                .padding(vertical = 40.dp)
-                .weight(1f)
-                .clickable {
-                    onNavigateToDetailsScreen(
-                        favoriteMovie.title,
-                        favoriteMovie.id.toInt()
-                    )
-                }
+            modifier = if(favoriteMovie.rating != 69.0) {
+                modifier
+                    .padding(vertical = 40.dp)
+                    .weight(1f)
+                    .clickable {
+                        onNavigateToDetailsScreen(
+                            favoriteMovie.title,
+                            favoriteMovie.id.toInt()
+                        )
+                    }
+            } else {
+                modifier
+                    .padding(vertical = 40.dp, horizontal = 20.dp)
+                    .weight(1f)
+                    .clickable {
+                        onNavigateToDetailsScreen(
+                            favoriteMovie.title,
+                            favoriteMovie.id.toInt()
+                        )
+                    }
+            }
         )
+        if(favoriteMovie.rating != 69.0) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier.weight(0.5f)
@@ -186,5 +199,6 @@ fun CreateFavCard(
                 text = String.format(Locale.getDefault(), "%.2f", favoriteMovie.rating),
             )
         }
+            }
     }
 }
