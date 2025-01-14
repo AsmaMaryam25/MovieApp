@@ -80,6 +80,12 @@
     <string name="top_rated">Top Rated</string>
     <string name="popular">Popular</string>
     <string name="now_playing">Now Playing</string>
+    <!-- HomeScreen end -->
+
+    <!-- SearchScreen start -->
+    <string name="advanced_search">Advanced Search</string>
+    <string name="no_results_found">No results found</string>
+    <string name="load_more">Load more</string>
 
 
 </resources>
