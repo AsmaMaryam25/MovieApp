@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,11 +20,22 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.ArrowForward
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.NorthWest
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SegmentedButtonDefaults.Icon
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
@@ -47,10 +59,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
+import com.example.blackbeard.models.Category
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
+import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -58,13 +72,18 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
+    onNavigateToAdvancedSearchScreen: (String) -> Unit,
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
+
     val searchViewModel = viewModel<SearchViewModel>()
     val searchUIModel = searchViewModel.searchUIState.collectAsState().value
+    val recentSearches = searchViewModel.recentSearches.collectAsState().value
+
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
     val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
@@ -125,6 +144,12 @@ private fun SearchContent(
     searchViewModel: SearchViewModel,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
+    val coroutineScope = rememberCoroutineScope()
+    var isSearchBarFocused by remember { mutableStateOf(false) }
+    val tabs = listOf("Recent", "Advanced Search")
+    val pagerState = rememberPagerState()
+    val recentSearches = searchViewModel.recentSearches.collectAsState().value
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -219,6 +244,11 @@ private fun SearchContent(
                 tabs = tabs,
                 pagerState = pagerState,
                 coroutineScope = coroutineScope,
+                recentSearches = recentSearches,
+                onRecentSearchClick = { searchQuery.value = it },
+                onClearRecentSearches = { searchViewModel.clearRecentSearches() },
+                onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) }
+                coroutineScope = coroutineScope,
                 searchQuery = searchQuery,
                 searchViewModel = searchViewModel,
             )
@@ -231,6 +261,11 @@ private fun SearchContent(
 private fun SearchTabs(
     tabs: List<String>,
     pagerState: PagerState,
+    coroutineScope: CoroutineScope,
+    recentSearches: List<String>,
+    onRecentSearchClick: (String) -> Unit,
+    onClearRecentSearches: () -> Unit,
+    onRemoveRecentSearch: (String) -> Unit
     searchQuery: MutableState<String>,
     coroutineScope: CoroutineScope,
     searchViewModel: SearchViewModel,
@@ -261,7 +296,50 @@ private fun SearchTabs(
         ) { page ->
             when (page) {
                 0 -> {
-                    Text("Feature in development", modifier = Modifier.fillMaxSize())
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "\t"
+                            )
+                            TextButton(onClick = onClearRecentSearches) {
+                                Text(text = "Clear All")
+                            }
+                        }
+                        recentSearches.forEach { search ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp)
+                                    .clickable { onRecentSearchClick(search) },
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Clear,
+                                    contentDescription = "Remove search",
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .clickable { onRemoveRecentSearch(search) }
+                                )
+                                Text(
+                                    text = search,
+                                    modifier = Modifier.weight(1f)
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.NorthWest,
+                                    contentDescription = "Use search",
+                                    modifier = Modifier
+                                        .padding(start = 8.dp)
+                                        .clickable { onRecentSearchClick(search) }
+                                )
+                            }
+                        }
+                    }
                 }
 
                 1 -> {

@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.SearchMovie
@@ -21,7 +22,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import java.net.UnknownHostException
 
-class SearchViewModel : ViewModel() {
+class SearchViewModel() : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
     private val mutableSearchUIState = MutableStateFlow<SearchUIModel>(SearchUIModel.Empty)
@@ -35,6 +36,12 @@ class SearchViewModel : ViewModel() {
     var totalPages = mutableStateOf<Int?>(null)
     var searchType = mutableStateOf(false)
     val selectedItems = mutableStateMapOf<Int, List<String>>()
+
+
+    private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
+    val recentSearches: StateFlow<List<String>> = _recentSearches
+
+    private val recentSearchRepository: RecentSearchRepository = DataModule.recentSearchRepository
 
     init {
         viewModelScope.launch {
@@ -100,6 +107,8 @@ class SearchViewModel : ViewModel() {
                 totalPages.value = 0
                 return@launch
             }
+
+            addRecentSearch(query)
 
             val currentMovies =
                 (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies ?: emptyList()
@@ -217,6 +226,32 @@ class SearchViewModel : ViewModel() {
         return if (list.isEmpty()) "" else list.minByOrNull { it.toDoubleOrNull() ?: Double.MAX_VALUE } ?: ""
     }
 }
+
+    init {
+        viewModelScope.launch {
+            recentSearchRepository.getRecentSearches().collect {
+                _recentSearches.value = it
+            }
+        }
+    }
+
+    fun addRecentSearch(query: String) {
+        viewModelScope.launch {
+            recentSearchRepository.addRecentSearch(query)
+        }
+    }
+
+    fun removeRecentSearch(query: String) {
+        viewModelScope.launch {
+            recentSearchRepository.removeRecentSearch(query)
+        }
+    }
+
+    fun clearRecentSearches() {
+        viewModelScope.launch {
+            recentSearchRepository.clearRecentSearches()
+        }
+    }
 
     sealed class SearchUIModel {
         data object Empty : SearchUIModel()
