@@ -1,6 +1,7 @@
 package com.example.blackbeard
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -17,7 +18,7 @@ import com.example.blackbeard.screens.home.HomeScreen
 import com.example.blackbeard.screens.search.SearchScreen
 import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
-@androidx.compose.runtime.Composable
+@Composable
 fun MainNavHost(
     navController: androidx.navigation.NavHostController,
     onRouteChanged: (Route) -> Unit,
@@ -94,7 +95,7 @@ fun MainNavHost(
         }
 
         composable<Route.AppearanceScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
 
             AppearanceScreen(
                 showTopBar = showTopBar,
