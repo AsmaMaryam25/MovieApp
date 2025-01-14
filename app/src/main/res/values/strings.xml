@@ -86,6 +86,11 @@
     <string name="advanced_search">Advanced Search</string>
     <string name="no_results_found">No results found</string>
     <string name="load_more">Load more</string>
+    <!-- SearchScreen end -->
+
+    <!-- WatchlistScreen start -->
+    <string name="no_watchlist">Nothing in watchlist yet</string>
+    <!-- WatchlistScreen end -->
 
 
 </resources>
