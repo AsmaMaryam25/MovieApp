@@ -26,5 +26,8 @@
     <string name="production_countries">Production Countries</string>
     <string name="language">Language</string>
     <string name="languages">Languages</string>
+    <string name="title_not_available">Title not available</string>
+    <string name="read_more">… Read more</string>
+    <string name="no_overview_available">No overview available</string>
 
 </resources>
