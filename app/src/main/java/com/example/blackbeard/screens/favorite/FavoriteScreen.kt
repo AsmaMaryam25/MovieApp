@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.blackbeard.R
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
@@ -122,7 +122,7 @@ fun CreateFavCard(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
-            .padding(horizontal = 20.dp)
+            .padding(horizontal = 10.dp)
     ) {
         Box(
             modifier = Modifier
@@ -154,7 +154,7 @@ fun CreateFavCard(
                 placeholder = ColorPainter(Color.Gray)
             )
         }
-        Spacer(modifier = Modifier.size(30.dp))
+        Spacer(modifier = Modifier.size(10.dp))
         Text(
             text = favoriteMovie.title,
             style = TextStyle(
@@ -175,7 +175,7 @@ fun CreateFavCard(
                     }
             } else {
                 modifier
-                    .padding(vertical = 40.dp, horizontal = 20.dp)
+                    .padding(vertical = 40.dp, horizontal = 10.dp)
                     .weight(1f)
                     .clickable {
                         onNavigateToDetailsScreen(
@@ -191,9 +191,10 @@ fun CreateFavCard(
             modifier = Modifier.weight(0.5f)
         ) {
             Icon(
-                imageVector = Icons.Default.Star,
+                painter = painterResource(R.drawable.chest_closed),
                 contentDescription = "Rating",
-                modifier = modifier.size(24.dp)
+                modifier = modifier.size(24.dp),
+                tint = Color.Unspecified
             )
             Text(
                 text = String.format(Locale.getDefault(), "%.2f", favoriteMovie.rating),
