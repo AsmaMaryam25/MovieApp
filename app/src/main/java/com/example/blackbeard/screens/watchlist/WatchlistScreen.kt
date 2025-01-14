@@ -156,7 +156,7 @@ fun CreateWatchlistCard(
                 placeholder = ColorPainter(Color.Gray)
             )
         }
-        Spacer(modifier = Modifier.size(30.dp))
+        Spacer(modifier = Modifier.size(10.dp))
         Text(
             text = watchlistMovie.title,
             style = TextStyle(
