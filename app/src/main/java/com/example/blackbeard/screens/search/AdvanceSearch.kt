@@ -2,7 +2,6 @@ package com.example.blackbeard.screens.search
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -77,7 +76,6 @@ fun AdvanceSearch(
                             currentSelected + item
                         }
                         searchViewModel.selectedItems[categoryIndex] = updatedSelected
-                        Log.d("AdvanceSearch", searchViewModel.selectedItems.toMap().toString())
                     }
                 )
             }

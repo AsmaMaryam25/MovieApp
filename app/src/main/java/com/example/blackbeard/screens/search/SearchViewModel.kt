@@ -1,6 +1,5 @@
 package com.example.blackbeard.screens.search
 
-import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -95,7 +94,6 @@ class SearchViewModel : ViewModel() {
 
     fun searchMovies(query: String, pageNum: Int) {
         viewModelScope.launch {
-            Log.d("AdvanceSearch", "searchMovies: query: $query")
             if (query.isBlank()) {
                 mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
                 currentPage.intValue = 1
