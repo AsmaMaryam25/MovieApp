@@ -69,6 +69,10 @@
     <string name="appearance">Appearance</string>
     <string name="customize_look_and_app_experience">
         Customize the look and feel of your app experience</string>
+    <!-- SettingsScreen end -->
+
+    <!-- FavoriteScreen start -->
+    <string name="no_favorites">No favorites yet</string>
 
 
 </resources>
