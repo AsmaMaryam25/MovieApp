@@ -95,7 +95,7 @@ fun MainNavHost(
         }
 
         composable<Route.AppearanceScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
 
             AppearanceScreen(
                 showTopBar = showTopBar,
