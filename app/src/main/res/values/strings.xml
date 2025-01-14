@@ -58,5 +58,12 @@
     <string name="empty">Empty</string>
     <!-- EmptyScreen end -->
 
+    <!-- NoConnectionScreen start -->
+    <string name="no_connection">No Connection</string>
+    <string name="no_Internet_connection">No Internet Connection</string>
+    <string name="no_internet_message">"It looks like you're not connected to the internet.
+        "Please check your Wi-Fi or mobile data settings and try again."</string>
+    <!-- NoConnectionScreen end -->
+
 
 </resources>
