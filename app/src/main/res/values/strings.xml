@@ -48,6 +48,12 @@
 
     <!-- AboutScreen start -->
     <string name="version">"Version 1.0.0"</string>
+    <!-- AboutScreen end -->
+
+    <!-- ApperanceScreen start -->
+    <string name="dark_mode">Dark Mode</string>
+    <!-- ApperanceScreen end -->
+
 
 
 </resources>
