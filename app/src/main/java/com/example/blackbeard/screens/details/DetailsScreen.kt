@@ -297,13 +297,15 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
             text = "Watch from these streaming services",
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
 
         )
 
         if(streamingServices.isEmpty()) {
             Text(
                 text = "There are no streaming services available for this title",
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@Column
         }
@@ -407,7 +409,8 @@ private fun SaveAndBookmarkSection(
     Text(
         text = "Favorite & Watchlist",
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground
     )
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -419,6 +422,7 @@ private fun SaveAndBookmarkSection(
             modifier = Modifier.weight(0.4f),
             text = "Add the movie to your favorites and watchlist",
             style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
 
         )
 
@@ -464,7 +468,8 @@ private fun CrewSection(crew: List<Crew>) {
                 text = "No crew members available",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -497,7 +502,8 @@ private fun MovieRatingSection(
             Text(
                 text = "Rating",
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Row(
                 Modifier.fillMaxWidth(),
@@ -508,7 +514,8 @@ private fun MovieRatingSection(
                 Text(
                     modifier = Modifier.weight(0.4f),
                     text = "Give your opinion on the movie by rating it",
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
                 Column(
                     modifier = Modifier.weight(1f),
@@ -517,6 +524,7 @@ private fun MovieRatingSection(
                     Text(
                         text = "Users ($userRatings)",
                         fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     RatingStars(
                         movieRating = movieRating,
@@ -525,6 +533,7 @@ private fun MovieRatingSection(
                     Text(
                         text = "Average: " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -542,7 +551,8 @@ private fun SecondaryContentSection(
     Text(
         header,
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground
     )
     Spacer(Modifier.height(6.dp))
     Row(
@@ -564,7 +574,8 @@ private fun CastSection(cast: List<Cast>) {
                 text = "No cast members available",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -614,7 +625,8 @@ private fun MovieDetailsSection(
                 text = "No details available",
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -682,13 +694,15 @@ private fun MovieDetailSingleLine(header: String, data: String) {
     ) {
         Text(
             text = header,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data,
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -704,13 +718,15 @@ private fun MovieDetailMultiLine(
     ) {
         Text(
             text = if (data.size > 1) multiItemHeader else singleItemHeader,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data.joinToString("\n"),
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -932,7 +948,8 @@ private fun PersonPoster(
             modifier = modifier.fillMaxWidth(),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = description,
@@ -941,6 +958,7 @@ private fun PersonPoster(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
