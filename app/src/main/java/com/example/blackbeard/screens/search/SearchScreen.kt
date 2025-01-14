@@ -13,10 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -26,7 +28,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -47,9 +48,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
+import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
-import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -62,13 +63,11 @@ fun SearchScreen(
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit
 ) {
-
     val searchViewModel = viewModel<SearchViewModel>()
     val searchUIModel = searchViewModel.searchUIState.collectAsState().value
-
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
-    val popularState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
+    val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
 
     when (searchUIModel) {
         SearchUIModel.Empty -> SearchContent(
@@ -77,7 +76,9 @@ fun SearchScreen(
             posterWidth,
             onNavigateToDetailsScreen,
             emptyList(),
-            searchViewModel
+            emptyList(),
+            searchViewModel,
+            gridState
         )
 
         SearchUIModel.Loading -> LoadingScreen()
@@ -91,8 +92,22 @@ fun SearchScreen(
                 posterWidth,
                 onNavigateToDetailsScreen,
                 searchUIModel.collectionMovies,
+                emptyList(),
                 searchViewModel,
-                popularState
+                gridState
+            )
+        }
+
+        is SearchUIModel.AdvanceSearchData -> {
+            SearchContent(
+                modifier,
+                searchQuery,
+                posterWidth,
+                onNavigateToDetailsScreen,
+                emptyList(),
+                searchUIModel.collectionMovies,
+                searchViewModel,
+                gridState
             )
         }
     }
@@ -106,8 +121,9 @@ private fun SearchContent(
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<Movie>,
+    collectionSearchMovies: List<SearchMovie>,
     searchViewModel: SearchViewModel,
-    popularState: LazyGridState = rememberLazyGridState()
+    gridState: LazyGridState = rememberLazyGridState(),
 ) {
     Column(
         modifier = modifier.fillMaxSize()
@@ -116,14 +132,22 @@ private fun SearchContent(
         val tabs = listOf("Recent", "Advanced Search")
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
-        val selectedItems = remember { mutableStateMapOf<Int, List<String>>() }
+
+        // Determine which list to use based on searchType
+        val currentMovies : List<Any> = if (searchViewModel.searchType.value) {
+            collectionSearchMovies
+        } else {
+            collectionMovies
+        }
 
         SearchBar(
             searchQuery = searchQuery,
-            onSearchQueryChange = { query, searchType ->
-                if(searchType){
-                    searchViewModel.advanceSearchMovies(query, 1, selectedItems.toMap())
-                }else{
+            searchViewModel = searchViewModel,
+            onSearchQueryChange = { query, typeOfSearch ->
+                searchViewModel.searchType.value = typeOfSearch
+                if (searchViewModel.searchType.value) {
+                    searchViewModel.advanceSearchMovies(query, 1, searchViewModel.selectedItems.toMap())
+                } else {
                     searchViewModel.searchMovies(query, 1)
                 }
             },
@@ -140,24 +164,53 @@ private fun SearchContent(
         )
 
         if (!isSearchBarFocused) {
-            if (collectionMovies.isEmpty()) {
+            if (currentMovies.isEmpty()) {
                 Text(
                     text = "No results found",
                     modifier = Modifier.padding(10.dp)
                 )
             } else {
                 LazyVerticalGrid(
-                    state = popularState,
+                    state = gridState,
                     columns = GridCells.Adaptive(posterWidth),
                     modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    items(collectionMovies.size) { index ->
+                    items(currentMovies.size) { index ->
                         CreateSearchPoster(
+                            searchViewModel,
                             posterWidth = posterWidth,
                             onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                            movie = collectionMovies[index]
+                            movie = currentMovies[index]
                         )
+                    }
+
+                    item(span = { GridItemSpan(2) }) {
+                        if (searchViewModel.currentPage.intValue < (searchViewModel.totalPages.value
+                                ?: 0)
+                        ) {
+                            Button(
+                                onClick = {
+                                    if (searchViewModel.searchType.value) {
+                                        searchViewModel.advanceSearchMovies(
+                                            searchQuery.value,
+                                            searchViewModel.currentPage.intValue + 1,
+                                            searchViewModel.selectedItems.toMap()
+                                        )
+                                    } else {
+                                        searchViewModel.searchMovies(
+                                            searchQuery.value,
+                                            searchViewModel.currentPage.intValue + 1
+                                        )
+                                    }
+                                },
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 10.dp),
+                            ) {
+                                Text(text = "Load more")
+                            }
+                        }
                     }
                 }
             }
@@ -168,7 +221,6 @@ private fun SearchContent(
                 coroutineScope = coroutineScope,
                 searchQuery = searchQuery,
                 searchViewModel = searchViewModel,
-                selectedItems = selectedItems
             )
         }
     }
@@ -182,9 +234,7 @@ private fun SearchTabs(
     searchQuery: MutableState<String>,
     coroutineScope: CoroutineScope,
     searchViewModel: SearchViewModel,
-    selectedItems: MutableMap<Int, List<String>>
 ) {
-
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
@@ -195,6 +245,8 @@ private fun SearchTabs(
                 keyboardController?.hide()
             } else {
                 keyboardController?.show()
+                searchViewModel.searchType.value = false
+                searchViewModel.selectedItems.clear()
             }
         })
 
@@ -213,9 +265,13 @@ private fun SearchTabs(
                 }
 
                 1 -> {
-                    AdvanceSearch(searchQuery,
+                    AdvanceSearch(
+                        searchQuery,
                         searchViewModel,
-                        selectedItems = selectedItems)
+                        updateSearchType = {
+                            searchViewModel.searchType.value = true
+                        }
+                    )
                 }
             }
         }
@@ -230,7 +286,6 @@ fun TabContent(
     coroutineScope: CoroutineScope,
     onTabSelected: (Int) -> Unit
 ) {
-
     TabRow(
         selectedTabIndex = pagerState.currentPage,
         modifier = Modifier
@@ -278,10 +333,11 @@ fun TabContent(
 
 @Composable
 private fun CreateSearchPoster(
+    searchViewModel: SearchViewModel,
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    movie: Movie
+    movie: Any
 ) {
     var isClickAble by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
@@ -298,7 +354,7 @@ private fun CreateSearchPoster(
                 .background(Color.Gray)
         ) {
             AsyncImage(
-                model = movie.posterPath,
+                model = if(searchViewModel.searchType.value) (movie as SearchMovie).posterPath else (movie as Movie).posterPath,
                 contentDescription = null,
                 modifier = Modifier
                     .width(posterWidth)
@@ -306,7 +362,10 @@ private fun CreateSearchPoster(
                     .clip(RoundedCornerShape(30.dp))
                     .clickable(enabled = isClickAble) {
                         if (isClickAble) {
-                            onNavigateToDetailsScreen(movie.title, movie.id)
+                            onNavigateToDetailsScreen(
+                                if(searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
+                                if(searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
+                            )
                             isClickAble = false
                             coroutineScope.launch {
                                 kotlinx.coroutines.delay(1000)
@@ -320,8 +379,11 @@ private fun CreateSearchPoster(
         Text(
             modifier = modifier
                 .width(posterWidth)
-                .clickable { onNavigateToDetailsScreen(movie.title, movie.id) },
-            text = movie.title,
+                .clickable { onNavigateToDetailsScreen(
+                    if(searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
+                    if(searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
+                ) },
+            text = if(searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             lineHeight = 15.sp

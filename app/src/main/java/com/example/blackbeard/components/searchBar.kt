@@ -26,6 +26,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import com.example.blackbeard.screens.search.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -36,6 +37,7 @@ fun SearchBar(
     isSearchBarFocused: Boolean,
     currentTabIndex: Int,
     onSearchBarFocusChange: (Boolean) -> Unit,
+    searchViewModel: SearchViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -74,7 +76,11 @@ fun SearchBar(
             trailingIcon = {
                 Row {
                     if (searchQuery.value.isNotEmpty()) {
-                        IconButton(onClick = { searchQuery.value = "" }) {
+                        IconButton(
+                            onClick = {
+                            searchQuery.value = ""
+                            }
+                        ) {
                             Icon(
                                 imageVector = Icons.Default.Clear,
                                 contentDescription = "Clear",
@@ -98,11 +104,8 @@ fun SearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    if (currentTabIndex == 0) {
-                        onSearchQueryChange(searchQuery.value,false)
-                    } else {
-                        onSearchQueryChange(searchQuery.value,true)
-                    }
+                    val isAdvancedSearch = currentTabIndex == 1
+                    onSearchQueryChange(searchQuery.value, isAdvancedSearch)
                 }
             )
         )
@@ -114,6 +117,8 @@ fun SearchBar(
                     searchQuery.value = ""
                     onSearchBarFocusChange(false)
                     focusManager.clearFocus()
+                    searchViewModel.searchType.value = false
+                    searchViewModel.selectedItems.clear()
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
