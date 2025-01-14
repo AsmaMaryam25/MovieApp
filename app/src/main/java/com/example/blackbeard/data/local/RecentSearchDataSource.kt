@@ -1,9 +1,9 @@
+package com.example.blackbeard.data.local
+
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringSetPreferencesKey
-import com.example.blackbeard.data.local.DataStoreSingleton
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 class RecentSearchDataSource(private val context: Context) {

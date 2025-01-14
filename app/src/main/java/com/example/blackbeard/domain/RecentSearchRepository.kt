@@ -1,6 +1,6 @@
 package com.example.blackbeard.domain
 
-import RecentSearchDataSource
+import com.example.blackbeard.data.local.RecentSearchDataSource
 import kotlinx.coroutines.flow.Flow
 
 class RecentSearchRepository(private val recentSearchDataSource: RecentSearchDataSource) {
