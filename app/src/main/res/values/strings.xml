@@ -10,5 +10,11 @@
     <string name="crew">Crew</string>
     <string name="no_crew_available">No crew members available</string>
     <string name="rating">Rating</string>
+    <string name="give_opinion">Give your opinion on the movie by rating it</string>
+    <string name="users">Users</string>
+    <string name="average">Average</string>
+    <string name="cast">Cast</string>
+    <string name="no_cast_available">No cast members available</string>
+    <string name="no_details_available">No details available</string>
 
 </resources>
