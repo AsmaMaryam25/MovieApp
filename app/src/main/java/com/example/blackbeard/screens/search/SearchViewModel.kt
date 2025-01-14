@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
@@ -33,11 +34,12 @@ class SearchViewModel() : ViewModel() {
 
     var totalPages = mutableStateOf<Int?>(null)
 
-    private val recentSearchDataSource = RecentSearchDataSource(context)
 
-    private val _recentSearches = mutableStateOf<List<String>>(emptyList())
-    val recentSearches: State<List<String>> = _recentSearches
 
+    private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
+    val recentSearches: StateFlow<List<String>> = _recentSearches
+
+    private val recentSearchRepository: RecentSearchRepository = DataModule.recentSearchRepository
 
     init {
         viewModelScope.launch {
@@ -128,33 +130,28 @@ class SearchViewModel() : ViewModel() {
     }
 
     init {
-        loadRecentSearches()
-    }
-
-    private fun loadRecentSearches() {
         viewModelScope.launch {
-            _recentSearches.value = recentSearchDataSource.getRecentSearches().first()
+            recentSearchRepository.getRecentSearches().collect {
+                _recentSearches.value = it
+            }
         }
     }
 
     fun addRecentSearch(query: String) {
         viewModelScope.launch {
-            recentSearchDataSource.addRecentSearch(query)
-            loadRecentSearches()
+            recentSearchRepository.addRecentSearch(query)
         }
     }
 
     fun removeRecentSearch(query: String) {
         viewModelScope.launch {
-            recentSearchDataSource.removeRecentSearch(query)
-            loadRecentSearches()
+            recentSearchRepository.removeRecentSearch(query)
         }
     }
 
     fun clearRecentSearches() {
         viewModelScope.launch {
-            recentSearchDataSource.clearRecentSearches()
-            loadRecentSearches()
+            recentSearchRepository.clearRecentSearches()
         }
     }
 

@@ -80,7 +80,7 @@ fun SearchScreen(
 ) {
     val searchViewModel = viewModel<SearchViewModel>()
     val searchUIModel by searchViewModel.searchUIState.collectAsState()
-    val recentSearches by searchViewModel.recentSearches
+    val recentSearches = searchViewModel.recentSearches.collectAsState().value
 
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf("") }
@@ -129,7 +129,7 @@ private fun SearchContent(
     var isSearchBarFocused by remember { mutableStateOf(false) }
     val tabs = listOf("Recent", "Advanced Search")
     val pagerState = rememberPagerState()
-    val recentSearches by searchViewModel.recentSearches
+    val recentSearches = searchViewModel.recentSearches.collectAsState().value
 
     Column(
         modifier = modifier.fillMaxSize()
