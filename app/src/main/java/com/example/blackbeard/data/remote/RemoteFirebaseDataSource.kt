@@ -78,7 +78,7 @@ class RemoteFirebaseDataSource {
         }
     }
 
-    suspend fun getVoterCount(id: String, voterCount: MutableLiveData<Int>, ) {
+    suspend fun getVoterCount(id: String, voterCount: MutableLiveData<Int>) {
         val ratingsRef = firestore.collection("ratings").document(id)
 
         val snapshot = ratingsRef.get().await()
