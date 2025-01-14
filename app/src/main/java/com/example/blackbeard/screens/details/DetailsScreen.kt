@@ -53,6 +53,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -301,14 +302,14 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Text(
-            text = "Watch from these streaming services",
+            text = stringResource(id = R.string.watch_from_streaming_services),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
         )
 
         if(streamingServices.isEmpty()) {
             Text(
-                text = "There are no streaming services available for this title",
+                text = stringResource(id = R.string.there_are_no_streaming_services_available_for_this_title),
                 style = MaterialTheme.typography.titleMedium
             )
             return@Column
