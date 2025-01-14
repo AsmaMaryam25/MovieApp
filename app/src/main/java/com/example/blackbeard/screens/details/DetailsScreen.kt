@@ -514,7 +514,7 @@ private fun MovieRatingSection(
             {
                 Text(
                     modifier = Modifier.weight(0.4f),
-                    text = "Give your opinion on the movie by rating it",
+                    text = stringResource(id = R.string.give_opinion),
                     color = Color.DarkGray,
                     style = MaterialTheme.typography.titleSmall
                 )
@@ -523,7 +523,7 @@ private fun MovieRatingSection(
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = "Users ($userRatings)",
+                        text = stringResource(id = R.string.users)+" ($userRatings)",
                         fontWeight = FontWeight.Bold,
                         color = Color.DarkGray
                     )
@@ -532,7 +532,8 @@ private fun MovieRatingSection(
                         onMovieRating = onMovieRating
                     )
                     Text(
-                        text = "Average: " + String.format(Locale.US, "%.2f", averageRating),
+                        text = stringResource(id = R.string.average)+
+                        ": " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
                         color = Color.DarkGray
                     )
@@ -567,11 +568,11 @@ private fun SecondaryContentSection(
 @Composable
 private fun CastSection(cast: List<Cast>) {
     SecondaryContentSection(
-        header = "Cast"
+        header = stringResource(id = R.string.cast)
     ) {
         if (cast.isEmpty()) {
             Text(
-                text = "No cast members available",
+                text = stringResource(id = R.string.no_cast_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium
@@ -621,7 +622,7 @@ private fun MovieDetailsSection(
             )
         ) {
             Text(
-                text = "No details available",
+                text = stringResource(id = R.string.no_details_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium
