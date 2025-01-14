@@ -7,6 +7,7 @@ import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
 import com.example.blackbeard.domain.MovieRepository
+import com.example.blackbeard.domain.RecentSearchRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -40,6 +41,7 @@ object DataModule {
     private lateinit var localThemeDataSource: ThemeDataSource
 
     lateinit var movieRepository: MovieRepository
+    lateinit var recentSearchRepository: RecentSearchRepository
 
     fun initialize(context: Context) {
         localFavoriteMovieDataSource = FavoriteMovieDataSource(context)
