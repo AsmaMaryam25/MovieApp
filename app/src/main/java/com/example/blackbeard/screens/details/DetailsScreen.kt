@@ -734,7 +734,7 @@ private fun MovieTitle(
     Box(Modifier.wrapContentSize()) {
         Text(
             modifier = modifier,
-            text = title.ifEmpty { "Title not available" },
+            text = title.ifEmpty { stringResource(id = R.string.title_not_available) },
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = 25.sp,
@@ -794,7 +794,7 @@ private fun CollapsibleBodyText(
     text: String?,
     onTextExpand: () -> Unit
 ) {
-    val readMore = "... Read more"
+    val readMore = stringResource(id = R.string.read_more)
     val minimumLineLength = 3
     var expandedState by remember { mutableStateOf(false) }
     var showReadMoreButtonState by remember { mutableStateOf(false) }
@@ -811,7 +811,7 @@ private fun CollapsibleBodyText(
     ) {
         if (text.isNullOrEmpty()) {
             Text(
-                text = "No overview available",
+                text = stringResource(id = R.string.no_overview_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = Color.White,
