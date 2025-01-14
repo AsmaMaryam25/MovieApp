@@ -65,5 +65,10 @@
         "Please check your Wi-Fi or mobile data settings and try again."</string>
     <!-- NoConnectionScreen end -->
 
+    <!-- SettingsScreen start -->
+    <string name="appearance">Appearance</string>
+    <string name="customize_look_and_app_experience">
+        Customize the look and feel of your app experience</string>
+
 
 </resources>
