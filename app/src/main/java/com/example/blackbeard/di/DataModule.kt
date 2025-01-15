@@ -3,11 +3,13 @@ package com.example.blackbeard.di
 import android.annotation.SuppressLint
 import android.content.Context
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
+import com.example.blackbeard.data.local.RecentSearchDataSource
 import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
 import com.example.blackbeard.data.remote.RemoteFirebaseDataSource
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
 import com.example.blackbeard.domain.MovieRepository
+import com.example.blackbeard.domain.RecentSearchRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
@@ -40,13 +42,18 @@ object DataModule {
     private lateinit var localWatchlistMovieDataSource: WatchListMovieDataSource
 
     @SuppressLint("StaticFieldLeak")
+    private lateinit var localRecentSearchDataSource: RecentSearchDataSource
+
+    @SuppressLint("StaticFieldLeak")
     private lateinit var localThemeDataSource: ThemeDataSource
 
     lateinit var movieRepository: MovieRepository
+    lateinit var recentSearchRepository: RecentSearchRepository
 
     fun initialize(context: Context) {
         localFavoriteMovieDataSource = FavoriteMovieDataSource(context)
         localWatchlistMovieDataSource = WatchListMovieDataSource(context)
+        localRecentSearchDataSource = RecentSearchDataSource(context)
         localThemeDataSource = ThemeDataSource(context)
         FirebaseFirestore.getInstance()
         movieRepository = MovieRepository(
@@ -56,5 +63,6 @@ object DataModule {
             localWatchlistMovieDataSource,
             localThemeDataSource
         )
+        recentSearchRepository = RecentSearchRepository(localRecentSearchDataSource)
     }
 }
