@@ -311,7 +311,9 @@ private fun SearchTabs(
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .padding(8.dp)
-                                        .clickable { onRecentSearchClick(search) },
+                                        .clickable { onRecentSearchClick(search)
+                                            searchViewModel.searchMovies(search, 1)
+                                                   },
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     Icon(
@@ -330,8 +332,8 @@ private fun SearchTabs(
                                         contentDescription = "Use search",
                                         modifier = Modifier
                                             .padding(start = 8.dp)
-                                            .clickable { onRecentSearchClick(search)
-                                            searchViewModel.searchMovies(search, 1)
+                                            .clickable {
+                                                onRecentSearchClick(search)
                                             }
                                     )
                                 }
