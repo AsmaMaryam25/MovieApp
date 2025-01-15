@@ -14,9 +14,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.blackbeard.R
 import com.example.blackbeard.di.DataModule
 import kotlinx.coroutines.launch
 
@@ -37,7 +39,7 @@ fun AppearanceScreen(
                 .padding(30.dp),
             horizontalArrangement = Arrangement.spacedBy(LocalConfiguration.current.screenWidthDp.dp / 2),
         ) {
-            Text(text = "Dark theme", fontSize = 25.sp, fontWeight = FontWeight.Bold)
+            Text(text = stringResource(id = R.string.dark_mode), fontSize = 25.sp, fontWeight = FontWeight.Bold)
             Switch(checked = switchIsOn.value,
                 onCheckedChange = {
                     switchIsOn.value = !switchIsOn.value

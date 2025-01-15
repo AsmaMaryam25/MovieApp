@@ -55,6 +55,9 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -300,7 +303,7 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Text(
-            text = "Watch from these streaming services",
+            text = stringResource(id = R.string.watch_from_streaming_services),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.onBackground
@@ -309,9 +312,12 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
 
         if (streamingServices.isEmpty()) {
             Text(
-                text = "There are no streaming services available for this title",
-                style = MaterialTheme.typography.titleMedium,
+
+                text = stringResource(id = R.string.there_are_no_streaming_services_available_for_this_title),
+                style = MaterialTheme.typography.titleMedium
+
                 color = MaterialTheme.colorScheme.onBackground
+
             )
             return@Column
         }
@@ -413,7 +419,7 @@ private fun SaveAndBookmarkSection(
     var isWatchListed by remember { mutableStateOf(isWatchList) }
 
     Text(
-        text = "Favorite & Watchlist",
+        text = stringResource(id= R.string.favorite_and_Watchlist),
         style = MaterialTheme.typography.titleMedium,
         fontWeight = FontWeight.Bold,
         color = MaterialTheme.colorScheme.onBackground
@@ -426,7 +432,7 @@ private fun SaveAndBookmarkSection(
 
         Text(
             modifier = Modifier.weight(0.4f),
-            text = "Add the movie to your favorites and watchlist",
+            text = stringResource(id= R.string.add_to_favorites_and_watchlist),
             style = MaterialTheme.typography.titleSmall,
             color = MaterialTheme.colorScheme.onBackground
 
@@ -467,11 +473,11 @@ private fun SaveAndBookmarkSection(
 @Composable
 private fun CrewSection(crew: List<Crew>) {
     SecondaryContentSection(
-        header = "Crew"
+        header = stringResource(id = R.string.crew)
     ) {
         if (crew.isEmpty()) {
             Text(
-                text = "No crew members available",
+                text = stringResource(id = R.string.no_crew_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
@@ -506,7 +512,7 @@ private fun MovieRatingSection(
             Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Rating",
+                text = stringResource(id = R.string.rating),
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
@@ -519,16 +525,19 @@ private fun MovieRatingSection(
             {
                 Text(
                     modifier = Modifier.weight(0.4f),
-                    text = "Give your opinion on the movie by rating it",
-                    style = MaterialTheme.typography.titleSmall,
+
+                    text = stringResource(id = R.string.give_opinion),
+                    style = MaterialTheme.typography.titleSmall
+
                     color = MaterialTheme.colorScheme.onBackground
+
                 )
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = "Users ($userRatings)",
+                        text = stringResource(id = R.string.users)+" ($userRatings)",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -537,7 +546,8 @@ private fun MovieRatingSection(
                         onMovieRating = onMovieRating
                     )
                     Text(
-                        text = "Average: " + String.format(Locale.US, "%.2f", averageRating),
+                        text = stringResource(id = R.string.average)+
+                        ": " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -573,11 +583,11 @@ private fun SecondaryContentSection(
 @Composable
 private fun CastSection(cast: List<Cast>) {
     SecondaryContentSection(
-        header = "Cast"
+        header = stringResource(id = R.string.cast)
     ) {
         if (cast.isEmpty()) {
             Text(
-                text = "No cast members available",
+                text = stringResource(id = R.string.no_cast_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
@@ -628,7 +638,7 @@ private fun MovieDetailsSection(
             )
         ) {
             Text(
-                text = "No details available",
+                text = stringResource(id = R.string.no_details_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleMedium,
@@ -640,44 +650,44 @@ private fun MovieDetailsSection(
         val details = listOf<@Composable () -> Unit>(
             {
                 if (!isReleaseDateInvalid(releaseDate)) MovieDetailSingleLine(
-                    "Release Date",
+                    stringResource(id = R.string.release_date),
                     releaseDate.toString()
                 )
             },
             {
                 if (!isRuntimeInvalid(runtime)) MovieDetailSingleLine(
-                    "Runtime",
+                    stringResource(id = R.string.runtime),
                     TimeUtils.convertMinutesToHoursAndMinutes(runtime ?: 0)
                 )
             },
             {
                 if (!isRevenueInvalid(revenue)) MovieDetailSingleLine(
-                    "Revenue",
+                    stringResource(id = R.string.revenue),
                     format.format(revenue)
                 )
             },
             {
                 if (!isBudgetInvalid(budget)) MovieDetailSingleLine(
-                    "Budget",
+                    stringResource(id = R.string.budget),
                     format.format(budget)
                 )
             },
             {
                 if (!isProductionCompaniesInvalid(productionCompanies)) MovieDetailMultiLine(
-                    "Production Company",
-                    "Production Companies",
+                    stringResource(id = R.string.production_company),
+                    stringResource(id = R.string.production_companies),
                     productionCompanies.map { it.name })
             },
             {
                 if (!isProductionCountriesInvalid(productionCountries)) MovieDetailMultiLine(
-                    "Production Country",
-                    "Production Countries",
+                    stringResource(id = R.string.production_country),
+                    stringResource(id = R.string.production_countries),
                     productionCountries.map { it.name })
             },
             {
                 if (!isSpokenLanguagesInvalid(spokenLanguages)) MovieDetailMultiLine(
-                    "Language",
-                    "Languages",
+                    stringResource(id = R.string.language),
+                    stringResource(id = R.string.languages),
                     spokenLanguages.map { it.englishName })
             },
 
@@ -745,7 +755,7 @@ private fun MovieTitle(
     Box(Modifier.wrapContentSize()) {
         Text(
             modifier = modifier,
-            text = title.ifEmpty { "Title not available" },
+            text = title.ifEmpty { stringResource(id = R.string.title_not_available) },
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = 25.sp,
@@ -805,7 +815,7 @@ private fun CollapsibleBodyText(
     text: String?,
     onTextExpand: () -> Unit
 ) {
-    val readMore = "... Read more"
+    val readMore = stringResource(id = R.string.read_more)
     val minimumLineLength = 3
     var expandedState by remember { mutableStateOf(false) }
     var showReadMoreButtonState by remember { mutableStateOf(false) }
@@ -822,7 +832,7 @@ private fun CollapsibleBodyText(
     ) {
         if (text.isNullOrEmpty()) {
             Text(
-                text = "No overview available",
+                text = stringResource(id = R.string.no_overview_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = Color.White,

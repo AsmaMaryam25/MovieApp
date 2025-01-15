@@ -44,7 +44,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -52,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.blackbeard.R
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Movie
@@ -184,6 +189,7 @@ private fun SearchContent(
             },
         )
 
+
         if (!isSearchBarFocused) {
             if (currentMovies.isEmpty()) {
                 Text(
@@ -233,6 +239,7 @@ private fun SearchContent(
                             }
                         }
                     }
+
                 }
             }
         } else {
@@ -356,6 +363,7 @@ private fun SearchTabs(
     }
 }
 
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TabContent(
@@ -401,6 +409,7 @@ fun TabContent(
                 onClick = {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
+
                     }
                     onTabSelected(index)
                 }

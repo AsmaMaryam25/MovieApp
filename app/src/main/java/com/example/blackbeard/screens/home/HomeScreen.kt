@@ -32,6 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.blackbeard.R
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
@@ -93,7 +95,7 @@ private fun HomeContent(
     ) {
 
         item {
-            TitleText("Now Playing")
+            TitleText(stringResource(id = R.string.now_playing))
         }
 
         item {
@@ -107,7 +109,7 @@ private fun HomeContent(
         }
 
         item {
-            TitleText("Popular")
+            TitleText(stringResource(id = R.string.popular))
         }
 
         item {
@@ -121,7 +123,7 @@ private fun HomeContent(
         }
 
         item {
-            TitleText("Top Rated")
+            TitleText(stringResource(id = R.string.top_rated))
         }
 
         item {
@@ -135,7 +137,7 @@ private fun HomeContent(
         }
 
         item {
-            TitleText("Upcoming")
+            TitleText(stringResource(id = R.string.upcoming))
         }
 
         item {
@@ -229,7 +231,7 @@ private fun CreatePoster(
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = collectionMovie.overview ?: "No overview available",
+                text = collectionMovie.overview ?: stringResource(id = R.string.no_overview_available),
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(
