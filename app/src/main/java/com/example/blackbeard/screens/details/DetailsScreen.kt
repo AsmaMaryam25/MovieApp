@@ -314,7 +314,7 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
             Text(
 
                 text = stringResource(id = R.string.there_are_no_streaming_services_available_for_this_title),
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
 
                 color = MaterialTheme.colorScheme.onBackground
 
@@ -527,7 +527,7 @@ private fun MovieRatingSection(
                     modifier = Modifier.weight(0.4f),
 
                     text = stringResource(id = R.string.give_opinion),
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
 
                     color = MaterialTheme.colorScheme.onBackground
 
