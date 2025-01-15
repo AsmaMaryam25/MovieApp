@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
+import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
@@ -289,47 +290,53 @@ private fun SearchTabs(
         ) { page ->
             when (page) {
                 0 -> {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "\t"
-                            )
-                            TextButton(onClick = onClearRecentSearches) {
-                                Text(text = "Clear All")
-                            }
-                        }
-                        recentSearches.forEach { search ->
+                    if (recentSearches.isNotEmpty()) {
+                        Column(modifier = Modifier.fillMaxSize()) {
                             Row(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .padding(8.dp)
-                                    .clickable { onRecentSearchClick(search) },
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Default.Clear,
-                                    contentDescription = "Remove search",
-                                    modifier = Modifier
-                                        .padding(end = 8.dp)
-                                        .clickable { onRemoveRecentSearch(search) }
-                                )
                                 Text(
-                                    text = search,
-                                    modifier = Modifier.weight(1f)
+                                    text = "\t"
                                 )
-                                Icon(
-                                    imageVector = Icons.Default.NorthWest,
-                                    contentDescription = "Use search",
+                                TextButton(onClick = onClearRecentSearches) {
+                                    Text(text = "Clear All")
+                                }
+                            }
+                            recentSearches.forEach { search ->
+                                Row(
                                     modifier = Modifier
-                                        .padding(start = 8.dp)
-                                        .clickable { onRecentSearchClick(search) }
-                                )
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .clickable { onRecentSearchClick(search)
+                                            searchViewModel.searchMovies(search, 1)
+                                                   },
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = "Remove search",
+                                        modifier = Modifier
+                                            .padding(end = 8.dp)
+                                            .clickable { onRemoveRecentSearch(search) }
+                                    )
+                                    Text(
+                                        text = search,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.NorthWest,
+                                        contentDescription = "Use search",
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .clickable {
+                                                onRecentSearchClick(search)
+                                            }
+                                    )
+                                }
                             }
                         }
                     }
