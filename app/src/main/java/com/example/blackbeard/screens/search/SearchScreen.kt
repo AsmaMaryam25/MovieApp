@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
+import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
@@ -329,7 +330,9 @@ private fun SearchTabs(
                                         contentDescription = "Use search",
                                         modifier = Modifier
                                             .padding(start = 8.dp)
-                                            .clickable { onRecentSearchClick(search) }
+                                            .clickable { onRecentSearchClick(search)
+                                            searchViewModel.searchMovies(search, 1)
+                                            }
                                     )
                                 }
                             }
