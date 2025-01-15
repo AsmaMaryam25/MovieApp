@@ -154,7 +154,7 @@ class SearchViewModel() : ViewModel() {
                         }
                     }
                 }
-                movieRepository.discoverMovies(genreStr, ratingGte, pageNum)
+                movieRepository.discoverMovies(genreStr, ratingGte, pageNum,selectedItems[2])
                     .collect { searchResults ->
                         val filteredMovies = searchResults.movies
 
@@ -180,8 +180,7 @@ class SearchViewModel() : ViewModel() {
                         ?: emptyList()
                 mutableSearchUIState.value = SearchUIModel.Loading
 
-
-                movieRepository.searchMovies(query, pageNum).collect { searchResults ->
+                movieRepository.advanceSearchMovies(query, pageNum,selectedItems[2]).collect { searchResults ->
                     val filteredMovies = searchResults.movies.filter { movie ->
                         selectedItems.all { (categoryIndex, selectedValues) ->
                             when (categoryIndex) {
