@@ -39,9 +39,7 @@ class HomeViewModel : ViewModel() {
                 }
 
 
-            } catch (e: TimeoutCancellationException) {
-                mutableHomeUIState.value = HomeUIModel.NoConnection
-            } catch (e: UnknownHostException) {
+            } catch (e: Exception) {
                 mutableHomeUIState.value = HomeUIModel.NoConnection
             }
         }

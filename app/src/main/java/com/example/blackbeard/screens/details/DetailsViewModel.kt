@@ -43,10 +43,7 @@ class DetailsViewModel(val movieId: Int) : ViewModel() {
                 } else {
                     mutableDetailsUIState.value = DetailsUIModel.NoConnection
                 }
-            } catch (e: TimeoutCancellationException) {
-                mutableDetailsUIState.value = DetailsUIModel.NoConnection
-
-            } catch (e: UnknownHostException) {
+            } catch (e: Exception) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
             }
         }
