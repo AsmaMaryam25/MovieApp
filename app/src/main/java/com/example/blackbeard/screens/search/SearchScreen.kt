@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -293,6 +294,7 @@ private fun SearchTabs(
             when (page) {
                 0 -> {
                     if (recentSearches.isNotEmpty()) {
+                        val reverseOrderOfSearches = recentSearches.reversed()
                         Column(modifier = Modifier.fillMaxSize()) {
                             Row(
                                 modifier = Modifier
@@ -302,43 +304,47 @@ private fun SearchTabs(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "\t"
+                                    text = "Recent Searches \t",
+                                    fontWeight = FontWeight.Bold
                                 )
                                 TextButton(onClick = onClearRecentSearches) {
                                     Text(text = "Clear All")
                                 }
                             }
-                            recentSearches.forEach { search ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp)
-                                        .clickable { onRecentSearchClick(search)
-                                            searchViewModel.searchMovies(search, 1)
-                                                   },
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = "Remove search",
+                            LazyColumn {
+                                items(reverseOrderOfSearches.size) { index ->
+                                    val search = reverseOrderOfSearches[index]
+                                    Row(
                                         modifier = Modifier
-                                            .padding(end = 8.dp)
-                                            .clickable { onRemoveRecentSearch(search) }
-                                    )
-                                    Text(
-                                        text = search,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.NorthWest,
-                                        contentDescription = "Use search",
-                                        modifier = Modifier
-                                            .padding(start = 8.dp)
-                                            .clickable {
-                                                onRecentSearchClick(search)
-                                                searchQuery.value = TextFieldValue(search, TextRange(search.length))
-                                            }
-                                    )
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
+                                            .clickable { onRecentSearchClick(search)
+                                                searchViewModel.searchMovies(search, 1)
+                                                    },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Remove search",
+                                            modifier = Modifier
+                                                .padding(end = 8.dp)
+                                                .clickable { onRemoveRecentSearch(search) }
+                                        )
+                                        Text(
+                                            text = search,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.NorthWest,
+                                            contentDescription = "Use search",
+                                            modifier = Modifier
+                                                .padding(start = 8.dp)
+                                                .clickable {
+                                                    onRecentSearchClick(search)
+                                                    searchQuery.value = TextFieldValue(search, TextRange(search.length))
+                                                }
+                                        )
+                                    }
                                 }
                             }
                         }
