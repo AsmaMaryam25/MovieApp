@@ -24,14 +24,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.blackbeard.screens.search.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
-    searchQuery: MutableState<String>,
+    searchQuery: MutableState<TextFieldValue>,
     onSearchQueryChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
     isSearchBarFocused: Boolean,
@@ -51,7 +53,7 @@ fun SearchBar(
         OutlinedTextField(
             value = searchQuery.value,
             onValueChange = {
-                searchQuery.value = it
+                searchQuery.value = it.copy(selection = TextRange(it.text.length))
             },
             modifier = Modifier
                 .weight(1f)
@@ -75,10 +77,10 @@ fun SearchBar(
             },
             trailingIcon = {
                 Row {
-                    if (searchQuery.value.isNotEmpty()) {
+                    if (searchQuery.value.text.isNotEmpty()) {
                         IconButton(
                             onClick = {
-                                searchQuery.value = ""
+                                searchQuery.value = TextFieldValue("")
                             }
                         ) {
                             Icon(
@@ -105,7 +107,7 @@ fun SearchBar(
             keyboardActions = KeyboardActions(
                 onSearch = {
                     val isAdvancedSearch = currentTabIndex == 1
-                    onSearchQueryChange(searchQuery.value, isAdvancedSearch)
+                    onSearchQueryChange(searchQuery.value.text, isAdvancedSearch)
                 }
             )
         )
@@ -114,7 +116,7 @@ fun SearchBar(
             TextButton(
                 onClick = {
                     keyboardController?.hide()
-                    searchQuery.value = ""
+                    searchQuery.value = TextFieldValue("")
                     onSearchBarFocusChange(false)
                     focusManager.clearFocus()
                     searchViewModel.searchType.value = false
