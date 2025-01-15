@@ -22,12 +22,13 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.example.blackbeard.models.Category
 
 @Composable
 fun AdvanceSearch(
-    searchQuery: MutableState<String>,
+    searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
     updateSearchType: () -> Unit,
 ) {
@@ -112,7 +113,7 @@ fun AdvanceSearch(
                 .clickable {
                     updateSearchType()
                     searchViewModel.advanceSearchMovies(
-                        searchQuery.value,
+                        searchQuery.value.text,
                         1,
                         searchViewModel.selectedItems.toMap()
                     )

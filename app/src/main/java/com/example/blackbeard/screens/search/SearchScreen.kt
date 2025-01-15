@@ -45,7 +45,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -78,7 +80,7 @@ fun SearchScreen(
     searchViewModel.recentSearches.collectAsState().value
 
     val posterWidth = 170.dp
-    val searchQuery = remember { mutableStateOf("") }
+    val searchQuery = remember { mutableStateOf(TextFieldValue("")) }
     val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
 
     when (searchUIModel) {
@@ -129,7 +131,7 @@ fun SearchScreen(
 @Composable
 private fun SearchContent(
     modifier: Modifier,
-    searchQuery: MutableState<String>,
+    searchQuery: MutableState<TextFieldValue>,
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<Movie>,
@@ -214,13 +216,13 @@ private fun SearchContent(
                                 onClick = {
                                     if (searchViewModel.searchType.value) {
                                         searchViewModel.advanceSearchMovies(
-                                            searchQuery.value,
+                                            searchQuery.value.text,
                                             searchViewModel.currentPage.intValue + 1,
                                             searchViewModel.selectedItems.toMap()
                                         )
                                     } else {
                                         searchViewModel.searchMovies(
-                                            searchQuery.value,
+                                            searchQuery.value.text,
                                             searchViewModel.currentPage.intValue + 1
                                         )
                                     }
@@ -241,7 +243,7 @@ private fun SearchContent(
                 pagerState = pagerState,
                 coroutineScope = coroutineScope,
                 recentSearches = recentSearches,
-                onRecentSearchClick = { searchQuery.value = it },
+                onRecentSearchClick = { searchQuery.value = TextFieldValue(it, TextRange(it.length)) },
                 onClearRecentSearches = { searchViewModel.clearRecentSearches() },
                 onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) },
                 searchQuery = searchQuery,
@@ -261,7 +263,7 @@ private fun SearchTabs(
     onRecentSearchClick: (String) -> Unit,
     onClearRecentSearches: () -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
-    searchQuery: MutableState<String>,
+    searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -334,6 +336,7 @@ private fun SearchTabs(
                                             .padding(start = 8.dp)
                                             .clickable {
                                                 onRecentSearchClick(search)
+                                                searchQuery.value = TextFieldValue(search, TextRange(search.length))
                                             }
                                     )
                                 }
