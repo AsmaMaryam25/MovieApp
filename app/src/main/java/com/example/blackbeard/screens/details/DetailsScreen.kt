@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -53,15 +55,13 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
@@ -95,6 +95,7 @@ import com.example.blackbeard.utils.TimeUtils
 import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.floor
+
 
 @Composable
 fun DetailsScreen(
@@ -304,13 +305,19 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
         Text(
             text = stringResource(id = R.string.watch_from_streaming_services),
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+
         )
 
-        if(streamingServices.isEmpty()) {
+        if (streamingServices.isEmpty()) {
             Text(
+
                 text = stringResource(id = R.string.there_are_no_streaming_services_available_for_this_title),
                 style = MaterialTheme.typography.titleMedium
+
+                color = MaterialTheme.colorScheme.onBackground
+
             )
             return@Column
         }
@@ -414,7 +421,8 @@ private fun SaveAndBookmarkSection(
     Text(
         text = stringResource(id= R.string.favorite_and_Watchlist),
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground
     )
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -426,7 +434,8 @@ private fun SaveAndBookmarkSection(
             modifier = Modifier.weight(0.4f),
             text = stringResource(id= R.string.add_to_favorites_and_watchlist),
             style = MaterialTheme.typography.titleSmall,
-            color = Color.DarkGray
+            color = MaterialTheme.colorScheme.onBackground
+
         )
 
         Row(
@@ -471,7 +480,8 @@ private fun CrewSection(crew: List<Crew>) {
                 text = stringResource(id = R.string.no_crew_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -504,7 +514,8 @@ private fun MovieRatingSection(
             Text(
                 text = stringResource(id = R.string.rating),
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Row(
                 Modifier.fillMaxWidth(),
@@ -514,9 +525,12 @@ private fun MovieRatingSection(
             {
                 Text(
                     modifier = Modifier.weight(0.4f),
+
                     text = stringResource(id = R.string.give_opinion),
-                    color = Color.DarkGray,
                     style = MaterialTheme.typography.titleSmall
+
+                    color = MaterialTheme.colorScheme.onBackground
+
                 )
                 Column(
                     modifier = Modifier.weight(1f),
@@ -525,7 +539,7 @@ private fun MovieRatingSection(
                     Text(
                         text = stringResource(id = R.string.users)+" ($userRatings)",
                         fontWeight = FontWeight.Bold,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                     RatingStars(
                         movieRating = movieRating,
@@ -535,7 +549,7 @@ private fun MovieRatingSection(
                         text = stringResource(id = R.string.average)+
                         ": " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -553,7 +567,8 @@ private fun SecondaryContentSection(
     Text(
         header,
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground
     )
     Spacer(Modifier.height(6.dp))
     Row(
@@ -575,7 +590,8 @@ private fun CastSection(cast: List<Cast>) {
                 text = stringResource(id = R.string.no_cast_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -625,7 +641,8 @@ private fun MovieDetailsSection(
                 text = stringResource(id = R.string.no_details_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -693,13 +710,15 @@ private fun MovieDetailSingleLine(header: String, data: String) {
     ) {
         Text(
             text = header,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data,
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -715,13 +734,15 @@ private fun MovieDetailMultiLine(
     ) {
         Text(
             text = if (data.size > 1) multiItemHeader else singleItemHeader,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data.joinToString("\n"),
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -842,7 +863,9 @@ private fun CollapsibleBodyText(
 private fun GenreItemContainer(genres: List<Genre>) {
 
     LazyRow(
-        modifier = Modifier.padding(vertical = 10.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(vertical = 10.dp)
+            .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
     ) {
         items(genres) { genre ->
@@ -943,7 +966,8 @@ private fun PersonPoster(
             modifier = modifier.fillMaxWidth(),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = description,
@@ -952,6 +976,7 @@ private fun PersonPoster(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

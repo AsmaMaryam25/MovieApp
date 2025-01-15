@@ -36,27 +36,27 @@ class WatchlistViewModel : ViewModel() {
                     initialConnectivityFlow.first()
                 }
 
-                if (isInitiallyConnected) {
-                    getWatchlist()
-                } else {
-                    mutableWatchlistUIState.value = WatchlistUIModel.NoConnection
-                }
+                getWatchlist(isInitiallyConnected)
 
 
             } catch (e: TimeoutCancellationException) {
-                mutableWatchlistUIState.value = WatchlistUIModel.NoConnection
+                getWatchlist(isInitiallyConnected = false)
             } catch (e: UnknownHostException) {
-                mutableWatchlistUIState.value = WatchlistUIModel.NoConnection
+                getWatchlist(isInitiallyConnected = false)
             }
         }
 
     }
 
-    private suspend fun getWatchlist() {
+    private suspend fun getWatchlist(isInitiallyConnected: Boolean) {
         movieRepository.getWatchlist().collect { watchlist ->
             val updatedWatchlist = watchlist.map { movieItem ->
                 movieItem.copy(
-                    rating = movieRepository.getAverageRating(movieItem.id)
+                    rating = if (isInitiallyConnected) {
+                        movieRepository.getAverageRating(movieItem.id)
+                    } else {
+                        69.0
+                    }
                 )
             }
 
@@ -71,7 +71,6 @@ class WatchlistViewModel : ViewModel() {
     sealed class WatchlistUIModel {
         data object Empty : WatchlistUIModel()
         data object Loading : WatchlistUIModel()
-        data object NoConnection : WatchlistUIModel()
         data class Data(
             val watchlist: List<MovieItem>
         ) : WatchlistUIModel()
