@@ -63,6 +63,7 @@ import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
+import com.example.blackbeard.screens.home.TitleText
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -197,6 +198,12 @@ private fun SearchContent(
                     modifier = Modifier.padding(10.dp)
                 )
             } else {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    TitleText(text = stringResource(id = R.string.popular))
+                }
                 LazyVerticalGrid(
                     state = gridState,
                     columns = GridCells.Adaptive(posterWidth),
@@ -372,6 +379,7 @@ fun TabContent(
     coroutineScope: CoroutineScope,
     onTabSelected: (Int) -> Unit
 ) {
+
     TabRow(
         selectedTabIndex = pagerState.currentPage,
         modifier = Modifier
@@ -392,7 +400,9 @@ fun TabContent(
             )
         },
         divider = {}
-    ) {
+
+    )
+    {
         tabs.forEachIndexed { index, title ->
             Tab(
                 text = {
