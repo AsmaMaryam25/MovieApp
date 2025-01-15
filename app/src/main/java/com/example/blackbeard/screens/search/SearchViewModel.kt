@@ -71,7 +71,7 @@ class SearchViewModel() : ViewModel() {
                         mutableSearchUIState.value = SearchUIModel.NoConnection
                     }
                 }
-            } catch (e: TimeoutCancellationException) {
+            } catch (e: Exception) {
                 mutableSearchUIState.value = SearchUIModel.NoConnection
 
                 initialConnectivityFlow.stateIn(
@@ -85,8 +85,6 @@ class SearchViewModel() : ViewModel() {
                         mutableSearchUIState.value = SearchUIModel.NoConnection
                     }
                 }
-            } catch (e: UnknownHostException) {
-                mutableSearchUIState.value = SearchUIModel.NoConnection
             }
         }
     }
