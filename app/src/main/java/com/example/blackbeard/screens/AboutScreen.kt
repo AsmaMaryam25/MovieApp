@@ -7,7 +7,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.sp
+import com.example.blackbeard.R
 
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier, showTopBar: () -> Unit) {
@@ -17,6 +19,6 @@ fun AboutScreen(modifier: Modifier = Modifier, showTopBar: () -> Unit) {
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
-        Text("Version 1.0.0", fontSize = 30.sp)
+        Text(stringResource(id = R.string.version)+"1.0.0", fontSize = 30.sp)
     }
 }

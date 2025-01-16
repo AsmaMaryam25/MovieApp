@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -53,6 +55,9 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -86,8 +91,11 @@ import com.example.blackbeard.models.isSpokenLanguagesInvalid
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
+import com.example.blackbeard.utils.TimeUtils
 import java.time.LocalDate
 import java.util.Locale
+import kotlin.math.floor
+
 
 @Composable
 fun DetailsScreen(
@@ -126,6 +134,7 @@ fun DetailsScreen(
                     detailsUIModel.installationID
                 )
             },
+            movieRating = detailsUIModel.movieRating,
             onWatchlistToggle = { detailsViewModel.toggleWatchlist(detailsUIModel.localMovie) },
             onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie) },
             voterCountLiveData = detailsViewModel.getVoterCount(
@@ -148,6 +157,7 @@ private fun MainContent(
     averageRating: Double,
     streamingServices: List<StreamingService>,
     ageRating: AgeRating,
+    movieRating: Double?,
     genres: List<Genre>,
     onMovieRating: (Double) -> Unit,
     onWatchlistToggle: () -> Unit,
@@ -201,6 +211,7 @@ private fun MainContent(
                     onMovieRating = onMovieRating,
                     isFavorite = isFavorite,
                     isWatchList = isWatchList,
+                    movieRating = movieRating,
                     onFavoriteToggle = onFavoriteToggle,
                     onBookmarkToggle = onWatchlistToggle,
                     voterCount = voterCount
@@ -221,7 +232,7 @@ private fun SimpleContent(
 ) {
     Column(
         modifier = Modifier
-            .padding(bottom = 20.dp)
+            .padding(start = 20.dp, end = 20.dp, bottom = 20.dp)
             .fillMaxWidth()
 
     ) {
@@ -249,8 +260,18 @@ private fun SimpleContent(
             AgeRatingIcon(ageRating = ageRating)
             GenreItemContainer(genres)
         }
+        if (overview.isNullOrEmpty()) {
+            Text(
+                text = "No overview available",
+                modifier = Modifier.fillMaxWidth(),
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium
+            )
+            return@Column
+        }
         ExpandableText(
-            text = overview ?: "",
+            text = overview,
             collapsedMaxLine = 3,
             fontSize = 14.sp,
             style = TextStyle(color = Color.White),
@@ -282,15 +303,21 @@ private fun StreamingServicesSection(streamingServices: List<StreamingService>) 
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
         Text(
-            text = "Watch from these streaming services",
+            text = stringResource(id = R.string.watch_from_streaming_services),
             style = MaterialTheme.typography.titleMedium,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
+
         )
 
         if (streamingServices.isEmpty()) {
             Text(
-                text = "There are no streaming services available for this title",
-                style = MaterialTheme.typography.titleMedium
+
+                text = stringResource(id = R.string.there_are_no_streaming_services_available_for_this_title),
+                style = MaterialTheme.typography.titleMedium,
+
+                color = MaterialTheme.colorScheme.onBackground
+
             )
             return@Column
         }
@@ -318,6 +345,7 @@ private fun SecondaryContent(
     streamingServices: List<StreamingService>,
     isFavorite: Boolean,
     isWatchList: Boolean,
+    movieRating: Double?,
     onMovieRating: (Double) -> Unit,
     onFavoriteToggle: () -> Unit,
     onBookmarkToggle: () -> Unit,
@@ -336,6 +364,7 @@ private fun SecondaryContent(
         {
             MovieRatingSection(
                 userRatings = voterCount,
+                movieRating = movieRating,
                 averageRating = averageRating,
                 onMovieRating = onMovieRating
             )
@@ -390,9 +419,10 @@ private fun SaveAndBookmarkSection(
     var isWatchListed by remember { mutableStateOf(isWatchList) }
 
     Text(
-        text = "Favorite & Watchlist",
+        text = stringResource(id= R.string.favorite_and_Watchlist),
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground
     )
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -402,9 +432,10 @@ private fun SaveAndBookmarkSection(
 
         Text(
             modifier = Modifier.weight(0.4f),
-            text = "Add the movie to your favorites and watchlist",
+            text = stringResource(id= R.string.add_to_favorites_and_watchlist),
             style = MaterialTheme.typography.titleSmall,
-            color = Color.DarkGray
+            color = MaterialTheme.colorScheme.onBackground
+
         )
 
         Row(
@@ -442,19 +473,21 @@ private fun SaveAndBookmarkSection(
 @Composable
 private fun CrewSection(crew: List<Crew>) {
     SecondaryContentSection(
-        header = "Crew"
+        header = stringResource(id = R.string.crew)
     ) {
         if (crew.isEmpty()) {
             Text(
-                text = "No crew members available",
+                text = stringResource(id = R.string.no_crew_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
+        val sortedCrew = crew.sortedByDescending { it.job == "Director" }
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            items(crew) { crewMember ->
+            items(sortedCrew) { crewMember ->
                 PersonPoster(
                     name = crewMember.name,
                     description = crewMember.job,
@@ -468,6 +501,7 @@ private fun CrewSection(crew: List<Crew>) {
 @Composable
 private fun MovieRatingSection(
     userRatings: Int,
+    movieRating: Double?,
     averageRating: Double,
     onMovieRating: (Double) -> Unit
 ) {
@@ -479,9 +513,10 @@ private fun MovieRatingSection(
             Modifier.fillMaxWidth()
         ) {
             Text(
-                text = "Rating",
+                text = stringResource(id = R.string.rating),
                 style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
             )
             Row(
                 Modifier.fillMaxWidth(),
@@ -491,24 +526,31 @@ private fun MovieRatingSection(
             {
                 Text(
                     modifier = Modifier.weight(0.4f),
-                    text = "Give your opinion on the movie by rating it",
-                    color = Color.DarkGray,
-                    style = MaterialTheme.typography.titleSmall
+
+                    text = stringResource(id = R.string.give_opinion),
+                    style = MaterialTheme.typography.titleSmall,
+
+                    color = MaterialTheme.colorScheme.onBackground
+
                 )
                 Column(
                     modifier = Modifier.weight(1f),
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = "Users ($userRatings)",
+                        text = stringResource(id = R.string.users)+" ($userRatings)",
                         fontWeight = FontWeight.Bold,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
-                    RatingStars(onMovieRating = onMovieRating)
+                    RatingStars(
+                        movieRating = movieRating,
+                        onMovieRating = onMovieRating
+                    )
                     Text(
-                        text = "Average: " + String.format(Locale.US, "%.2f", averageRating),
+                        text = stringResource(id = R.string.average)+
+                        ": " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
-                        color = Color.DarkGray
+                        color = MaterialTheme.colorScheme.onBackground
                     )
                 }
             }
@@ -526,7 +568,8 @@ private fun SecondaryContentSection(
     Text(
         header,
         style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+        color = MaterialTheme.colorScheme.onBackground
     )
     Spacer(Modifier.height(6.dp))
     Row(
@@ -541,14 +584,15 @@ private fun SecondaryContentSection(
 @Composable
 private fun CastSection(cast: List<Cast>) {
     SecondaryContentSection(
-        header = "Cast"
+        header = stringResource(id = R.string.cast)
     ) {
         if (cast.isEmpty()) {
             Text(
-                text = "No cast members available",
+                text = stringResource(id = R.string.no_cast_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -595,10 +639,11 @@ private fun MovieDetailsSection(
             )
         ) {
             Text(
-                text = "No details available",
+                text = stringResource(id = R.string.no_details_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onBackground
             )
             return@SecondaryContentSection
         }
@@ -606,45 +651,45 @@ private fun MovieDetailsSection(
         val details = listOf<@Composable () -> Unit>(
             {
                 if (!isReleaseDateInvalid(releaseDate)) MovieDetailSingleLine(
-                    "Release Date",
+                    stringResource(id = R.string.release_date),
                     releaseDate.toString()
                 )
             },
             {
                 if (!isRuntimeInvalid(runtime)) MovieDetailSingleLine(
-                    "Runtime",
-                    "$runtime minutes"
+                    stringResource(id = R.string.runtime),
+                    TimeUtils.convertMinutesToHoursAndMinutes(runtime ?: 0)
                 )
             },
             {
-                if (!isRevenueInvalid(revenue)) MovieDetailSingleLine(
-                    "Revenue",
+                if (!isRevenueInvalid(revenue) || revenue != 0L) MovieDetailSingleLine(
+                    stringResource(id = R.string.revenue),
                     format.format(revenue)
                 )
             },
             {
                 if (!isBudgetInvalid(budget)) MovieDetailSingleLine(
-                    "Budget",
+                    stringResource(id = R.string.budget),
                     format.format(budget)
                 )
             },
             {
                 if (!isProductionCompaniesInvalid(productionCompanies)) MovieDetailMultiLine(
-                    "Production Company",
-                    "Production Companies",
+                    stringResource(id = R.string.production_company),
+                    stringResource(id = R.string.production_companies),
                     productionCompanies.map { it.name })
             },
             {
                 if (!isProductionCountriesInvalid(productionCountries)) MovieDetailMultiLine(
-                    "Production Country",
-                    "Production Countries",
+                    stringResource(id = R.string.production_country),
+                    stringResource(id = R.string.production_countries),
                     productionCountries.map { it.name })
             },
             {
                 if (!isSpokenLanguagesInvalid(spokenLanguages)) MovieDetailMultiLine(
-                    "Language",
-                    "Languages",
-                    spokenLanguages.map { it.name })
+                    stringResource(id = R.string.language),
+                    stringResource(id = R.string.languages),
+                    spokenLanguages.map { it.englishName })
             },
 
             )
@@ -666,13 +711,15 @@ private fun MovieDetailSingleLine(header: String, data: String) {
     ) {
         Text(
             text = header,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data,
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -688,13 +735,15 @@ private fun MovieDetailMultiLine(
     ) {
         Text(
             text = if (data.size > 1) multiItemHeader else singleItemHeader,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = data.joinToString("\n"),
             textAlign = TextAlign.Right,
-            style = MaterialTheme.typography.titleSmall
+            style = MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }
@@ -707,7 +756,7 @@ private fun MovieTitle(
     Box(Modifier.wrapContentSize()) {
         Text(
             modifier = modifier,
-            text = title.ifEmpty { "Title not available" },
+            text = title.ifEmpty { stringResource(id = R.string.title_not_available) },
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             fontSize = 25.sp,
@@ -767,7 +816,7 @@ private fun CollapsibleBodyText(
     text: String?,
     onTextExpand: () -> Unit
 ) {
-    val readMore = "... Read more"
+    val readMore = stringResource(id = R.string.read_more)
     val minimumLineLength = 3
     var expandedState by remember { mutableStateOf(false) }
     var showReadMoreButtonState by remember { mutableStateOf(false) }
@@ -784,7 +833,7 @@ private fun CollapsibleBodyText(
     ) {
         if (text.isNullOrEmpty()) {
             Text(
-                text = "No overview available",
+                text = stringResource(id = R.string.no_overview_available),
                 modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
                 color = Color.White,
@@ -843,15 +892,22 @@ private fun GenreItem(genre: Genre) {
 }
 
 @Composable
-private fun RatingStars(modifier: Modifier = Modifier, onMovieRating: (Double) -> Unit) {
+private fun RatingStars(
+    modifier: Modifier = Modifier,
+    movieRating: Double?,
+    onMovieRating: (Double) -> Unit
+) {
+    val movieRatingFloor = floor(movieRating ?: 0.0).toInt()
+
     val iconList = remember {
-        mutableStateListOf(
-            R.drawable.chest_closed,
-            R.drawable.chest_closed,
-            R.drawable.chest_closed,
-            R.drawable.chest_closed,
-            R.drawable.chest_closed
-        )
+        mutableStateListOf<Int>().apply {
+            repeat(movieRatingFloor) {
+                add(R.drawable.chest_open)
+            }
+            repeat(5 - movieRatingFloor) {
+                add(R.drawable.chest_closed)
+            }
+        }
     }
     Row {
         for (i in 0 until 5) {
@@ -911,7 +967,8 @@ private fun PersonPoster(
             modifier = modifier.fillMaxWidth(),
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
-            fontWeight = FontWeight.Bold
+            fontWeight = FontWeight.Bold,
+            color = MaterialTheme.colorScheme.onBackground
         )
         Text(
             text = description,
@@ -920,6 +977,7 @@ private fun PersonPoster(
             maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = modifier.fillMaxWidth(),
+            color = MaterialTheme.colorScheme.onBackground
         )
     }
 }

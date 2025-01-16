@@ -50,6 +50,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+
+import androidx.compose.ui.res.stringResource
+
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
@@ -60,10 +63,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.blackbeard.R
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
+import com.example.blackbeard.screens.home.TitleText
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -167,6 +172,7 @@ private fun SearchContent(
             },
         )
 
+
         if (!isSearchBarFocused) {
             if (collectionMovies.isEmpty()) {
                 Text(
@@ -174,6 +180,12 @@ private fun SearchContent(
                     modifier = Modifier.padding(10.dp)
                 )
             } else {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    TitleText(text = stringResource(id = R.string.popular))
+                }
                 LazyVerticalGrid(
                     state = gridState,
                     columns = GridCells.Adaptive(posterWidth),
@@ -215,6 +227,7 @@ private fun SearchContent(
                             }
                         }
                     }
+
                 }
             }
         } else {
@@ -350,6 +363,7 @@ private fun SearchTabs(
     }
 }
 
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun TabContent(
@@ -358,6 +372,7 @@ fun TabContent(
     coroutineScope: CoroutineScope,
     onTabSelected: (Int) -> Unit
 ) {
+
     TabRow(
         selectedTabIndex = pagerState.currentPage,
         modifier = Modifier
@@ -378,7 +393,9 @@ fun TabContent(
             )
         },
         divider = {}
-    ) {
+
+    )
+    {
         tabs.forEachIndexed { index, title ->
             Tab(
                 text = {
@@ -395,6 +412,7 @@ fun TabContent(
                 onClick = {
                     coroutineScope.launch {
                         pagerState.animateScrollToPage(index)
+
                     }
                     onTabSelected(index)
                 }

@@ -6,6 +6,7 @@ import com.example.blackbeard.data.local.FavoriteMovieDataSource
 import com.example.blackbeard.data.local.RecentSearchDataSource
 import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
+import com.example.blackbeard.data.remote.RemoteFirebaseDataSource
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
 import com.example.blackbeard.domain.MovieRepository
 import com.example.blackbeard.domain.RecentSearchRepository
@@ -32,6 +33,8 @@ object DataModule {
 
     private val remoteMovieDataSource = RemoteMovieDataSource(retrofit)
 
+    private val remoteFirebaseDataSource = RemoteFirebaseDataSource()
+
     @SuppressLint("StaticFieldLeak")
     private lateinit var localFavoriteMovieDataSource: FavoriteMovieDataSource
 
@@ -52,13 +55,13 @@ object DataModule {
         localWatchlistMovieDataSource = WatchListMovieDataSource(context)
         localRecentSearchDataSource = RecentSearchDataSource(context)
         localThemeDataSource = ThemeDataSource(context)
-        val firestore = FirebaseFirestore.getInstance()
+        FirebaseFirestore.getInstance()
         movieRepository = MovieRepository(
             remoteMovieDataSource,
+            remoteFirebaseDataSource,
             localFavoriteMovieDataSource,
             localWatchlistMovieDataSource,
-            localThemeDataSource,
-            firestore
+            localThemeDataSource
         )
         recentSearchRepository = RecentSearchRepository(localRecentSearchDataSource)
     }
