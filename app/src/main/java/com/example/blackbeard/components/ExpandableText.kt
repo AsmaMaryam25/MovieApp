@@ -55,7 +55,7 @@ fun ExpandableText(
     showLessStyle: SpanStyle = showMoreStyle,
     textAlign: TextAlign? = null,
     fontSize: TextUnit,
-    onTextExpand: () -> Unit = {},
+    onTextExpand: (Boolean) -> Unit = {},
 ) {
     // State variables to track the expanded state, clickable state, and last character index.
     var isExpanded by remember { mutableStateOf(false) }
@@ -66,7 +66,7 @@ fun ExpandableText(
     Box(modifier = Modifier
         .clickable(clickable) {
             isExpanded = !isExpanded
-            //onTextExpand.invoke()
+            onTextExpand(isExpanded)
         }
         .then(modifier)
     ) {
