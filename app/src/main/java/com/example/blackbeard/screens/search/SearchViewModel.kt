@@ -1,6 +1,7 @@
 package com.example.blackbeard.screens.search
 
 import android.util.Log
+import android.util.Log.i
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -178,7 +179,8 @@ class SearchViewModel() : ViewModel() {
                 }
             } else {
 
-                if (selectedCategories.isEmpty()) {
+                Log.d("SearchViewModel", "Query: $selectedCategories")
+                if (selectedCategories.values.all { it.isEmpty() } || selectedCategories.isEmpty()) {
                     searchMovies(query, pageNum, false)
                 } else {
                     searchMovies(query, pageNum, true)
@@ -193,10 +195,17 @@ class SearchViewModel() : ViewModel() {
     ) {
         val updatedMovies =
             searchResults.movies.filter { movie ->
+                var releaseDates: List<Int> = emptyList()
+                Log.d("SearchViewModel", "ReleaseDates: $releaseDates")
                 movie.genres?.filter { genre ->
                     selectedCategories["Popular Genres"]?.values?.contains(genre.toString()) == true
                 }?.isNotEmpty() == true ||
-                        selectedCategories["Decade"]?.values?.contains(movie.releaseDate.year.toString()) == true
+                        selectedCategories["Decade"]?.values?.any { decade ->
+                            for (i in 0..9) {
+                                releaseDates += decade.toInt() + i
+                            }
+                            releaseDates.contains(decade.toInt())
+                        } == true
             }
 
         mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
