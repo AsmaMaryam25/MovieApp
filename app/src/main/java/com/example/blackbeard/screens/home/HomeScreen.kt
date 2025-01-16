@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -36,22 +37,22 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.models.CollectionMovie
-import com.example.blackbeard.models.Genre
-import com.example.blackbeard.models.MovieCategory
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
+data class MovieCarousel(
+    val title: String,
+    val movies: List<CollectionMovie>,
+    val listState: LazyListState
+)
 
 @Composable
 fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modifier = Modifier) {
@@ -91,68 +92,55 @@ private fun HomeContent(
     topRatedState: LazyListState,
     upcomingState: LazyListState
 ) {
+    var emptyMovies = 0
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         state = rememberLazyListState()
     ) {
+        if (homeUIModel !is HomeUIModel.Data) return@LazyColumn
+        val movieCarousels = listOf(
+            MovieCarousel("Now Playing", homeUIModel.nowPlayingCollectionMovies, nowPlayingState),
+            MovieCarousel("Popular", homeUIModel.popularCollectionMovies, popularState),
+            MovieCarousel("Top Rated", homeUIModel.topRatedCollectionMovies, topRatedState),
+            MovieCarousel("Upcoming", homeUIModel.upcomingCollectionMovies, upcomingState),
+        )
+        for (movieCarousel in movieCarousels) {
+            if(movieCarousel.movies.isEmpty()) {
+                emptyMovies++
+                continue
+            }
+            item {
+                TitleText(movieCarousel.title)
+            }
 
-        item {
-            TitleText("Now Playing")
-        }
+            item {
 
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
                 CreatePosters(
                     onNavigateToDetailsScreen,
-                    homeUIModel.nowPlayingCollectionMovies,
-                    nowPlayingState
+                    movieCarousel.movies,
+                    movieCarousel.listState
                 )
             }
         }
-
         item {
-            TitleText("Popular")
-        }
+            if(emptyMovies != 0) {
 
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
-                    homeUIModel.popularCollectionMovies,
-                    popularState
-                )
-            }
-        }
-
-        item {
-            TitleText("Top Rated")
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
-                    homeUIModel.topRatedCollectionMovies,
-                    topRatedState
-                )
-            }
-        }
-
-        item {
-            TitleText("Upcoming")
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
-                    homeUIModel.upcomingCollectionMovies,
-                    upcomingState
-                )
             }
         }
     }
+}
+
+@Composable
+fun NoMovies() {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                "",
+            )
+        }
 }
 
 @Composable

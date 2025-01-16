@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.domain.NetworkError
+import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.AgeRating
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
@@ -24,7 +26,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withTimeout
 import java.net.UnknownHostException
 
-class DetailsViewModel(val movieId: Int) : ViewModel() {
+class DetailsViewModel(private val movieId: Int) : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
     private val mutableDetailsUIState = MutableStateFlow<DetailsUIModel>(DetailsUIModel.Empty)

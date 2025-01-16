@@ -104,7 +104,6 @@ fun MainNavHost(
 
         composable<Route.DetailsScreen> { backStackEntry ->
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>()) }
-
             DetailsScreen(
                 movieId = backStackEntry.arguments?.getInt("movieId")!!,
                 showTopBar = showTopBar,
