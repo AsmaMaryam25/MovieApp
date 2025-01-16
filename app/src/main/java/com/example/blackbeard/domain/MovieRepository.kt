@@ -73,58 +73,33 @@ class MovieRepository(
         emit(MovieSearchResult(movies, totalPages))
     }
 
-    fun advanceSearchMovies(query: String, pageNum: Int, primaryReleaseYears : List<String?>?): Flow<MovieSearchResult> = flow {
-        if(primaryReleaseYears != null){
-            val allMovies = mutableListOf<SearchMovie>()
-            var totalPages = 0
-            primaryReleaseYears.forEach { year ->
-                if (year != null) {
-                    val responseMulti = remoteMovieDataSource.advanceSearchMovies(query, pageNum, year)
-                    val moviesMulti = responseMulti.results?.map { it.mapToMovie() } ?: emptyList()
-                    allMovies.addAll(moviesMulti)
-                    totalPages = maxOf(totalPages, responseMulti.totalPages ?: 0)
-                }
-            }
-            emit(MovieSearchResult(allMovies, totalPages))
-        }else{
-            val res = remoteMovieDataSource.advanceSearchMovies(query, pageNum, null)
-            val moviesRes = res.results?.map { it.mapToMovie() } ?: emptyList()
-            val totalPagesRes = res.totalPages
-            emit(MovieSearchResult(moviesRes, totalPagesRes))
-        }
-    }
-
-    fun discoverMovies(
-        genreStr: String?,
-        ratingGte: String?,
-        pageNum: Int,
-        primaryReleaseYears : List<String?>?
-    ): Flow<MovieSearchResult> = flow {
-        if(primaryReleaseYears != null){
-            val allMovies = mutableListOf<SearchMovie>()
-            var totalPages = 0
-            primaryReleaseYears.forEach { year ->
-                if (year != null) {
-                    val responseMulti = remoteMovieDataSource.discoverMovies(genreStr, ratingGte, pageNum, year)
-                    val moviesMulti = responseMulti.results?.map { it.mapToMovie() } ?: emptyList()
-                    allMovies.addAll(moviesMulti)
-                    totalPages = maxOf(totalPages, responseMulti.totalPages ?: 0)
-                }
-            }
-            emit(MovieSearchResult(allMovies, totalPages))
-        }else{
-            val res = remoteMovieDataSource.discoverMovies(genreStr, ratingGte, pageNum, null)
-            val moviesRes = res.results?.map { it.mapToMovie() } ?: emptyList()
-            val totalPagesRes = res.totalPages
-            emit(MovieSearchResult(moviesRes, totalPagesRes))
-        }
-    }
-
     fun getMovie(externalId: Int): Flow<LocalMovie> = flow {
         emit(
             remoteMovieDataSource.getMovie(externalId.toString())
                 .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
         )
+    }
+
+    fun discoverMovies(
+        pageNum: Int,
+        releaseDateGte: String?,
+        releaseDateLte: String?,
+        sortBy: String?,
+        watchRegion: String?,
+        withGenres: String?,
+        withWatchProviders: String?,
+    ): Flow<MovieSearchResult> = flow {
+        val response = remoteMovieDataSource.discoverMovies(
+            pageNum,
+            releaseDateGte,
+            releaseDateLte,
+            sortBy,
+            watchRegion,
+            withGenres,
+            withWatchProviders,
+        )
+        val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
+        emit(MovieSearchResult(movies, response.totalPages))
     }
 
     fun getCredits(externalId: Int): Flow<Credits> = flow {
