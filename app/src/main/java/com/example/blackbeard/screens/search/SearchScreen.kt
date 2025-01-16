@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -226,7 +227,9 @@ private fun SearchContent(
                 pagerState = pagerState,
                 coroutineScope = coroutineScope,
                 recentSearches = recentSearches,
-                onRecentSearchClick = { searchQuery.value = TextFieldValue(it, TextRange(it.length)) },
+                onRecentSearchClick = {
+                    searchQuery.value = TextFieldValue(it, TextRange(it.length))
+                },
                 onClearRecentSearches = { searchViewModel.clearRecentSearches() },
                 onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) },
                 searchQuery = searchQuery,
@@ -275,6 +278,7 @@ private fun SearchTabs(
             when (page) {
                 0 -> {
                     if (recentSearches.isNotEmpty()) {
+                        val reverseOrderOfSearches = recentSearches.reversed()
                         Column(modifier = Modifier.fillMaxSize()) {
                             Row(
                                 modifier = Modifier
@@ -284,43 +288,52 @@ private fun SearchTabs(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "\t"
+                                    text = "Recent searches\t",
+                                    fontWeight = FontWeight.Bold
                                 )
                                 TextButton(onClick = onClearRecentSearches) {
                                     Text(text = "Clear All")
                                 }
                             }
-                            recentSearches.forEach { search ->
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(8.dp)
-                                        .clickable { onRecentSearchClick(search)
-                                            searchViewModel.searchMovies(search, 1)
-                                                   },
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = "Remove search",
-                                        modifier = Modifier
-                                            .padding(end = 8.dp)
-                                            .clickable { onRemoveRecentSearch(search) }
-                                    )
-                                    Text(
-                                        text = search,
-                                        modifier = Modifier.weight(1f)
-                                    )
-                                    Icon(
-                                        imageVector = Icons.Default.NorthWest,
-                                        contentDescription = "Use search",
-                                        modifier = Modifier
-                                            .padding(start = 8.dp)
+                            LazyColumn {
+                                items(reverseOrderOfSearches.size) { index ->
+                                    val search = reverseOrderOfSearches[index]
+                                    Row(
+                                        Modifier
+                                            .fillMaxWidth()
+                                            .padding(8.dp)
                                             .clickable {
                                                 onRecentSearchClick(search)
-                                                searchQuery.value = TextFieldValue(search, TextRange(search.length))
-                                            }
-                                    )
+                                                searchViewModel.searchMovies(search, 1)
+                                            },
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Default.Clear,
+                                            contentDescription = "Remove search",
+                                            modifier = Modifier
+                                                .padding(end = 8.dp)
+                                                .clickable { onRemoveRecentSearch(search) }
+                                        )
+                                        Text(
+                                            text = search,
+                                            modifier = Modifier.weight(1f)
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.NorthWest,
+                                            contentDescription = "Use search",
+                                            modifier = Modifier
+                                                .padding(start = 8.dp)
+                                                .clickable {
+                                                    onRecentSearchClick(search)
+                                                    searchQuery.value =
+                                                        TextFieldValue(
+                                                            search,
+                                                            TextRange(search.length)
+                                                        )
+                                                }
+                                        )
+                                    }
                                 }
                             }
                         }
