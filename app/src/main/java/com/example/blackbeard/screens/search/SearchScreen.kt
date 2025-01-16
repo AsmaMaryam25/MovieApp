@@ -1,7 +1,5 @@
 package com.example.blackbeard.screens.search
 
-import android.R.attr.fontWeight
-import android.R.attr.lineHeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +62,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
-import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.search.SearchViewModel.SearchUIModel
@@ -75,7 +72,6 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.stream.Collectors.toList
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -592,7 +588,7 @@ fun CategorySection(
     availableCategoryValues: List<String>, // List of values for that category
     selectedCategories: Map<String, Map<String, String>>, // Track selected items
     onCategorySelected: (String, String, Boolean) -> Unit // Callback for item selection
-    ) {
+) {
     Column {
         Text(
             text = categoryTitle,
@@ -603,12 +599,19 @@ fun CategorySection(
         LazyRow {
             // Display all items in the current category
             availableCategoryNames.forEachIndexed { index, categoryName ->
-                val isSelected = selectedCategories[categoryTitle]?.containsKey(categoryName) == true
+                val isSelected =
+                    selectedCategories[categoryTitle]?.containsKey(categoryName) == true
                 item {
                     CategoryItem(
                         displayItem = categoryName,
                         isSelected = isSelected,
-                        onSelected = { onCategorySelected(categoryName, availableCategoryValues[index], !isSelected) }
+                        onSelected = {
+                            onCategorySelected(
+                                categoryName,
+                                availableCategoryValues[index],
+                                !isSelected
+                            )
+                        }
                     )
                 }
             }

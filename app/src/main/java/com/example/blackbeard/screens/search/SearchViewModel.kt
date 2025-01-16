@@ -1,7 +1,6 @@
 package com.example.blackbeard.screens.search
 
 import android.util.Log
-import android.util.Log.i
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -159,8 +158,9 @@ class SearchViewModel() : ViewModel() {
                     withGenres = selectedCategories["Popular Genres"]?.values?.joinToString(",")
                 }
 
-                if(selectedCategories["Streaming Services"] != null) {
-                    withWatchProviders = selectedCategories["Streaming Services"]?.values?.joinToString("|")
+                if (selectedCategories["Streaming Services"] != null) {
+                    withWatchProviders =
+                        selectedCategories["Streaming Services"]?.values?.joinToString("|")
                 }
 
                 Log.d(
