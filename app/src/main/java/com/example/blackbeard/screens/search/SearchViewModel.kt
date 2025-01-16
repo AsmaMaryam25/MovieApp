@@ -1,15 +1,16 @@
 package com.example.blackbeard.screens.search
 
+import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
+import com.example.blackbeard.di.DataModule.recentSearchRepository
 import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
-import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -35,8 +36,7 @@ class SearchViewModel() : ViewModel() {
 
     var totalPages = mutableStateOf<Int?>(null)
     var searchType = mutableStateOf(false)
-    val selectedItems = mutableStateMapOf<Int, List<String>>()
-
+    val selectedCategories = mutableStateMapOf<String, MutableMap<String, String>>()
 
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches: StateFlow<List<String>> = _recentSearches
@@ -47,7 +47,6 @@ class SearchViewModel() : ViewModel() {
         viewModelScope.launch {
             try {
                 searchType.value = false
-                selectedItems.clear()
                 mutableSearchUIState.value = SearchUIModel.Loading
 
                 val isInitiallyConnected = withTimeout(5000L) {
@@ -58,6 +57,10 @@ class SearchViewModel() : ViewModel() {
                     loadPopularMovies()
                 } else {
                     mutableSearchUIState.value = SearchUIModel.NoConnection
+                }
+
+                recentSearchRepository.getRecentSearches().collect {
+                    _recentSearches.value = it
                 }
 
                 initialConnectivityFlow.stateIn(
@@ -134,110 +137,52 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
-    fun advanceSearchMovies(query: String, pageNum: Int, selectedItems: Map<Int, List<String>>) {
-        viewModelScope.launch {
-            if (query.isBlank()) {
-                val currentMovies =
-                    (mutableSearchUIState.value as? SearchUIModel.AdvanceSearchData)?.collectionMovies
-                        ?: emptyList()
+    fun discoverMovies(query: String, pageNum: Int) {
+        viewModelScope.launch{
 
-                mutableSearchUIState.value = SearchUIModel.Loading
-                var ratingGte: String? = null
-                var genreStr: String? = null
-                for (i in selectedItems.keys) {
-                    selectedItems[i]?.let { list ->
-                        if (list.isNotEmpty()) {
-                            if (i == 0)
-                                ratingGte = getSmallestRating(list)
-                            else if (i == 1)
-                                genreStr = convertListToString(list)
-                        }
-                    }
-                }
-                movieRepository.discoverMovies(genreStr, ratingGte, pageNum,selectedItems[2])
-                    .collect { searchResults ->
-                        val filteredMovies = searchResults.movies
+            Log.d("SearchViewModel", "SelectedCategories: $selectedCategories")
+            /*if (query.isBlank()) {
+                mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
+                currentPage.intValue = 1
+                totalPages.value = 0
+                return@launch
+            }*/
 
-                        val updatedMovies = if (pageNum == 1) {
-                            filteredMovies
-                        } else {
-                            currentMovies + filteredMovies
-                        }
+            var releaseDateGte: String? = null
+            var releaseDateLte: String? = null
+            var withGenres: String? = null
 
-                        mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
-                            SearchUIModel.Empty
-                        } else {
-                            SearchUIModel.AdvanceSearchData(updatedMovies, searchResults.totalPages)
-                        }
+            if (selectedCategories["Decade"] != null) {
+                val decade = selectedCategories["Decade"]?.values?.first()
+                releaseDateGte = "$decade-01-01"
+                releaseDateLte = (decade?.toInt()?.plus(9)).toString() + "-01-01"
+            } else if (selectedCategories["Popular Genres"] != null) {
+                withGenres = selectedCategories["Popular Genres"]?.values?.joinToString(",")
+            }
 
-                        totalPages.value = searchResults.totalPages
-                        currentPage.intValue = pageNum
-                    }
-            } else {
+            Log.d("SearchViewModel", "Discovering movies with releaseDateGte: $releaseDateGte, releaseDateLte: $releaseDateLte, withGenres: $withGenres")
 
-                val currentMovies =
-                    (mutableSearchUIState.value as? SearchUIModel.AdvanceSearchData)?.collectionMovies
-                        ?: emptyList()
-                mutableSearchUIState.value = SearchUIModel.Loading
-
-                movieRepository.advanceSearchMovies(query, pageNum,selectedItems[2]).collect { searchResults ->
-                    val filteredMovies = searchResults.movies.filter { movie ->
-                        selectedItems.all { (categoryIndex, selectedValues) ->
-                            when (categoryIndex) {
-                                0 -> {
-                                    selectedValues.any { selectedValue ->
-                                        val selectedRating = selectedValue.toDoubleOrNull() ?: 0.0
-                                        movie.voteAverage >= selectedRating
-                                    }
-                                }
-
-                                1 -> {
-                                    selectedValues.any { selectedValue ->
-                                        val selectedGenreId = selectedValue.toIntOrNull()
-                                        movie.genres?.contains(selectedGenreId) == true
-                                    }
-                                }
-
-                                else -> true
-                            }
-                        }
-                    }
-
-                    val updatedMovies = if (pageNum == 1) {
-                        filteredMovies
-                    } else {
-                        currentMovies + filteredMovies
-                    }
-
-                    mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
-                        SearchUIModel.Empty
-                    } else {
-                        SearchUIModel.AdvanceSearchData(updatedMovies, searchResults.totalPages)
-                    }
-
-                    totalPages.value = searchResults.totalPages
-                    currentPage.intValue = pageNum
-                }
+            mutableSearchUIState.value = SearchUIModel.Loading
+            movieRepository.discoverMovies(pageNum, releaseDateGte, releaseDateLte, null, null, withGenres, null, null).collect { searchResults ->
+                Log.d("SearchResult", searchResults.movies.toString())
+                mutableSearchUIState.value = SearchUIModel.Data(searchResults.movies, searchResults.totalPages)
+                totalPages.value = searchResults.totalPages
+                currentPage.intValue = pageNum
             }
         }
     }
 
-    private fun convertListToString(list: List<String>): String {
-        return if (list.isEmpty()) "" else list.joinToString("|")
-    }
 
-    private fun getSmallestRating(list: List<String>): String {
-        return if (list.isEmpty()) "" else list.minByOrNull {
-            it.toDoubleOrNull() ?: Double.MAX_VALUE
-        } ?: ""
-    }
+    fun onCategorySelected(categoryTitle: String, item: String, isSelected: Boolean) {
+        val currentCategoryItems = selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
 
-    init {
-        viewModelScope.launch {
-            recentSearchRepository.getRecentSearches().collect {
-                _recentSearches.value = it
-            }
+        if (isSelected) {
+            currentCategoryItems[item] = item
+        } else {
+            currentCategoryItems.remove(item)
         }
+
+        selectedCategories[categoryTitle] = currentCategoryItems
     }
 
     fun addRecentSearch(query: String) {
@@ -264,11 +209,6 @@ class SearchViewModel() : ViewModel() {
         data object NoConnection : SearchUIModel()
         data class Data(
             val collectionMovies: List<Movie>,
-            val totalPages: Int?
-        ) : SearchUIModel()
-
-        data class AdvanceSearchData(
-            val collectionMovies: List<SearchMovie>,
             val totalPages: Int?
         ) : SearchUIModel()
     }

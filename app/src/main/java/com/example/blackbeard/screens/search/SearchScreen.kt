@@ -13,17 +13,22 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.NorthWest
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Tab
@@ -56,7 +61,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
-import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.LoadingScreen
@@ -67,6 +71,7 @@ import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPagerApi::class)
@@ -91,7 +96,6 @@ fun SearchScreen(
             posterWidth,
             onNavigateToDetailsScreen,
             emptyList(),
-            emptyList(),
             searchViewModel,
             gridState
         )
@@ -106,20 +110,6 @@ fun SearchScreen(
                 searchQuery,
                 posterWidth,
                 onNavigateToDetailsScreen,
-                searchUIModel.collectionMovies,
-                emptyList(),
-                searchViewModel,
-                gridState
-            )
-        }
-
-        is SearchUIModel.AdvanceSearchData -> {
-            SearchContent(
-                modifier,
-                searchQuery,
-                posterWidth,
-                onNavigateToDetailsScreen,
-                emptyList(),
                 searchUIModel.collectionMovies,
                 searchViewModel,
                 gridState
@@ -136,7 +126,6 @@ private fun SearchContent(
     posterWidth: Dp,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovies: List<Movie>,
-    collectionSearchMovies: List<SearchMovie>,
     searchViewModel: SearchViewModel,
     gridState: LazyGridState = rememberLazyGridState(),
 ) {
@@ -153,23 +142,15 @@ private fun SearchContent(
         val coroutineScope = rememberCoroutineScope()
         val pagerState = rememberPagerState()
 
-        // Determine which list to use based on searchType
-        val currentMovies: List<Any> = if (searchViewModel.searchType.value) {
-            collectionSearchMovies
-        } else {
-            collectionMovies
-        }
-
         SearchBar(
             searchQuery = searchQuery,
             searchViewModel = searchViewModel,
             onSearchQueryChange = { query, typeOfSearch ->
                 searchViewModel.searchType.value = typeOfSearch
                 if (searchViewModel.searchType.value) {
-                    searchViewModel.advanceSearchMovies(
-                        query,
-                        1,
-                        searchViewModel.selectedItems.toMap()
+                    searchViewModel.discoverMovies(
+                        searchQuery.value.text,
+                        searchViewModel.currentPage.intValue,
                     )
                 } else {
                     searchViewModel.searchMovies(query, 1)
@@ -188,7 +169,7 @@ private fun SearchContent(
         )
 
         if (!isSearchBarFocused) {
-            if (currentMovies.isEmpty()) {
+            if (collectionMovies.isEmpty()) {
                 Text(
                     text = "No results found",
                     modifier = Modifier.padding(10.dp)
@@ -200,12 +181,12 @@ private fun SearchContent(
                     modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    items(currentMovies.size) { index ->
+                    items(collectionMovies.size) { index ->
                         CreateSearchPoster(
                             searchViewModel,
                             posterWidth = posterWidth,
                             onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                            movie = currentMovies[index]
+                            movie = collectionMovies[index]
                         )
                     }
 
@@ -216,10 +197,9 @@ private fun SearchContent(
                             Button(
                                 onClick = {
                                     if (searchViewModel.searchType.value) {
-                                        searchViewModel.advanceSearchMovies(
+                                        searchViewModel.discoverMovies(
                                             searchQuery.value.text,
                                             searchViewModel.currentPage.intValue + 1,
-                                            searchViewModel.selectedItems.toMap()
                                         )
                                     } else {
                                         searchViewModel.searchMovies(
@@ -278,7 +258,6 @@ private fun SearchTabs(
             } else {
                 keyboardController?.show()
                 searchViewModel.searchType.value = false
-                searchViewModel.selectedItems.clear()
             }
         })
 
@@ -294,7 +273,6 @@ private fun SearchTabs(
             when (page) {
                 0 -> {
                     if (recentSearches.isNotEmpty()) {
-                        val reverseOrderOfSearches = recentSearches.reversed()
                         Column(modifier = Modifier.fillMaxSize()) {
                             Row(
                                 modifier = Modifier
@@ -304,47 +282,43 @@ private fun SearchTabs(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Text(
-                                    text = "Recent Searches \t",
-                                    fontWeight = FontWeight.Bold
+                                    text = "\t"
                                 )
                                 TextButton(onClick = onClearRecentSearches) {
                                     Text(text = "Clear All")
                                 }
                             }
-                            LazyColumn {
-                                items(reverseOrderOfSearches.size) { index ->
-                                    val search = reverseOrderOfSearches[index]
-                                    Row(
+                            recentSearches.forEach { search ->
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(8.dp)
+                                        .clickable { onRecentSearchClick(search)
+                                            searchViewModel.searchMovies(search, 1)
+                                                   },
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Clear,
+                                        contentDescription = "Remove search",
                                         modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(8.dp)
-                                            .clickable { onRecentSearchClick(search)
-                                                searchViewModel.searchMovies(search, 1)
-                                                    },
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            imageVector = Icons.Default.Clear,
-                                            contentDescription = "Remove search",
-                                            modifier = Modifier
-                                                .padding(end = 8.dp)
-                                                .clickable { onRemoveRecentSearch(search) }
-                                        )
-                                        Text(
-                                            text = search,
-                                            modifier = Modifier.weight(1f)
-                                        )
-                                        Icon(
-                                            imageVector = Icons.Default.NorthWest,
-                                            contentDescription = "Use search",
-                                            modifier = Modifier
-                                                .padding(start = 8.dp)
-                                                .clickable {
-                                                    onRecentSearchClick(search)
-                                                    searchQuery.value = TextFieldValue(search, TextRange(search.length))
-                                                }
-                                        )
-                                    }
+                                            .padding(end = 8.dp)
+                                            .clickable { onRemoveRecentSearch(search) }
+                                    )
+                                    Text(
+                                        text = search,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                    Icon(
+                                        imageVector = Icons.Default.NorthWest,
+                                        contentDescription = "Use search",
+                                        modifier = Modifier
+                                            .padding(start = 8.dp)
+                                            .clickable {
+                                                onRecentSearchClick(search)
+                                                searchQuery.value = TextFieldValue(search, TextRange(search.length))
+                                            }
+                                    )
                                 }
                             }
                         }
@@ -352,7 +326,7 @@ private fun SearchTabs(
                 }
 
                 1 -> {
-                    AdvanceSearch(
+                    AdvancedSearch(
                         searchQuery,
                         searchViewModel,
                         updateSearchType = {
@@ -455,7 +429,7 @@ private fun CreateSearchPoster(
                             )
                             isClickAble = false
                             coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
+                                delay(1000)
                                 isClickAble = true
                             }
                         }
@@ -478,4 +452,142 @@ private fun CreateSearchPoster(
             lineHeight = 15.sp
         )
     }
+}
+
+@Composable
+fun AdvancedSearch(
+    searchQuery: MutableState<TextFieldValue>,
+    searchViewModel: SearchViewModel,
+    updateSearchType: () -> Unit,
+) {
+    val categories = mapOf(
+        "Rating" to mapOf(
+            "9+" to "9",
+            "8+" to "8",
+            "7+" to "7",
+            "6+" to "6"
+        ),
+        "Popular Genres" to mapOf(
+            "Action" to "28",
+            "Adventure" to "12",
+            "Horror" to "27",
+            "Romance" to "10749",
+            "Comedy" to "35",
+            "Crime" to "80",
+            "Drama" to "18",
+            "Fantasy" to "14",
+            "Science Fiction" to "878",
+            "Western" to "37",
+            "Documentary" to "99"
+        ),
+        "Decade" to mapOf(
+            "2020's" to "2020",
+            "2010's" to "2010",
+            "2000's" to "2000",
+            "1990's" to "1990",
+            "1980's" to "1980",
+            "1970's" to "1970",
+            "1960's" to "1960",
+            "1950's" to "1950",
+            "1940's" to "1940",
+            "1930's" to "1930",
+            "1920's" to "1920",
+            "1910's" to "1910",
+            "1900's" to "1900"
+        )
+    )
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 4.dp)
+        ) {
+            categories.forEach { (categoryTitle, categoryItems) ->
+                CategorySection(
+                    categoryTitle = categoryTitle,
+                    availableItems = categoryItems.keys.toList(),  // Get list of category keys (display names)
+                    selectedCategories = searchViewModel.selectedCategories,
+                    onCategorySelected = { item, isSelected ->
+                        searchViewModel.onCategorySelected(categoryTitle, item, isSelected)
+                    }
+                )
+            }
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    color = Color(0xFFFFD700),
+                    shape = RoundedCornerShape(10)
+                )
+                .clickable {
+                    updateSearchType()
+                    searchViewModel.discoverMovies(
+                        searchQuery.value.text,
+                        1,
+                    )
+                }
+                .padding(16.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Text(
+                text = "See Results", color = Color.Black
+            )
+        }
+    }
+}
+
+@Composable
+fun CategorySection(
+    categoryTitle: String,
+    availableItems: List<String>, // List of items for that category
+    selectedCategories: Map<String, Map<String, String>>, // Track selected items
+    onCategorySelected: (String, Boolean) -> Unit // Callback for item selection
+) {
+    Column {
+        Text(
+            text = categoryTitle,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+
+        LazyRow {
+            // Display all items in the current category
+            availableItems.forEach { item ->
+                val isSelected = selectedCategories[categoryTitle]?.containsKey(item) == true
+                item {
+                    CategoryItem(
+                        displayItem = item,
+                        isSelected = isSelected,
+                        onSelected = { onCategorySelected(item, !isSelected) }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CategoryItem(
+    displayItem: String,
+    isSelected: Boolean,
+    onSelected: () -> Unit
+) {
+    FilterChip(
+        selected = isSelected,
+        onClick = { onSelected() },
+        colors = FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+        ),
+        label = { Text(text = displayItem) },
+        modifier = Modifier.padding(end = 8.dp)
+    )
 }

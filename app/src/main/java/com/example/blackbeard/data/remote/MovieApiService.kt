@@ -10,6 +10,7 @@ import com.example.blackbeard.data.model.VideosDao
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface MovieApiService {
 
@@ -64,21 +65,9 @@ interface MovieApiService {
         @Query("api_key") apiKey: String
     ): QueryDao
 
-    @GET("search/movie")
-    suspend fun advanceSearchMovies(
-        @Query("query") query: String,
-        @Query("page") pageNum: Int,
-        @Query("api_key") apiKey: String,
-        @Query("primary_release_year") primaryReleaseYear : String?
-    ): QueryDao
-
     @GET("discover/movie")
     suspend fun discoverMovies(
-        @Query("with_genres") withGenres: String?,
-        @Query("vote_average.gte") voteAverageGte: String?,
-        @Query("page") pageNum: Int,
-        @Query("api_key") apiKey: String,
-        @Query("primary_release_year") primaryReleaseYear : String?
+        @QueryMap queryParams: Map<String, String>
     ): QueryDao
 
     @GET("movie/{external_id}/watch/providers")

@@ -120,7 +120,7 @@ fun SearchBar(
                     onSearchBarFocusChange(false)
                     focusManager.clearFocus()
                     searchViewModel.searchType.value = false
-                    searchViewModel.selectedItems.clear()
+                    searchViewModel.selectedCategories.clear()
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
