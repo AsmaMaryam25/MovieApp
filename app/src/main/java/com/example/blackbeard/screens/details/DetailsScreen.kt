@@ -662,7 +662,7 @@ private fun MovieDetailsSection(
                 )
             },
             {
-                if (!isRevenueInvalid(revenue)) MovieDetailSingleLine(
+                if (!isRevenueInvalid(revenue) || revenue != 0L) MovieDetailSingleLine(
                     stringResource(id = R.string.revenue),
                     format.format(revenue)
                 )
