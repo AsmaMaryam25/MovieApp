@@ -102,7 +102,7 @@ class SearchViewModel() : ViewModel() {
         }
     }
 
-    fun searchMovies(query: String, pageNum: Int) {
+    fun searchMovies(query: String, pageNum: Int, isAdvanced: Boolean = false) {
         viewModelScope.launch {
             if (query.isBlank()) {
                 mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
@@ -119,7 +119,11 @@ class SearchViewModel() : ViewModel() {
             mutableSearchUIState.value = SearchUIModel.Loading
 
             movieRepository.searchMovies(query, pageNum).collect { searchResults ->
-                collectMovies(pageNum, searchResults, currentMovies)
+                if (isAdvanced) {
+                    collectAdvancedMovies(searchResults)
+                } else {
+                    collectMovies(pageNum, searchResults, currentMovies)
+                }
             }
         }
     }
@@ -137,7 +141,8 @@ class SearchViewModel() : ViewModel() {
                 }
 
                 val currentMovies =
-                    (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies ?: emptyList()
+                    (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies
+                        ?: emptyList()
                 var releaseDateGte: String? = null
                 var releaseDateLte: String? = null
                 var withGenres: String? = null
@@ -172,13 +177,36 @@ class SearchViewModel() : ViewModel() {
                     collectMovies(pageNum, searchResults, currentMovies)
                 }
             } else {
-                addRecentSearch(query)
 
-                mutableSearchUIState.value = SearchUIModel.Loading
-                searchMovies(query, pageNum)
+                if (selectedCategories.isEmpty()) {
+                    searchMovies(query, pageNum, false)
+                } else {
+                    searchMovies(query, pageNum, true)
+                }
             }
 
         }
+    }
+
+    private fun collectAdvancedMovies(
+        searchResults: MovieSearchResult,
+    ) {
+        val updatedMovies =
+            searchResults.movies.filter { movie ->
+                movie.genres?.filter { genre ->
+                    selectedCategories["Popular Genres"]?.values?.contains(genre.toString()) == true
+                }?.isNotEmpty() == true ||
+                        selectedCategories["Decade"]?.values?.contains(movie.releaseDate.year.toString()) == true
+            }
+
+        mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
+            SearchUIModel.Empty
+        } else {
+            SearchUIModel.Data(updatedMovies, 0)
+        }
+
+        totalPages.value = 0
+        currentPage.intValue = 1
     }
 
     private fun collectMovies(

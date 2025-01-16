@@ -1,5 +1,7 @@
 package com.example.blackbeard.screens.search
 
+import android.R.attr.fontWeight
+import android.R.attr.lineHeight
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -398,7 +400,7 @@ private fun CreateSearchPoster(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    movie: Any
+    movie: Movie
 ) {
     var isClickAble by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
@@ -415,7 +417,7 @@ private fun CreateSearchPoster(
                 .background(Color.Gray)
         ) {
             AsyncImage(
-                model = if (searchViewModel.searchType.value) (movie as SearchMovie).posterPath else (movie as Movie).posterPath,
+                model = movie.posterPath,
                 contentDescription = null,
                 modifier = Modifier
                     .width(posterWidth)
@@ -424,8 +426,8 @@ private fun CreateSearchPoster(
                     .clickable(enabled = isClickAble) {
                         if (isClickAble) {
                             onNavigateToDetailsScreen(
-                                if (searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
-                                if (searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
+                                movie.title,
+                                movie.id
                             )
                             isClickAble = false
                             coroutineScope.launch {
@@ -442,11 +444,11 @@ private fun CreateSearchPoster(
                 .width(posterWidth)
                 .clickable {
                     onNavigateToDetailsScreen(
-                        if (searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
-                        if (searchViewModel.searchType.value) (movie as SearchMovie).id else (movie as Movie).id
+                        movie.title,
+                        movie.id
                     )
                 },
-            text = if (searchViewModel.searchType.value) (movie as SearchMovie).title else (movie as Movie).title,
+            text = movie.title,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold,
             lineHeight = 15.sp
