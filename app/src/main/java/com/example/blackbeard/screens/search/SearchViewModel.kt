@@ -148,7 +148,7 @@ class SearchViewModel() : ViewModel() {
                 var withGenres: String? = null
                 var withWatchProviders: String? = null
 
-                if (selectedCategories["Decade"] != null) {
+                if (selectedCategories["Decade"] != null && selectedCategories["Decade"]?.values?.isNotEmpty() == true) {
                     val decade = selectedCategories["Decade"]?.values?.first()
                     releaseDateGte = "$decade-01-01"
                     releaseDateLte = (decade?.toInt()?.plus(9)).toString() + "-01-01"
