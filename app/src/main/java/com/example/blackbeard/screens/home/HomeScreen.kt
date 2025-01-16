@@ -6,6 +6,8 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -54,6 +56,8 @@ import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import androidx.compose.foundation.layout.*
+
 
 
 @Composable
@@ -229,21 +233,6 @@ private fun CreatePoster(
             ){
                 GenreItemContainer(collectionMovie.genres)
             }
-            /*Text(
-                modifier = Modifier.fillMaxWidth(),
-                //text = GenreItemContainer(collectionMovie.genres),
-                text = collectionMovie.genres.joinToString { it.name },
-                style = TextStyle(
-                    textAlign = TextAlign.Center
-                ),
-            )*/
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = collectionMovie.releaseDate.year.toString(),
-                style = TextStyle(
-                    textAlign = TextAlign.Center
-                ),
-            )
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = collectionMovie.overview ?: stringResource(id = R.string.no_overview_available),
@@ -287,16 +276,18 @@ fun CreatePosters(
         }
     }
 }
+
+
 @Composable
 private fun GenreItemContainer(genres: List<Genre>) {
 
     LazyRow(
         modifier = Modifier
-            .padding(vertical = 10.dp)
+            .padding(vertical = 2.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
     ) {
-        items(genres) { genre ->
+        items(genres.take(2)) { genre ->
             GenreItem(genre)
         }
     }
