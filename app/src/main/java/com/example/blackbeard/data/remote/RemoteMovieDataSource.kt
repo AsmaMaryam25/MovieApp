@@ -42,8 +42,8 @@ class RemoteMovieDataSource(private val retrofit: Retrofit) {
     ): QueryDao {
         val queryParams = mutableMapOf<String, String>().apply {
             put("page", pageNum.toString())
-            releaseDateGte?.let { put("release_date.gte", it) }
-            releaseDateLte?.let { put("release_date.lte", it) }
+            releaseDateGte?.let { put("primary_release_date.gte", it) }
+            releaseDateLte?.let { put("primary_release_date.lte", it) }
             sortBy?.let { put("sort_by", it) }
             watchRegion?.let { put("watch_region", it) }
             withGenres?.let { put("with_genres", it) }

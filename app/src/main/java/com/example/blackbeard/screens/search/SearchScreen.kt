@@ -26,7 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.NorthWest
 import androidx.compose.material3.Button
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
@@ -73,6 +72,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.stream.Collectors.toList
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -509,10 +509,11 @@ fun AdvancedSearch(
             categories.forEach { (categoryTitle, categoryItems) ->
                 CategorySection(
                     categoryTitle = categoryTitle,
-                    availableItems = categoryItems.keys.toList(),  // Get list of category keys (display names)
+                    availableCategoryNames = categoryItems.keys.toList(),  // Get list of category keys (display names)
+                    availableCategoryValues = categoryItems.values.toList(), // Get list of category values (actual values)
                     selectedCategories = searchViewModel.selectedCategories,
-                    onCategorySelected = { item, isSelected ->
-                        searchViewModel.onCategorySelected(categoryTitle, item, isSelected)
+                    onCategorySelected = { key, value, isSelected ->
+                        searchViewModel.onCategorySelected(categoryTitle, key, value, isSelected)
                     }
                 )
             }
@@ -545,10 +546,11 @@ fun AdvancedSearch(
 @Composable
 fun CategorySection(
     categoryTitle: String,
-    availableItems: List<String>, // List of items for that category
+    availableCategoryNames: List<String>, // List of items for that category
+    availableCategoryValues: List<String>, // List of values for that category
     selectedCategories: Map<String, Map<String, String>>, // Track selected items
-    onCategorySelected: (String, Boolean) -> Unit // Callback for item selection
-) {
+    onCategorySelected: (String, String, Boolean) -> Unit // Callback for item selection
+    ) {
     Column {
         Text(
             text = categoryTitle,
@@ -558,13 +560,13 @@ fun CategorySection(
 
         LazyRow {
             // Display all items in the current category
-            availableItems.forEach { item ->
-                val isSelected = selectedCategories[categoryTitle]?.containsKey(item) == true
+            availableCategoryNames.forEachIndexed { index, categoryName ->
+                val isSelected = selectedCategories[categoryTitle]?.containsKey(categoryName) == true
                 item {
                     CategoryItem(
-                        displayItem = item,
+                        displayItem = categoryName,
                         isSelected = isSelected,
-                        onSelected = { onCategorySelected(item, !isSelected) }
+                        onSelected = { onCategorySelected(categoryName, availableCategoryValues[index], !isSelected) }
                     )
                 }
             }

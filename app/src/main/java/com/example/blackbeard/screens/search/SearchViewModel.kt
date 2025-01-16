@@ -7,10 +7,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
-import com.example.blackbeard.di.DataModule.recentSearchRepository
 import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
+import com.example.blackbeard.models.MovieSearchResult
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -119,67 +119,102 @@ class SearchViewModel() : ViewModel() {
             mutableSearchUIState.value = SearchUIModel.Loading
 
             movieRepository.searchMovies(query, pageNum).collect { searchResults ->
-                val updatedMovies =
-                    if (pageNum == 1) {
-                        searchResults.movies
-                    } else {
-                        currentMovies + searchResults.movies
-                    }
-
-                mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
-                    SearchUIModel.Empty
-                } else {
-                    SearchUIModel.Data(updatedMovies, searchResults.totalPages)
-                }
-                totalPages.value = searchResults.totalPages
-                currentPage.intValue = pageNum
+                collectMovies(pageNum, searchResults, currentMovies)
             }
         }
     }
 
     fun discoverMovies(query: String, pageNum: Int) {
-        viewModelScope.launch{
+        viewModelScope.launch {
 
             Log.d("SearchViewModel", "SelectedCategories: $selectedCategories")
-            /*if (query.isBlank()) {
-                mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
-                currentPage.intValue = 1
-                totalPages.value = 0
-                return@launch
-            }*/
+            if (query.isBlank()) {
+                if (selectedCategories.isEmpty()) {
+                    mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
+                    currentPage.intValue = 1
+                    totalPages.value = 0
+                    return@launch
+                }
 
-            var releaseDateGte: String? = null
-            var releaseDateLte: String? = null
-            var withGenres: String? = null
+                val currentMovies =
+                    (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies ?: emptyList()
+                var releaseDateGte: String? = null
+                var releaseDateLte: String? = null
+                var withGenres: String? = null
 
-            if (selectedCategories["Decade"] != null) {
-                val decade = selectedCategories["Decade"]?.values?.first()
-                releaseDateGte = "$decade-01-01"
-                releaseDateLte = (decade?.toInt()?.plus(9)).toString() + "-01-01"
-            } else if (selectedCategories["Popular Genres"] != null) {
-                withGenres = selectedCategories["Popular Genres"]?.values?.joinToString(",")
+                if (selectedCategories["Decade"] != null) {
+                    val decade = selectedCategories["Decade"]?.values?.first()
+                    releaseDateGte = "$decade-01-01"
+                    releaseDateLte = (decade?.toInt()?.plus(9)).toString() + "-01-01"
+                }
+
+                if (selectedCategories["Popular Genres"] != null) {
+                    withGenres = selectedCategories["Popular Genres"]?.values?.joinToString(",")
+                }
+
+                Log.d(
+                    "SearchViewModel",
+                    "ReleaseDateGte: $releaseDateGte, ReleaseDateLte: $releaseDateLte, " +
+                            "WithGenres: $withGenres"
+                )
+
+                mutableSearchUIState.value = SearchUIModel.Loading
+                movieRepository.discoverMovies(
+                    pageNum,
+                    releaseDateGte,
+                    releaseDateLte,
+                    null,
+                    null,
+                    withGenres,
+                    null,
+                    null
+                ).collect { searchResults ->
+                    collectMovies(pageNum, searchResults, currentMovies)
+                }
+            } else {
+                addRecentSearch(query)
+
+                mutableSearchUIState.value = SearchUIModel.Loading
+                searchMovies(query, pageNum)
             }
 
-            Log.d("SearchViewModel", "Discovering movies with releaseDateGte: $releaseDateGte, releaseDateLte: $releaseDateLte, withGenres: $withGenres")
-
-            mutableSearchUIState.value = SearchUIModel.Loading
-            movieRepository.discoverMovies(pageNum, releaseDateGte, releaseDateLte, null, null, withGenres, null, null).collect { searchResults ->
-                Log.d("SearchResult", searchResults.movies.toString())
-                mutableSearchUIState.value = SearchUIModel.Data(searchResults.movies, searchResults.totalPages)
-                totalPages.value = searchResults.totalPages
-                currentPage.intValue = pageNum
-            }
         }
     }
 
+    private fun collectMovies(
+        pageNum: Int,
+        searchResults: MovieSearchResult,
+        currentMovies: List<Movie>
+    ) {
+        val updatedMovies =
+            if (pageNum == 1) {
+                searchResults.movies
+            } else {
+                currentMovies + searchResults.movies
+            }
 
-    fun onCategorySelected(categoryTitle: String, item: String, isSelected: Boolean) {
-        val currentCategoryItems = selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
-
-        if (isSelected) {
-            currentCategoryItems[item] = item
+        mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
+            SearchUIModel.Empty
         } else {
-            currentCategoryItems.remove(item)
+            SearchUIModel.Data(updatedMovies, searchResults.totalPages)
+        }
+        totalPages.value = searchResults.totalPages
+        currentPage.intValue = pageNum
+    }
+
+
+    fun onCategorySelected(categoryTitle: String, key: String, value: String, isSelected: Boolean) {
+        val currentCategoryItems =
+            selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
+
+        Log.d(
+            "OnCategorySelected",
+            "CategoryTitle: $categoryTitle, Key: $key, Value: $value, isSelected: $isSelected"
+        )
+        if (isSelected) {
+            currentCategoryItems[key] = value
+        } else {
+            currentCategoryItems.remove(key)
         }
 
         selectedCategories[categoryTitle] = currentCategoryItems
