@@ -147,6 +147,7 @@ class SearchViewModel() : ViewModel() {
                 var releaseDateGte: String? = null
                 var releaseDateLte: String? = null
                 var withGenres: String? = null
+                var withWatchProviders: String? = null
 
                 if (selectedCategories["Decade"] != null) {
                     val decade = selectedCategories["Decade"]?.values?.first()
@@ -156,6 +157,10 @@ class SearchViewModel() : ViewModel() {
 
                 if (selectedCategories["Popular Genres"] != null) {
                     withGenres = selectedCategories["Popular Genres"]?.values?.joinToString(",")
+                }
+
+                if(selectedCategories["Streaming Services"] != null) {
+                    withWatchProviders = selectedCategories["Streaming Services"]?.values?.joinToString("|")
                 }
 
                 Log.d(
@@ -170,10 +175,9 @@ class SearchViewModel() : ViewModel() {
                     releaseDateGte,
                     releaseDateLte,
                     null,
-                    null,
+                    "DK",
                     withGenres,
-                    null,
-                    null
+                    withWatchProviders
                 ).collect { searchResults ->
                     collectMovies(pageNum, searchResults, currentMovies)
                 }

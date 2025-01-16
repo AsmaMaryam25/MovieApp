@@ -476,11 +476,38 @@ fun AdvancedSearch(
     updateSearchType: () -> Unit,
 ) {
     val categories = mapOf(
-        "Rating" to mapOf(
-            "9+" to "9",
-            "8+" to "8",
-            "7+" to "7",
-            "6+" to "6"
+        "Streaming Services" to mapOf(
+            "Disney Plus" to "337",
+            "Netflix" to "8",
+            "Amazon Prime Video" to "119",
+            "Viaplay" to "76",
+            "Apple TV" to "2",
+            "Google Play Movies" to "3",
+            "TV 2" to "383",
+            "Microsoft Store" to "68",
+            "MUBI" to "11",
+            "Apple TV Plus" to "350",
+            "GuideDoc" to "100",
+            "Netflix Kids" to "175",
+            "YouTube Premium" to "188",
+            "Rakuten TV" to "35",
+            "Filmstriben" to "443",
+            "Blockbuster" to "423",
+            "SF Anytime" to "426",
+            "Curiosity Stream" to "190",
+            "DOCSVILLE" to "475",
+            "Spamflix" to "521",
+            "WOW Presents Plus" to "546",
+            "Magellan TV" to "551",
+            "BroadwayHD" to "554",
+            "Filmzie" to "559",
+            "Dekkoo" to "444",
+            "True Story" to "567",
+            "DocAlliance Films" to "569",
+            "Hoichoi" to "315",
+            "Dansk Filmskat" to "621",
+            "DRTV" to "620",
+            "Eventive" to "677"
         ),
         "Popular Genres" to mapOf(
             "Action" to "28",

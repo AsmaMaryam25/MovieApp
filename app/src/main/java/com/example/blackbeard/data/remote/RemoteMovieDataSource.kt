@@ -37,7 +37,6 @@ class RemoteMovieDataSource(private val retrofit: Retrofit) {
         sortBy: String?,
         watchRegion: String?,
         withGenres: String?,
-        withKeywords: String?,
         withWatchProviders: String?,
     ): QueryDao {
         val queryParams = mutableMapOf<String, String>().apply {
@@ -47,7 +46,6 @@ class RemoteMovieDataSource(private val retrofit: Retrofit) {
             sortBy?.let { put("sort_by", it) }
             watchRegion?.let { put("watch_region", it) }
             withGenres?.let { put("with_genres", it) }
-            withKeywords?.let { put("with_keywords", it) }
             withWatchProviders?.let { put("with_watch_providers", it) }
             put("api_key", apiKey)
         }
