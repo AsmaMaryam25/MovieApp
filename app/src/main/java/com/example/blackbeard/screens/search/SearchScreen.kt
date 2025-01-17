@@ -210,17 +210,6 @@ private fun SearchContent(
                     )
                 }
             } else {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
-                        stringResource(id = R.string.popular)
-                    } else {
-                        stringResource(id = R.string.search_results)
-                    }
-                    TitleText(text = titleText)
-                }
                 LazyVerticalGrid(
                     state = gridState,
                     columns = GridCells.Adaptive(posterWidth),
@@ -232,7 +221,12 @@ private fun SearchContent(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            TitleText(text = stringResource(id = R.string.popular))
+                            titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
+                                stringResource(id = R.string.popular)
+                            } else {
+                                stringResource(id = R.string.search_results)
+                            }
+                            TitleText(text = titleText)
                         }
                     }
                     items(collectionMovies.size) { index ->
