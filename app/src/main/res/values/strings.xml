@@ -69,6 +69,11 @@
         "Please check your Wi-Fi or mobile data settings and try again."</string>
     <!-- NoConnectionScreen end -->
 
+    <!-- ApiErrorScreen start -->
+    <string name="api_error">We\’re Experiencing Technical Difficulties</string>
+    <string name="api_error_message">We\'re experiencing a problem retrieving data from our servers. Please try again in a few minutes.</string>
+    <!-- ApiErrorScreen end -->
+
     <!-- SettingsScreen start -->
     <string name="appearance">Appearance</string>
     <string name="customize_look_and_app_experience">

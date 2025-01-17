@@ -47,6 +47,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.R
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Genre
+import com.example.blackbeard.screens.APIErrorScreen
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
@@ -128,6 +129,10 @@ private fun HomeContent(
                     movieCarousel.listState
                 )
 
+            }
+
+            if(emptyMovies == 4) {
+                APIErrorScreen()
             }
         }
     }
