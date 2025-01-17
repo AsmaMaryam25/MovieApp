@@ -65,7 +65,7 @@ fun ExpandableText(
 
     // Box composable containing the Text composable.
     Box(modifier = Modifier
-        .clickable(clickable) {
+        .clickable {
             onTextExpand()
         }
         .then(modifier)
