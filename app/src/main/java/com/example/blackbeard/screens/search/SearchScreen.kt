@@ -187,18 +187,20 @@ private fun SearchContent(
                     )
                 }
             } else {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    TitleText(text = stringResource(id = R.string.popular))
-                }
                 LazyVerticalGrid(
                     state = gridState,
                     columns = GridCells.Adaptive(posterWidth),
                     modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TitleText(text = stringResource(id = R.string.popular))
+                        }
+                    }
                     items(collectionMovies.size) { index ->
                         CreateSearchPoster(
                             searchViewModel,
