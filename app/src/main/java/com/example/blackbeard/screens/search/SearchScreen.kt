@@ -93,6 +93,8 @@ fun SearchScreen(
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf(TextFieldValue("")) }
     val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
+    val isBoxClicked = remember { mutableStateOf(false) }
+
 
     when (searchUIModel) {
         SearchUIModel.Empty -> SearchContent(
@@ -102,7 +104,8 @@ fun SearchScreen(
             onNavigateToDetailsScreen,
             emptyList(),
             searchViewModel,
-            gridState
+            gridState,
+            isBoxClicked
         )
 
         SearchUIModel.Loading -> LoadingScreen()
@@ -117,7 +120,8 @@ fun SearchScreen(
                 onNavigateToDetailsScreen,
                 searchUIModel.collectionMovies,
                 searchViewModel,
-                gridState
+                gridState,
+                isBoxClicked
             )
         }
     }
@@ -133,11 +137,13 @@ private fun SearchContent(
     collectionMovies: List<Movie>,
     searchViewModel: SearchViewModel,
     gridState: LazyGridState = rememberLazyGridState(),
+    isBoxClicked: MutableState<Boolean>
 ) {
     val coroutineScope = rememberCoroutineScope()
     val pagerState = rememberPagerState()
     val recentSearches = searchViewModel.recentSearches.collectAsState().value
     var isSearchQueryCleared by remember { mutableStateOf(false) }
+    var isAdvancedSearchPressed by remember { mutableStateOf(false) }
     val previousSearchQuery = remember { mutableStateOf(searchQuery.value.text) }
 
     LaunchedEffect(searchQuery.value.text) {
@@ -148,6 +154,14 @@ private fun SearchContent(
             isSearchQueryCleared = false
         }
         previousSearchQuery.value = searchQuery.value.text
+    }
+
+    LaunchedEffect(isBoxClicked.value) {
+        if (isBoxClicked.value) {
+            isAdvancedSearchPressed = true
+        } else {
+            isAdvancedSearchPressed = false
+        }
     }
 
     Column(
@@ -200,7 +214,7 @@ private fun SearchContent(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared) {
+                    titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
                         stringResource(id = R.string.popular)
                     } else {
                         stringResource(id = R.string.search_results)
@@ -263,6 +277,7 @@ private fun SearchContent(
                 onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) },
                 searchQuery = searchQuery,
                 searchViewModel = searchViewModel,
+                isBoxClicked = isBoxClicked
             )
         }
     }
@@ -280,6 +295,7 @@ private fun SearchTabs(
     onRemoveRecentSearch: (String) -> Unit,
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
+    isBoxClicked: MutableState<Boolean>
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -375,7 +391,8 @@ private fun SearchTabs(
                         searchViewModel,
                         updateSearchType = {
                             searchViewModel.searchType.value = true
-                        }
+                        },
+                        isBoxClicked = isBoxClicked
                     )
                 }
             }
@@ -390,7 +407,7 @@ fun TabContent(
     tabs: List<String>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
 ) {
 
     TabRow(
@@ -508,6 +525,7 @@ fun AdvancedSearch(
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
     updateSearchType: () -> Unit,
+    isBoxClicked: MutableState<Boolean>
 ) {
     val categories = mapOf(
         "Streaming Services" to mapOf(
@@ -603,6 +621,7 @@ fun AdvancedSearch(
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
+                    isBoxClicked.value = true
                     updateSearchType()
                     searchViewModel.discoverMovies(
                         searchQuery.value.text,
