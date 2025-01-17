@@ -191,7 +191,12 @@ private fun SearchContent(
                     modifier = Modifier.fillMaxWidth(),
                     contentAlignment = Alignment.Center
                 ) {
-                    TitleText(text = stringResource(id = R.string.popular))
+                    val titleText = if (searchQuery.value.text.isEmpty()) {
+                        stringResource(id = R.string.popular)
+                    } else {
+                        stringResource(id = R.string.search_results)
+                    }
+                    TitleText(text = titleText)
                 }
                 LazyVerticalGrid(
                     state = gridState,

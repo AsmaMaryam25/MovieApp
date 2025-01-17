@@ -90,6 +90,7 @@
 
     <!-- WatchlistScreen start -->
     <string name="no_watchlist">Nothing in watchlist yet</string>
+    <string name="search_results">Search results</string>
     <!-- WatchlistScreen end -->
 
 
