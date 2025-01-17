@@ -1,6 +1,8 @@
 package com.example.blackbeard.data.remote
 
+import android.util.Log
 import com.example.blackbeard.BuildConfig
+import com.example.blackbeard.data.model.QueryDao
 import retrofit2.Retrofit
 
 class RemoteMovieDataSource(private val retrofit: Retrofit) {
@@ -27,6 +29,31 @@ class RemoteMovieDataSource(private val retrofit: Retrofit) {
 
     suspend fun searchMovies(query: String, pageNum: Int) =
         movieApi.searchMovies(query, pageNum, apiKey)
+
+    suspend fun discoverMovies(
+        pageNum: Int,
+        releaseDateGte: String?,
+        releaseDateLte: String?,
+        sortBy: String?,
+        watchRegion: String?,
+        withGenres: String?,
+        withWatchProviders: String?,
+    ): QueryDao {
+        val queryParams = mutableMapOf<String, String>().apply {
+            put("page", pageNum.toString())
+            releaseDateGte?.let { put("primary_release_date.gte", it) }
+            releaseDateLte?.let { put("primary_release_date.lte", it) }
+            sortBy?.let { put("sort_by", it) }
+            watchRegion?.let { put("watch_region", it) }
+            withGenres?.let { put("with_genres", it) }
+            withWatchProviders?.let { put("with_watch_providers", it) }
+            put("api_key", apiKey)
+        }
+
+        Log.d("RemoteMovieDataSource", "discoverMovies: $queryParams")
+
+        return movieApi.discoverMovies(queryParams)
+    }
 
     suspend fun getStreamingServices(externalId: String) =
         movieApi.getStreamingServices(externalId, apiKey)

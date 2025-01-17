@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
+import com.example.blackbeard.R
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
@@ -99,48 +101,33 @@ private fun HomeContent(
         state = rememberLazyListState()
     ) {
         if (homeUIModel !is HomeUIModel.Data) return@LazyColumn
-        val movieCarousels = listOf(
-            MovieCarousel("Now Playing", homeUIModel.nowPlayingCollectionMovies, nowPlayingState),
-            MovieCarousel("Popular", homeUIModel.popularCollectionMovies, popularState),
-            MovieCarousel("Top Rated", homeUIModel.topRatedCollectionMovies, topRatedState),
-            MovieCarousel("Upcoming", homeUIModel.upcomingCollectionMovies, upcomingState),
-        )
-        for (movieCarousel in movieCarousels) {
-            if(movieCarousel.movies.isEmpty()) {
-                emptyMovies++
-                continue
-            }
-            item {
+        item {
+            val movieCarousels = listOf(
+                MovieCarousel(
+                    stringResource(id = R.string.now_playing),
+                    homeUIModel.nowPlayingCollectionMovies,
+                    nowPlayingState
+                ),
+                MovieCarousel(stringResource(id = R.string.popular), homeUIModel.popularCollectionMovies, popularState),
+                MovieCarousel(stringResource(id = R.string.top_rated), homeUIModel.topRatedCollectionMovies, topRatedState),
+                MovieCarousel(stringResource(id = R.string.upcoming), homeUIModel.upcomingCollectionMovies, upcomingState),
+            )
+            for (movieCarousel in movieCarousels) {
+                if (movieCarousel.movies.isEmpty()) {
+                    emptyMovies++
+                    continue
+                }
                 TitleText(movieCarousel.title)
-            }
-
-            item {
 
                 CreatePosters(
                     onNavigateToDetailsScreen,
                     movieCarousel.movies,
                     movieCarousel.listState
                 )
-            }
-        }
-        item {
-            if(emptyMovies != 0) {
 
             }
         }
     }
-}
-
-@Composable
-fun NoMovies() {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(
-                "",
-            )
-        }
 }
 
 @Composable
@@ -222,7 +209,7 @@ private fun CreatePoster(
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = collectionMovie.overview ?: "No overview available",
+                text = collectionMovie.overview ?: stringResource(id = R.string.no_overview_available),
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(

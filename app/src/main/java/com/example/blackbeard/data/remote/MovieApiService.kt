@@ -10,6 +10,7 @@ import com.example.blackbeard.data.model.VideosDao
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.QueryMap
 
 interface MovieApiService {
 
@@ -62,6 +63,11 @@ interface MovieApiService {
         @Query("query") query: String,
         @Query("page") pageNum: Int,
         @Query("api_key") apiKey: String
+    ): QueryDao
+
+    @GET("discover/movie")
+    suspend fun discoverMovies(
+        @QueryMap queryParams: Map<String, String>
     ): QueryDao
 
     @GET("movie/{external_id}/watch/providers")

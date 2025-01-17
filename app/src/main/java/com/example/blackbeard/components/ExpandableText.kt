@@ -56,17 +56,17 @@ fun ExpandableText(
     textAlign: TextAlign? = null,
     fontSize: TextUnit,
     onTextExpand: () -> Unit = {},
+    expandText: Boolean
 ) {
     // State variables to track the expanded state, clickable state, and last character index.
-    var isExpanded by remember { mutableStateOf(false) }
+    val isExpanded by remember { mutableStateOf(expandText) }
     var clickable by remember { mutableStateOf(false) }
     var lastCharIndex by remember { mutableIntStateOf(0) }
 
     // Box composable containing the Text composable.
     Box(modifier = Modifier
-        .clickable(clickable) {
-            isExpanded = !isExpanded
-            //onTextExpand.invoke()
+        .clickable {
+            onTextExpand()
         }
         .then(modifier)
     ) {

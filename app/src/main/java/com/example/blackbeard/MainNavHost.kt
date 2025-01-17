@@ -1,6 +1,7 @@
 package com.example.blackbeard
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
@@ -8,7 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.example.blackbeard.models.Route
 import com.example.blackbeard.screens.AboutScreen
-import com.example.blackbeard.screens.AdvancedSearchScreen
 import com.example.blackbeard.screens.AppearanceScreen
 import com.example.blackbeard.screens.SettingsScreen
 import com.example.blackbeard.screens.details.DetailsScreen
@@ -17,7 +17,7 @@ import com.example.blackbeard.screens.home.HomeScreen
 import com.example.blackbeard.screens.search.SearchScreen
 import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
-@androidx.compose.runtime.Composable
+@Composable
 fun MainNavHost(
     navController: androidx.navigation.NavHostController,
     onRouteChanged: (Route) -> Unit,
@@ -51,18 +51,14 @@ fun MainNavHost(
                 })
         }
 
-        composable<Route.SearchScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchScreen>()) }
-
+        composable<Route.SearchScreen> {
             SearchScreen(
-                onNavigateToAdvancedSearchScreen = {
-                    navController.navigate(Route.AdvancedSearchScreen(it))
-                },
-                modifier = Modifier.fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
-                })
+                }
+            )
         }
+
 
         composable<Route.SettingsScreen> { backStackEntry ->
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>()) }
@@ -94,7 +90,7 @@ fun MainNavHost(
         }
 
         composable<Route.AppearanceScreen> { backStackEntry ->
-            androidx.compose.runtime.LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
 
             AppearanceScreen(
                 showTopBar = showTopBar,
@@ -109,16 +105,6 @@ fun MainNavHost(
                 showTopBar = showTopBar,
                 modifier = Modifier.fillMaxSize(),
                 setVideoLink = setVideoLink
-            )
-        }
-
-        composable<Route.AdvancedSearchScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
-
-            AdvancedSearchScreen(
-                query = backStackEntry.arguments?.getString("query")!!,
-                modifier = Modifier.fillMaxSize(),
-                showTopBar = showTopBar
             )
         }
     }

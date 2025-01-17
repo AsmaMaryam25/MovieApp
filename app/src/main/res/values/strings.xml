@@ -1,3 +1,96 @@
 <resources>
+    <!-- Application name -->
     <string name="app_name">Blackbeard</string>
+
+    <!-- DetailScreen start -->
+    <!-- Streaming services section -->
+    <string name="watch_from_streaming_services">Watch from these streaming services</string>
+    <string name="there_are_no_streaming_services_available_for_this_title">There are no streaming services available for this title</string>
+
+    <!-- Favorites and Watchlist section -->
+    <string name="favorite_and_Watchlist">Favorite &amp; Watchlist</string>
+    <string name="add_to_favorites_and_watchlist">Add the movie to your favorites and watchlist</string>
+
+    <!-- Crew section -->
+    <string name="crew">Crew</string>
+    <string name="no_crew_available">No crew members available</string>
+
+    <!-- Rating section -->
+    <string name="rating">Rating</string>
+    <string name="give_opinion">Give your opinion on the movie by rating it</string>
+
+    <!-- Users section -->
+    <string name="users">Users</string>
+    <string name="average">Average</string>
+
+    <!-- Cast section -->
+    <string name="cast">Cast</string>
+    <string name="no_cast_available">No cast members available</string>
+
+    <!-- Details section -->
+    <string name="no_details_available">No details available</string>
+    <string name="release_date">Release Date</string>
+    <string name="runtime">Runtime</string>
+    <string name="revenue">Revenue</string>
+    <string name="budget">Budget</string>
+    <string name="production_company">Production Company</string>
+    <string name="production_companies">Production Companies</string>
+    <string name="production_country">Production Country</string>
+    <string name="production_countries">Production Countries</string>
+    <string name="language">Language</string>
+    <string name="languages">Languages</string>
+
+    <!-- Miscellaneous -->
+    <string name="title_not_available">Title not available</string>
+    <string name="read_more">… Read more</string>
+    <string name="no_overview_available">No overview available</string>
+    <!-- DetailScreen end -->
+
+    <!-- AboutScreen start -->
+    <string name="version">"Version 1.0.0"</string>
+    <!-- AboutScreen end -->
+
+    <!-- ApperanceScreen start -->
+    <string name="dark_mode">Dark Mode</string>
+    <!-- ApperanceScreen end -->
+
+    <!-- EmptyScreen start -->
+    <string name="empty">Empty</string>
+    <!-- EmptyScreen end -->
+
+    <!-- NoConnectionScreen start -->
+    <string name="no_connection">No Connection</string>
+    <string name="no_Internet_connection">No Internet Connection</string>
+    <string name="no_internet_message">"It looks like you're not connected to the internet.
+        "Please check your Wi-Fi or mobile data settings and try again."</string>
+    <!-- NoConnectionScreen end -->
+
+    <!-- SettingsScreen start -->
+    <string name="appearance">Appearance</string>
+    <string name="customize_look_and_app_experience">
+        Customize the look and feel of your app experience</string>
+    <!-- SettingsScreen end -->
+
+    <!-- FavoriteScreen start -->
+    <string name="no_favorites">No favorites yet</string>
+    <!-- FavoriteScreen end -->
+
+    <!-- HomeScreen start -->
+    <string name="upcoming">Upcoming</string>
+    <string name="top_rated">Top Rated</string>
+    <string name="popular">Popular</string>
+    <string name="now_playing">Now Playing</string>
+    <!-- HomeScreen end -->
+
+    <!-- SearchScreen start -->
+    <string name="advanced_search">Advanced Search</string>
+    <string name="no_results_found">No results found</string>
+    <string name="load_more">Load more</string>
+    <!-- SearchScreen end -->
+
+    <!-- WatchlistScreen start -->
+    <string name="no_watchlist">Nothing in watchlist yet</string>
+    <!-- WatchlistScreen end -->
+
+
 </resources>

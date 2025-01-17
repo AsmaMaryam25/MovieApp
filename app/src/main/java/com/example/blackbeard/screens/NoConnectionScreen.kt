@@ -11,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,11 +25,11 @@ fun NoConnectionScreen() {
     Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(16.dp)) {
         Image(
             painter = image,
-            contentDescription = "No Connection",
+            contentDescription = stringResource(id = R.string.no_connection),
             modifier = Modifier.fillMaxWidth()
         )
         Text(
-            text = "No Internet Connection",
+            text = stringResource(id = R.string.no_Internet_connection),
             fontWeight = FontWeight.Bold,
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
@@ -36,8 +37,7 @@ fun NoConnectionScreen() {
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
-            text = "It looks like you're not connected to the internet. " +
-                    "Please check your Wi-Fi or mobile data settings and try again.",
+            text = stringResource(id = R.string.no_internet_message),
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth(),
             fontSize = 16.sp

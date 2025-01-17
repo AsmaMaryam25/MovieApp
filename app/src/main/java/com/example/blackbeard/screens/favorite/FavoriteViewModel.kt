@@ -36,41 +36,41 @@ class FavoriteViewModel : ViewModel() {
                     initialConnectivityFlow.first()
                 }
 
-                if (isInitiallyConnected) {
-                    getFavorites()
-                } else {
-                    mutableFavoriteUIState.value = FavoriteUIModel.NoConnection
-                }
+                getFavorites(isInitiallyConnected)
 
 
             } catch (e: TimeoutCancellationException) {
-                mutableFavoriteUIState.value = FavoriteUIModel.NoConnection
+                getFavorites(isInitiallyConnected = false)
             } catch (e: UnknownHostException) {
-                mutableFavoriteUIState.value = FavoriteUIModel.NoConnection
+                getFavorites(isInitiallyConnected = false)
             }
         }
     }
 
-    private suspend fun getFavorites() {
+    private suspend fun getFavorites(isInitiallyConnected: Boolean) {
         movieRepository.getFavorites().collect { favorites ->
             val updatedFavorites = favorites.map { movieItem ->
                 movieItem.copy(
-                    rating = movieRepository.getAverageRating(movieItem.id)
+                    rating = if (isInitiallyConnected) {
+                        movieRepository.getAverageRating(movieItem.id)
+                    } else {
+                        69.0
+                    }
                 )
             }
-
             mutableFavoriteUIState.update {
                 FavoriteUIModel.Data(
                     favorites = updatedFavorites
                 )
             }
+
         }
     }
 
     sealed class FavoriteUIModel {
         data object Empty : FavoriteUIModel()
         data object Loading : FavoriteUIModel()
-        data object NoConnection : FavoriteUIModel()
+
         data class Data(
             val favorites: List<MovieItem>
         ) : FavoriteUIModel()

@@ -1,26 +1,26 @@
 package com.example.blackbeard.domain
 
+import androidx.lifecycle.MutableLiveData
 import com.example.blackbeard.R
 import com.example.blackbeard.data.local.FavoriteMovieDataSource
 import com.example.blackbeard.data.local.ThemeDataSource
 import com.example.blackbeard.data.local.WatchListMovieDataSource
 import com.example.blackbeard.data.model.*
+import com.example.blackbeard.data.remote.RemoteFirebaseDataSource
 import com.example.blackbeard.data.remote.RemoteMovieDataSource
 import com.example.blackbeard.models.*
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.tasks.await
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class MovieRepository(
     private val remoteMovieDataSource: RemoteMovieDataSource,
+    private val remoteFirebaseDataSource: RemoteFirebaseDataSource,
     private val localFavoriteMovieDataSource: FavoriteMovieDataSource,
     private val localWatchlistMovieDataSource: WatchListMovieDataSource,
     private val localThemeDataSource: ThemeDataSource,
-    val firestore: FirebaseFirestore
 ) {
     val movieGenres = mapOf(
         28 to "Action",
@@ -99,6 +99,28 @@ class MovieRepository(
         emit(LocalMovie())
     }
 
+    fun discoverMovies(
+        pageNum: Int,
+        releaseDateGte: String?,
+        releaseDateLte: String?,
+        sortBy: String?,
+        watchRegion: String?,
+        withGenres: String?,
+        withWatchProviders: String?,
+    ): Flow<MovieSearchResult> = flow {
+        val response = remoteMovieDataSource.discoverMovies(
+            pageNum,
+            releaseDateGte,
+            releaseDateLte,
+            sortBy,
+            watchRegion,
+            withGenres,
+            withWatchProviders,
+        )
+        val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
+        emit(MovieSearchResult(movies, response.totalPages))
+    }
+
     fun getCredits(externalId: Int): Flow<Credits> = flow {
         emit(remoteMovieDataSource.getCredits(externalId.toString()).mapToCredits())
     }.catch {
@@ -147,14 +169,7 @@ class MovieRepository(
     suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
 
     suspend fun getAverageRating(id: String): Double {
-        val ratingsRef = firestore.collection("ratings").document(id)
-        val snapshot = ratingsRef.get().await()
-        return if (snapshot.exists()) {
-            val currentData = snapshot.data
-            currentData?.get("averageRating") as? Double ?: 0.0
-        } else {
-            0.0
-        }
+        return remoteFirebaseDataSource.getAverageRating(id)
     }
 
     fun getMovieRating(movieId: String, userId: String): Flow<Double?> = flow {
@@ -162,25 +177,19 @@ class MovieRepository(
     }
 
     private suspend fun getRating(movieId: String, userId: String): Double? {
-        return try {
-            val document = firestore
-                .collection("ratings")
-                .document(movieId.toString())
-                .get()
-                .await()
+        return remoteFirebaseDataSource.getRating(movieId, userId)
+    }
 
-            if (document.exists()) {
-                val userRatings = document.get("userRatings") as? Map<*, *>
-                val userRating = userRatings?.get(userId) as? Map<*, *>
-                val rating = userRating?.get("rating") as? Double
-                rating
-            } else {
-                null
-            }
-        } catch (exception: Exception) {
-            println("Error getting user rating: $exception")
-            null
-        }
+    suspend fun addRating(id: String, rating: Double, installationID: String) {
+        remoteFirebaseDataSource.addRating(id, rating, installationID)
+    }
+
+    suspend fun getVoterCount(id: String, voterCount: MutableLiveData<Int>) {
+        return remoteFirebaseDataSource.getVoterCount(id, voterCount)
+    }
+
+    suspend fun getInstallationID(): String {
+        return remoteFirebaseDataSource.getInstallationID()
     }
 }
 
@@ -259,6 +268,8 @@ fun SearchMovieDao.mapToMovie() = SearchMovie(
     originalTitle = originalTitle.orEmpty(),
     popularity = popularity ?: 0.0,
     video = video == true,
+    voteAverage = voteAverage ?: 0.0,
+    genres = genreIds,
 )
 
 fun GenreDao.mapToGenre() = Genre(
