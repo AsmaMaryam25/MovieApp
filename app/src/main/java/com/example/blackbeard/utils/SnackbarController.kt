@@ -12,10 +12,10 @@ data class SnackbarEvent(
 
 data class SnackbarAction(
     val name: String,
-    val action: () -> Unit
+    val action: suspend () -> Unit
 )
 
-class SnackbarController {
+object SnackbarController {
 
     private val _event = Channel<SnackbarEvent>()
     val events = _event.receiveAsFlow()
