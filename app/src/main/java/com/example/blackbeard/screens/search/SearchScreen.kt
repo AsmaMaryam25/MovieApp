@@ -37,6 +37,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -92,6 +93,8 @@ fun SearchScreen(
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf(TextFieldValue("")) }
     val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
+    val isBoxClicked = remember { mutableStateOf(false) }
+
 
     when (searchUIModel) {
         SearchUIModel.Empty -> SearchContent(
@@ -101,7 +104,8 @@ fun SearchScreen(
             onNavigateToDetailsScreen,
             emptyList(),
             searchViewModel,
-            gridState
+            gridState,
+            isBoxClicked
         )
 
         SearchUIModel.Loading -> LoadingScreen()
@@ -116,7 +120,8 @@ fun SearchScreen(
                 onNavigateToDetailsScreen,
                 searchUIModel.collectionMovies,
                 searchViewModel,
-                gridState
+                gridState,
+                isBoxClicked
             )
         }
     }
@@ -132,19 +137,39 @@ private fun SearchContent(
     collectionMovies: List<Movie>,
     searchViewModel: SearchViewModel,
     gridState: LazyGridState = rememberLazyGridState(),
+    isBoxClicked: MutableState<Boolean>
 ) {
-    rememberCoroutineScope()
-    listOf("Recent", "Advanced Search")
-    rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState()
     val recentSearches = searchViewModel.recentSearches.collectAsState().value
+    var isSearchQueryCleared by remember { mutableStateOf(false) }
+    var isAdvancedSearchPressed by remember { mutableStateOf(false) }
+    val previousSearchQuery = remember { mutableStateOf(searchQuery.value.text) }
+
+    LaunchedEffect(searchQuery.value.text) {
+        if (previousSearchQuery.value.isNotEmpty() && searchQuery.value.text.isEmpty()) {
+            isSearchQueryCleared = true
+            println("Search query has been cleared")
+        } else {
+            isSearchQueryCleared = false
+        }
+        previousSearchQuery.value = searchQuery.value.text
+    }
+
+    LaunchedEffect(isBoxClicked.value) {
+        if (isBoxClicked.value) {
+            isAdvancedSearchPressed = true
+        } else {
+            isAdvancedSearchPressed = false
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         var isSearchBarFocused by remember { mutableStateOf(false) }
+        var titleText by remember { mutableStateOf("") }
         val tabs = listOf("Recent", "Advanced Search")
-        val coroutineScope = rememberCoroutineScope()
-        val pagerState = rememberPagerState()
 
         SearchBar(
             searchQuery = searchQuery,
@@ -172,12 +197,10 @@ private fun SearchContent(
             },
         )
 
-
         if (!isSearchBarFocused) {
             if (collectionMovies.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
                         text = "No results found",
@@ -187,6 +210,17 @@ private fun SearchContent(
                     )
                 }
             } else {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
+                        stringResource(id = R.string.popular)
+                    } else {
+                        stringResource(id = R.string.search_results)
+                    }
+                    TitleText(text = titleText)
+                }
                 LazyVerticalGrid(
                     state = gridState,
                     columns = GridCells.Adaptive(posterWidth),
@@ -236,7 +270,6 @@ private fun SearchContent(
                             }
                         }
                     }
-
                 }
             }
         } else {
@@ -252,6 +285,7 @@ private fun SearchContent(
                 onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) },
                 searchQuery = searchQuery,
                 searchViewModel = searchViewModel,
+                isBoxClicked = isBoxClicked
             )
         }
     }
@@ -269,6 +303,7 @@ private fun SearchTabs(
     onRemoveRecentSearch: (String) -> Unit,
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
+    isBoxClicked: MutableState<Boolean>
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -364,7 +399,8 @@ private fun SearchTabs(
                         searchViewModel,
                         updateSearchType = {
                             searchViewModel.searchType.value = true
-                        }
+                        },
+                        isBoxClicked = isBoxClicked
                     )
                 }
             }
@@ -379,7 +415,7 @@ fun TabContent(
     tabs: List<String>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
 ) {
 
     TabRow(
@@ -497,6 +533,7 @@ fun AdvancedSearch(
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
     updateSearchType: () -> Unit,
+    isBoxClicked: MutableState<Boolean>
 ) {
     val categories = mapOf(
         "Streaming Services" to mapOf(
@@ -592,6 +629,7 @@ fun AdvancedSearch(
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
+                    isBoxClicked.value = true
                     updateSearchType()
                     searchViewModel.discoverMovies(
                         searchQuery.value.text,
