@@ -924,8 +924,8 @@ private fun RatingStars(
                             } else if (j > i) {
                                 iconList[j] = R.drawable.chest_closed
                             }
-                            onMovieRating.invoke((i + 1).toDouble())
                         }
+                        onMovieRating((i + 1).toDouble())
                     }),
                 tint = Color.Unspecified
             )

@@ -6,24 +6,19 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,16 +44,17 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
 import com.example.blackbeard.models.CollectionMovie
-import com.example.blackbeard.models.Genre
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.*
 
-
+data class MovieCarousel(
+    val title: String,
+    val movies: List<CollectionMovie>,
+    val listState: LazyListState
+)
 
 @Composable
 fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modifier = Modifier) {
@@ -98,65 +94,37 @@ private fun HomeContent(
     topRatedState: LazyListState,
     upcomingState: LazyListState
 ) {
+    var emptyMovies = 0
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         state = rememberLazyListState()
     ) {
-
+        if (homeUIModel !is HomeUIModel.Data) return@LazyColumn
         item {
-            TitleText(stringResource(id = R.string.now_playing))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
+            val movieCarousels = listOf(
+                MovieCarousel(
+                    stringResource(id = R.string.now_playing),
                     homeUIModel.nowPlayingCollectionMovies,
                     nowPlayingState
-                )
-            }
-        }
+                ),
+                MovieCarousel(stringResource(id = R.string.popular), homeUIModel.popularCollectionMovies, popularState),
+                MovieCarousel(stringResource(id = R.string.top_rated), homeUIModel.topRatedCollectionMovies, topRatedState),
+                MovieCarousel(stringResource(id = R.string.upcoming), homeUIModel.upcomingCollectionMovies, upcomingState),
+            )
+            for (movieCarousel in movieCarousels) {
+                if (movieCarousel.movies.isEmpty()) {
+                    emptyMovies++
+                    continue
+                }
+                TitleText(movieCarousel.title)
 
-        item {
-            TitleText(stringResource(id = R.string.popular))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
                 CreatePosters(
                     onNavigateToDetailsScreen,
-                    homeUIModel.popularCollectionMovies,
-                    popularState
+                    movieCarousel.movies,
+                    movieCarousel.listState
                 )
-            }
-        }
 
-        item {
-            TitleText(stringResource(id = R.string.top_rated))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
-                    homeUIModel.topRatedCollectionMovies,
-                    topRatedState
-                )
-            }
-        }
-
-        item {
-            TitleText(stringResource(id = R.string.upcoming))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
-                    homeUIModel.upcomingCollectionMovies,
-                    upcomingState
-                )
             }
         }
     }
@@ -194,7 +162,7 @@ private fun CreatePoster(
                             )
                             isClickAble = false
                             coroutineScope.launch {
-                                delay(1000)
+                                kotlinx.coroutines.delay(1000)
                                 isClickAble = true
                             }
                         }
@@ -225,14 +193,20 @@ private fun CreatePoster(
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold
             )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically,
-            ){
-                GenreItemContainer(collectionMovie.genres)
-            }
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = collectionMovie.genres.joinToString { it.name },
+                style = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
+            )
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = collectionMovie.releaseDate.year.toString(),
+                style = TextStyle(
+                    textAlign = TextAlign.Center
+                ),
+            )
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = collectionMovie.overview ?: stringResource(id = R.string.no_overview_available),
@@ -274,37 +248,5 @@ fun CreatePosters(
         items(collectionMovies.size) { index ->
             CreatePoster(onNavigateToDetailsScreen, collectionMovies[index])
         }
-    }
-}
-
-
-@Composable
-private fun GenreItemContainer(genres: List<Genre>) {
-
-    LazyRow(
-        modifier = Modifier
-            .padding(vertical = 2.dp)
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
-    ) {
-        items(genres.take(2)) { genre ->
-            GenreItem(genre)
-        }
-    }
-}
-
-@Composable
-private fun GenreItem(genre: Genre) {
-    Box(
-        Modifier
-            .background(Color.Gray, shape = RoundedCornerShape(4.dp))
-            .padding(horizontal = 8.dp, vertical = 2.dp)
-            .wrapContentSize()
-    ) {
-        Text(
-            text = genre.name,
-            color = Color.White,
-            fontSize = 15.sp,
-        )
     }
 }

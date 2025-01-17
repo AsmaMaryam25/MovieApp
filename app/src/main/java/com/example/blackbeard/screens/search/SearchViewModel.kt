@@ -96,10 +96,13 @@ class SearchViewModel() : ViewModel() {
 
     private suspend fun loadPopularMovies() {
         mutableSearchUIState.value = SearchUIModel.Loading
+        /*
         movieRepository.getPopularMovies().collect { popular ->
             popularMovies = popular
             mutableSearchUIState.value = SearchUIModel.Data(popular, 1)
         }
+
+         */
     }
 
     fun searchMovies(query: String, pageNum: Int, isAdvanced: Boolean = false) {
