@@ -486,8 +486,9 @@ private fun CrewSection(crew: List<Crew>) {
             )
             return@SecondaryContentSection
         }
+        val sortedCrew = crew.sortedByDescending { it.job == "Director" }
         LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            items(crew) { crewMember ->
+            items(sortedCrew) { crewMember ->
                 PersonPoster(
                     name = crewMember.name,
                     description = crewMember.job,
@@ -662,7 +663,7 @@ private fun MovieDetailsSection(
                 )
             },
             {
-                if (!isRevenueInvalid(revenue)) MovieDetailSingleLine(
+                if (!isRevenueInvalid(revenue) || revenue != 0L) MovieDetailSingleLine(
                     stringResource(id = R.string.revenue),
                     format.format(revenue)
                 )
