@@ -145,11 +145,13 @@ private fun SearchContent(
     var isSearchQueryCleared by remember { mutableStateOf(false) }
     var isAdvancedSearchPressed by remember { mutableStateOf(false) }
     val previousSearchQuery = remember { mutableStateOf(searchQuery.value.text) }
+    val popularTitle = stringResource(id = R.string.popular)
+    val searchResultsTitle = stringResource(id = R.string.search_results)
+    var titleText by remember { mutableStateOf(popularTitle) }
 
     LaunchedEffect(searchQuery.value.text) {
         if (previousSearchQuery.value.isNotEmpty() && searchQuery.value.text.isEmpty()) {
             isSearchQueryCleared = true
-            println("Search query has been cleared")
         } else {
             isSearchQueryCleared = false
         }
@@ -164,11 +166,18 @@ private fun SearchContent(
         }
     }
 
+    LaunchedEffect(searchQuery.value.text, isAdvancedSearchPressed) {
+        titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
+            popularTitle
+        } else {
+            searchResultsTitle
+        }
+    }
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         var isSearchBarFocused by remember { mutableStateOf(false) }
-        var titleText by remember { mutableStateOf("") }
         val tabs = listOf("Recent", "Advanced Search")
 
         SearchBar(
@@ -221,11 +230,6 @@ private fun SearchContent(
                             modifier = Modifier.fillMaxWidth(),
                             contentAlignment = Alignment.Center
                         ) {
-                            titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
-                                stringResource(id = R.string.popular)
-                            } else {
-                                stringResource(id = R.string.search_results)
-                            }
                             TitleText(text = titleText)
                         }
                     }
