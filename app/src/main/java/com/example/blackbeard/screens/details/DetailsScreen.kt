@@ -5,6 +5,7 @@ import android.icu.util.Currency
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -28,6 +29,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -419,57 +421,89 @@ private fun SaveAndBookmarkSection(
     var isFavorited by remember { mutableStateOf(isFavorite) }
     var isWatchListed by remember { mutableStateOf(isWatchList) }
 
-    Text(
-        text = stringResource(id= R.string.favorite_and_Watchlist),
-        style = MaterialTheme.typography.titleMedium,
-        fontWeight = FontWeight.Bold,
-        color = MaterialTheme.colorScheme.onBackground
-    )
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.fillMaxWidth()
     ) {
-
-        Text(
-            modifier = Modifier.weight(0.4f),
-            text = stringResource(id= R.string.add_to_favorites_and_watchlist),
-            style = MaterialTheme.typography.titleSmall,
-            color = MaterialTheme.colorScheme.onBackground
-
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .background(color = MaterialTheme.colorScheme.secondaryContainer
+                    , shape = RoundedCornerShape(8.dp))
+                .padding(vertical = 4.dp, horizontal = 8.dp),
+            contentAlignment = Alignment.Center
         )
+        {
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()) {
 
-        Row(
-            modifier = Modifier.weight(0.6f),
-            horizontalArrangement = Arrangement.End
+                    Icon(
+                        imageVector = if (isWatchListed) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                        contentDescription = "Watchlist",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .size(40.dp)
+                            .clickable {
+                                isWatchListed = !isWatchListed
+                                onBookmarkToggle.invoke()
+                            },
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                    Text(
+                        modifier = Modifier,
+                        text = if (isWatchListed) stringResource(id = R.string.remove_from_watchlist)
+                        else stringResource(id = R.string.add_to_watchlist),
+                        maxLines = Int.MAX_VALUE,
+                        overflow = TextOverflow.Clip,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
+            }
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Box(
+            modifier = Modifier
+                .weight(1f)
+                .background(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(8.dp))
+                .padding(vertical = 4.dp, horizontal = 8.dp),
+            contentAlignment = Alignment.Center
+
         ) {
-            Icon(
-                imageVector = if (isFavorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                contentDescription = "Favorite",
+            Column(
                 modifier = Modifier
-                    .padding(5.dp)
-                    .size(40.dp)
-                    .clickable {
-                        isFavorited = !isFavorited
-                        onFavoriteToggle.invoke()
-                    },
-                tint = Color(0xFFA20321)
-            )
-            Icon(
-                imageVector = if (isWatchListed) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
-                contentDescription = "Watchlist",
-                modifier = Modifier
-                    .padding(5.dp)
-                    .size(40.dp)
-                    .clickable {
-                        isWatchListed = !isWatchListed
-                        onBookmarkToggle.invoke()
-                    },
-                tint = Color(0xFF0000FF)
-            )
+                    .padding(8.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()) {
+                    Icon(
+                        imageVector = if (isFavorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite",
+                        modifier = Modifier
+                            .padding(5.dp)
+                            .size(40.dp)
+                            .clickable {
+                                isFavorited = !isFavorited
+                                onFavoriteToggle.invoke()
+                            },
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                    Text(
+                        modifier = Modifier,
+                        text = if (isFavorited) stringResource(id = R.string.remove_from_favorite)
+                        else stringResource(id = R.string.add_to_favorite),
+                        maxLines = Int.MAX_VALUE,
+                        overflow = TextOverflow.Clip,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
+            }
         }
     }
 }
+
 
 @Composable
 private fun CrewSection(crew: List<Crew>) {
@@ -539,7 +573,7 @@ private fun MovieRatingSection(
                     horizontalAlignment = Alignment.End
                 ) {
                     Text(
-                        text = stringResource(id = R.string.users)+" ($userRatings)",
+                        text = stringResource(id = R.string.users) + " ($userRatings)",
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -548,8 +582,8 @@ private fun MovieRatingSection(
                         onMovieRating = onMovieRating
                     )
                     Text(
-                        text = stringResource(id = R.string.average)+
-                        ": " + String.format(Locale.US, "%.2f", averageRating),
+                        text = stringResource(id = R.string.average) +
+                                ": " + String.format(Locale.US, "%.2f", averageRating),
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onBackground
                     )
@@ -924,8 +958,8 @@ private fun RatingStars(
                             } else if (j > i) {
                                 iconList[j] = R.drawable.chest_closed
                             }
-                            onMovieRating.invoke((i + 1).toDouble())
                         }
+                        onMovieRating((i + 1).toDouble())
                     }),
                 tint = Color.Unspecified
             )

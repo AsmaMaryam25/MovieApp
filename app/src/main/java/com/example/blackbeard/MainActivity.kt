@@ -1,6 +1,7 @@
 package com.example.blackbeard
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -30,6 +31,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -37,6 +42,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -44,11 +50,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.example.blackbeard.components.ObserveAsEvents
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.NavItem
 import com.example.blackbeard.models.Route
 import com.example.blackbeard.ui.theme.BlackbeardTheme
 import com.example.blackbeard.utils.ConnectivityObserver
+import com.example.blackbeard.utils.SnackbarController
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private var navItemList = mutableListOf(
@@ -84,7 +93,28 @@ class MainActivity : ComponentActivity() {
                     var topBarShown by remember { mutableStateOf(false) }
                     var selectedItem by remember { mutableStateOf(navItemList[0].label) }
                     var videoLink by remember { mutableStateOf<String?>(null) }
+                    val snackbarHostState = remember { SnackbarHostState() }
                     val context = LocalContext.current
+
+                    val scope = rememberCoroutineScope()
+                    ObserveAsEvents(
+                        flow = SnackbarController.events,
+                        snackbarHostState
+                    ) { event ->
+                        scope.launch {
+                            snackbarHostState.currentSnackbarData?.dismiss()
+
+                            val result = snackbarHostState.showSnackbar(
+                                message = event.message,
+                                actionLabel = event.action?.name,
+                                duration = SnackbarDuration.Short
+                            )
+
+                            if(result == SnackbarResult.ActionPerformed) {
+                                event.action?.action?.invoke()
+                            }
+                        }
+                    }
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
                         if (!isNavigationBarAction) {
@@ -94,6 +124,9 @@ class MainActivity : ComponentActivity() {
                     }
 
                     Scaffold(
+                        snackbarHost = {
+                            SnackbarHost(hostState = snackbarHostState)
+                        },
                         bottomBar = {
                             if (!canNavigateBack) {
                                 NavigationBar {
@@ -105,6 +138,7 @@ class MainActivity : ComponentActivity() {
                                                     contentDescription = null
                                                 )
                                             },
+                                            //colors = Color(),
                                             label = {
                                                 Text(navItem.label)
                                             },

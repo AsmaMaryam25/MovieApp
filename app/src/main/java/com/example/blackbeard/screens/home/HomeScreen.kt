@@ -6,8 +6,6 @@ import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -23,7 +21,6 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -54,11 +51,13 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.HomeViewModel.HomeUIModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.*
 
-
+data class MovieCarousel(
+    val title: String,
+    val movies: List<CollectionMovie>,
+    val listState: LazyListState
+)
 
 @Composable
 fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modifier = Modifier) {
@@ -98,65 +97,37 @@ private fun HomeContent(
     topRatedState: LazyListState,
     upcomingState: LazyListState
 ) {
+    var emptyMovies = 0
     LazyColumn(
         modifier = modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         state = rememberLazyListState()
     ) {
-
+        if (homeUIModel !is HomeUIModel.Data) return@LazyColumn
         item {
-            TitleText(stringResource(id = R.string.now_playing))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
+            val movieCarousels = listOf(
+                MovieCarousel(
+                    stringResource(id = R.string.now_playing),
                     homeUIModel.nowPlayingCollectionMovies,
                     nowPlayingState
-                )
-            }
-        }
+                ),
+                MovieCarousel(stringResource(id = R.string.popular), homeUIModel.popularCollectionMovies, popularState),
+                MovieCarousel(stringResource(id = R.string.top_rated), homeUIModel.topRatedCollectionMovies, topRatedState),
+                MovieCarousel(stringResource(id = R.string.upcoming), homeUIModel.upcomingCollectionMovies, upcomingState),
+            )
+            for (movieCarousel in movieCarousels) {
+                if (movieCarousel.movies.isEmpty()) {
+                    emptyMovies++
+                    continue
+                }
+                TitleText(movieCarousel.title)
 
-        item {
-            TitleText(stringResource(id = R.string.popular))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
                 CreatePosters(
                     onNavigateToDetailsScreen,
-                    homeUIModel.popularCollectionMovies,
-                    popularState
+                    movieCarousel.movies,
+                    movieCarousel.listState
                 )
-            }
-        }
 
-        item {
-            TitleText(stringResource(id = R.string.top_rated))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
-                    homeUIModel.topRatedCollectionMovies,
-                    topRatedState
-                )
-            }
-        }
-
-        item {
-            TitleText(stringResource(id = R.string.upcoming))
-        }
-
-        item {
-            if (homeUIModel is HomeUIModel.Data) {
-                CreatePosters(
-                    onNavigateToDetailsScreen,
-                    homeUIModel.upcomingCollectionMovies,
-                    upcomingState
-                )
             }
         }
     }
@@ -194,7 +165,7 @@ private fun CreatePoster(
                             )
                             isClickAble = false
                             coroutineScope.launch {
-                                delay(1000)
+                                kotlinx.coroutines.delay(1000)
                                 isClickAble = true
                             }
                         }
@@ -276,7 +247,6 @@ fun CreatePosters(
         }
     }
 }
-
 
 @Composable
 private fun GenreItemContainer(genres: List<Genre>) {
