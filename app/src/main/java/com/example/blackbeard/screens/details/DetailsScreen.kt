@@ -174,7 +174,8 @@ private fun MainContent(
             overview = localMovie.overview,
             posterPath = localMovie.posterPath,
             ageRating = ageRating,
-            onTextExpand = { isExpanded -> shouldBeSticky = !isExpanded }
+            onTextExpand = { shouldBeSticky = !shouldBeSticky },
+            expandText = !shouldBeSticky
         )
     }
 
@@ -226,7 +227,8 @@ private fun SimpleContent(
     overview: String?,
     posterPath: String?,
     ageRating: AgeRating,
-    onTextExpand: (Boolean) -> Unit
+    onTextExpand: () -> Unit,
+    expandText: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -274,7 +276,8 @@ private fun SimpleContent(
             fontSize = 14.sp,
             style = TextStyle(color = Color.White),
             showLessText = "",
-            onTextExpand = onTextExpand
+            onTextExpand = onTextExpand,
+            expandText = expandText
         )
         /*
         CollapsibleBodyText(
