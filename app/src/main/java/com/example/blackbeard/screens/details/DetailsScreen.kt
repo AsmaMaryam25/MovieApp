@@ -164,9 +164,7 @@ private fun MainContent(
     onFavoriteToggle: () -> Unit,
     voterCountLiveData: LiveData<Int>
 ) {
-
     val voterCount by voterCountLiveData.observeAsState(0)
-
     var shouldBeSticky by remember { mutableStateOf(true) }
 
     val simpleContent = @Composable {
@@ -176,7 +174,8 @@ private fun MainContent(
             overview = localMovie.overview,
             posterPath = localMovie.posterPath,
             ageRating = ageRating,
-            onTextExpand = { shouldBeSticky = !shouldBeSticky }
+            onTextExpand = { shouldBeSticky = !shouldBeSticky },
+            expandText = !shouldBeSticky
         )
     }
 
@@ -228,7 +227,8 @@ private fun SimpleContent(
     overview: String?,
     posterPath: String?,
     ageRating: AgeRating,
-    onTextExpand: () -> Unit
+    onTextExpand: () -> Unit,
+    expandText: Boolean
 ) {
     Column(
         modifier = Modifier
@@ -276,7 +276,8 @@ private fun SimpleContent(
             fontSize = 14.sp,
             style = TextStyle(color = Color.White),
             showLessText = "",
-            onTextExpand = onTextExpand
+            onTextExpand = onTextExpand,
+            expandText = expandText
         )
         /*
         CollapsibleBodyText(

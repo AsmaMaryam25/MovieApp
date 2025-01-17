@@ -175,10 +175,17 @@ private fun SearchContent(
 
         if (!isSearchBarFocused) {
             if (collectionMovies.isEmpty()) {
-                Text(
-                    text = "No results found",
-                    modifier = Modifier.padding(10.dp)
-                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
+                    Text(
+                        text = "No results found",
+                        fontSize = 30.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(10.dp).align(Alignment.Center)
+                    )
+                }
             } else {
                 Box(
                     modifier = Modifier.fillMaxWidth(),
