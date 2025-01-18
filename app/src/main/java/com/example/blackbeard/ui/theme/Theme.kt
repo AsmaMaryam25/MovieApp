@@ -10,50 +10,37 @@ import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Black,
-    secondary = PurpleGrey80,
-    tertiary = Pink80,
-    onBackground = White,
-    onSurface = White,
-    secondaryContainer = GoldenYellow,
-    onSecondaryContainer = Black,
-    tertiaryContainer = DeeperRed,
-    onTertiaryContainer = Gray
-
-
+    primary = DarkPrimary,            // #007FFF - Bright blue
+    secondary = DarkSecondary,        // #00B7FA - Lighter blue
+    tertiary = DarkAccent,            // #5C58D5 - Vibrant purple accent
+    onBackground = DarkText,          // #EAE9FC - Light text on dark background
+    onSurface = DarkText,             // #EAE9FC - Light text on dark surface
+    background = DarkBackground,      // #010104 - Very dark background
+    surface = DarkBackground,         // #010104 - Matches background
+    secondaryContainer = DarkSecondary, // Same as secondary for containers
+    onSecondaryContainer = DarkText,  // #EAE9FC - Light text on secondary container
+    tertiaryContainer = DarkAccent,   // Same as tertiary for containers
+    onTertiaryContainer = DarkText    // #EAE9FC - Light text on tertiary container
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Black,
-    secondary = PurpleGrey40,
-    tertiary = Pink40,
-    onBackground = Black,
-    onSurface = Black,
-    secondaryContainer = Yellow,
-    onSecondaryContainer = Black,
-    tertiaryContainer = SoftRed,
-    onTertiaryContainer = Gray
-
-
-
-
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = LightPrimary,           // #007FFF - Bright blue
+    secondary = LightSecondary,       // #05BCFF - Lighter blue
+    tertiary = LightAccent,           // #2E2AA7 - Deep purple accent
+    onBackground = LightText,         // #040316 - Dark text on light background
+    onSurface = LightText,            // #040316 - Dark text on light surface
+    background = LightBackground,     // #FBFBFE - Very light background
+    surface = LightBackground,        // #FBFBFE - Matches background
+    secondaryContainer = LightSecondary, // Same as secondary for containers
+    onSecondaryContainer = LightText, // #040316 - Dark text on secondary container
+    tertiaryContainer = LightAccent,  // Same as tertiary for containers
+    onTertiaryContainer = LightText   // #040316 - Dark text on tertiary container
 )
 
 @Composable
