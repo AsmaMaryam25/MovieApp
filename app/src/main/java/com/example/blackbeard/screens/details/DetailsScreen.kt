@@ -5,10 +5,8 @@ import android.icu.util.Currency
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,8 +26,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.paddingFrom
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
@@ -57,9 +53,7 @@ import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -397,7 +391,6 @@ private fun SecondaryContent(
             .padding(top = 16.dp, start = 14.dp, end = 14.dp, bottom = 16.dp)
             .zIndex(1f)
             .pointerInput(Unit) {
-                // Intercept touch events to prevent clicks from propagating
                 detectTapGestures(onTap = { /* Do nothing */ })
             }
     ) {
@@ -662,7 +655,6 @@ private fun MovieDetailsSection(
         format.maximumFractionDigits = 0
         format.currency = Currency.getInstance("USD")
 
-        // No detail data available
         if (isDetailsInvalid(
                 releaseDate = releaseDate,
                 spokenLanguages = spokenLanguages,
@@ -862,7 +854,6 @@ private fun CollapsibleBodyText(
             .fillMaxHeight()
             .padding(start = 20.dp, end = 20.dp)
             .clickable {
-                //onTextExpand.invoke()
                 expandedState = !expandedState
             }
     ) {

@@ -51,10 +51,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-
-import androidx.compose.ui.res.stringResource
-
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -430,7 +428,7 @@ fun TabContent(
                     .fillMaxWidth()
                     .height(4.dp)
                     .background(
-                        color = Color(0xFFFFD700),
+                        color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(topStartPercent = 50, topEndPercent = 50)
                     )
             )
@@ -609,8 +607,8 @@ fun AdvancedSearch(
             categories.forEach { (categoryTitle, categoryItems) ->
                 CategorySection(
                     categoryTitle = categoryTitle,
-                    availableCategoryNames = categoryItems.keys.toList(),  // Get list of category keys (display names)
-                    availableCategoryValues = categoryItems.values.toList(), // Get list of category values (actual values)
+                    availableCategoryNames = categoryItems.keys.toList(),
+                    availableCategoryValues = categoryItems.values.toList(),
                     selectedCategories = searchViewModel.selectedCategories,
                     onCategorySelected = { key, value, isSelected ->
                         searchViewModel.onCategorySelected(categoryTitle, key, value, isSelected)
@@ -623,7 +621,7 @@ fun AdvancedSearch(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = Color(0xFFFFD700),
+                    color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
@@ -638,7 +636,7 @@ fun AdvancedSearch(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "See Results", color = Color.Black
+                text = "See Results", color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
@@ -647,10 +645,10 @@ fun AdvancedSearch(
 @Composable
 fun CategorySection(
     categoryTitle: String,
-    availableCategoryNames: List<String>, // List of items for that category
-    availableCategoryValues: List<String>, // List of values for that category
-    selectedCategories: Map<String, Map<String, String>>, // Track selected items
-    onCategorySelected: (String, String, Boolean) -> Unit // Callback for item selection
+    availableCategoryNames: List<String>,
+    availableCategoryValues: List<String>,
+    selectedCategories: Map<String, Map<String, String>>,
+    onCategorySelected: (String, String, Boolean) -> Unit
 ) {
     Column {
         Text(
@@ -660,7 +658,6 @@ fun CategorySection(
         )
 
         LazyRow {
-            // Display all items in the current category
             availableCategoryNames.forEachIndexed { index, categoryName ->
                 val isSelected =
                     selectedCategories[categoryTitle]?.containsKey(categoryName) == true

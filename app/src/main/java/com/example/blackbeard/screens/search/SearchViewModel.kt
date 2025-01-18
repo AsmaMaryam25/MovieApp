@@ -255,21 +255,26 @@ class SearchViewModel() : ViewModel() {
 
 
     fun onCategorySelected(categoryTitle: String, key: String, value: String, isSelected: Boolean) {
-        val currentCategoryItems =
-            selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
+        val currentItems = selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
 
-        Log.d(
-            "OnCategorySelected",
-            "CategoryTitle: $categoryTitle, Key: $key, Value: $value, isSelected: $isSelected"
-        )
-        if (isSelected) {
-            currentCategoryItems[key] = value
+        if (categoryTitle == "Decade") {
+            if (isSelected) {
+                currentItems.clear()
+                currentItems[key] = value
+            } else {
+                currentItems.remove(key)
+            }
         } else {
-            currentCategoryItems.remove(key)
+            if (isSelected) {
+                currentItems[key] = value
+            } else {
+                currentItems.remove(key)
+            }
         }
 
-        selectedCategories[categoryTitle] = currentCategoryItems
+        selectedCategories[categoryTitle] = currentItems
     }
+
 
     fun addRecentSearch(query: String) {
         viewModelScope.launch {

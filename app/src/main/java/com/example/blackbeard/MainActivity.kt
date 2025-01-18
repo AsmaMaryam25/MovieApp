@@ -1,7 +1,6 @@
 package com.example.blackbeard
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
@@ -135,7 +134,10 @@ class MainActivity : ComponentActivity() {
                         },
                         bottomBar = {
                             if (!canNavigateBack) {
-                                NavigationBar {
+                                NavigationBar(
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                ) {
                                     navItemList.forEach { navItem ->
                                         NavigationBarItem(
                                             icon = {
@@ -144,7 +146,6 @@ class MainActivity : ComponentActivity() {
                                                     contentDescription = null
                                                 )
                                             },
-                                            //colors = Color(),
                                             label = {
                                                 Text(navItem.label)
                                             },
