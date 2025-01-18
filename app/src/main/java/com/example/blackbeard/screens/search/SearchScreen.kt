@@ -51,10 +51,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-
-import androidx.compose.ui.res.stringResource
-
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -430,7 +428,7 @@ fun TabContent(
                     .fillMaxWidth()
                     .height(4.dp)
                     .background(
-                        color = Color(0xFFFFD700),
+                        color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(topStartPercent = 50, topEndPercent = 50)
                     )
             )
@@ -623,7 +621,7 @@ fun AdvancedSearch(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = Color(0xFFFFD700),
+                    color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
