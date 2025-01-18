@@ -396,7 +396,7 @@ private fun SecondaryContent(
     ) {
         sections.forEachIndexed { index, section ->
             if (index > 0) {
-                HorizontalDivider(Modifier.padding(vertical = 10.dp), color = Color.Black)
+                HorizontalDivider(Modifier.padding(vertical = 10.dp), color = MaterialTheme.colorScheme.onBackground)
             }
             section()
         }
