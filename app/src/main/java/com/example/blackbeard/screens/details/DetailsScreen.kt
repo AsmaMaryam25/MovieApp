@@ -443,7 +443,7 @@ private fun SaveAndBookmarkSection(
                                 isWatchListed = !isWatchListed
                                 onBookmarkToggle.invoke()
                             },
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                     Text(
                         modifier = Modifier,
@@ -451,7 +451,7 @@ private fun SaveAndBookmarkSection(
                         else stringResource(id = R.string.add_to_watchlist),
                         maxLines = Int.MAX_VALUE,
                         overflow = TextOverflow.Clip,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 }
             }
