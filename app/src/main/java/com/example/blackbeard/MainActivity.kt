@@ -134,7 +134,10 @@ class MainActivity : ComponentActivity() {
                         },
                         bottomBar = {
                             if (!canNavigateBack) {
-                                NavigationBar {
+                                NavigationBar(
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                ) {
                                     navItemList.forEach { navItem ->
                                         NavigationBarItem(
                                             icon = {

@@ -636,7 +636,7 @@ fun AdvancedSearch(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "See Results", color = Color.Black
+                text = "See Results", color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
