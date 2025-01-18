@@ -607,8 +607,8 @@ fun AdvancedSearch(
             categories.forEach { (categoryTitle, categoryItems) ->
                 CategorySection(
                     categoryTitle = categoryTitle,
-                    availableCategoryNames = categoryItems.keys.toList(),  // Get list of category keys (display names)
-                    availableCategoryValues = categoryItems.values.toList(), // Get list of category values (actual values)
+                    availableCategoryNames = categoryItems.keys.toList(),
+                    availableCategoryValues = categoryItems.values.toList(),
                     selectedCategories = searchViewModel.selectedCategories,
                     onCategorySelected = { key, value, isSelected ->
                         searchViewModel.onCategorySelected(categoryTitle, key, value, isSelected)
@@ -645,10 +645,10 @@ fun AdvancedSearch(
 @Composable
 fun CategorySection(
     categoryTitle: String,
-    availableCategoryNames: List<String>, // List of items for that category
-    availableCategoryValues: List<String>, // List of values for that category
-    selectedCategories: Map<String, Map<String, String>>, // Track selected items
-    onCategorySelected: (String, String, Boolean) -> Unit // Callback for item selection
+    availableCategoryNames: List<String>,
+    availableCategoryValues: List<String>,
+    selectedCategories: Map<String, Map<String, String>>,
+    onCategorySelected: (String, String, Boolean) -> Unit
 ) {
     Column {
         Text(
@@ -658,7 +658,6 @@ fun CategorySection(
         )
 
         LazyRow {
-            // Display all items in the current category
             availableCategoryNames.forEachIndexed { index, categoryName ->
                 val isSelected =
                     selectedCategories[categoryTitle]?.containsKey(categoryName) == true

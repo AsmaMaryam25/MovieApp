@@ -1,7 +1,6 @@
 package com.example.blackbeard
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.view.MotionEvent
@@ -144,7 +143,6 @@ class MainActivity : ComponentActivity() {
                                                     contentDescription = null
                                                 )
                                             },
-                                            //colors = Color(),
                                             label = {
                                                 Text(navItem.label)
                                             },
