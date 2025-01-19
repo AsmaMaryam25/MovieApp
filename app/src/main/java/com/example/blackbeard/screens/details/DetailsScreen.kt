@@ -422,6 +422,10 @@ private fun SaveAndBookmarkSection(
                 .weight(1f)
                 .background(color = MaterialTheme.colorScheme.secondaryContainer
                     , shape = RoundedCornerShape(8.dp))
+                .clickable {
+                    isWatchListed = !isWatchListed
+                    onBookmarkToggle.invoke()
+                }
                 .padding(vertical = 4.dp, horizontal = 8.dp),
             contentAlignment = Alignment.Center
         )
@@ -438,11 +442,7 @@ private fun SaveAndBookmarkSection(
                         contentDescription = "Watchlist",
                         modifier = Modifier
                             .padding(5.dp)
-                            .size(40.dp)
-                            .clickable {
-                                isWatchListed = !isWatchListed
-                                onBookmarkToggle.invoke()
-                            },
+                            .size(40.dp),
                         tint = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                     Text(
@@ -461,6 +461,10 @@ private fun SaveAndBookmarkSection(
             modifier = Modifier
                 .weight(1f)
                 .background(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(8.dp))
+                .clickable {
+                    isFavorited = !isFavorited
+                    onFavoriteToggle.invoke()
+                }
                 .padding(vertical = 4.dp, horizontal = 8.dp),
             contentAlignment = Alignment.Center
 
@@ -476,11 +480,7 @@ private fun SaveAndBookmarkSection(
                         contentDescription = "Favorite",
                         modifier = Modifier
                             .padding(5.dp)
-                            .size(40.dp)
-                            .clickable {
-                                isFavorited = !isFavorited
-                                onFavoriteToggle.invoke()
-                            },
+                            .size(40.dp),
                         tint = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                     Text(
