@@ -37,6 +37,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -50,10 +51,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-
-import androidx.compose.ui.res.stringResource
-
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
@@ -92,6 +91,8 @@ fun SearchScreen(
     val posterWidth = 170.dp
     val searchQuery = remember { mutableStateOf(TextFieldValue("")) }
     val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
+    val isBoxClicked = remember { mutableStateOf(false) }
+
 
     when (searchUIModel) {
         SearchUIModel.Empty -> SearchContent(
@@ -101,7 +102,8 @@ fun SearchScreen(
             onNavigateToDetailsScreen,
             emptyList(),
             searchViewModel,
-            gridState
+            gridState,
+            isBoxClicked
         )
 
         SearchUIModel.Loading -> LoadingScreen()
@@ -116,7 +118,8 @@ fun SearchScreen(
                 onNavigateToDetailsScreen,
                 searchUIModel.collectionMovies,
                 searchViewModel,
-                gridState
+                gridState,
+                isBoxClicked
             )
         }
     }
@@ -132,19 +135,48 @@ private fun SearchContent(
     collectionMovies: List<Movie>,
     searchViewModel: SearchViewModel,
     gridState: LazyGridState = rememberLazyGridState(),
+    isBoxClicked: MutableState<Boolean>
 ) {
-    rememberCoroutineScope()
-    listOf("Recent", "Advanced Search")
-    rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState()
     val recentSearches = searchViewModel.recentSearches.collectAsState().value
+    var isSearchQueryCleared by remember { mutableStateOf(false) }
+    var isAdvancedSearchPressed by remember { mutableStateOf(false) }
+    val previousSearchQuery = remember { mutableStateOf(searchQuery.value.text) }
+    val popularTitle = stringResource(id = R.string.popular)
+    val searchResultsTitle = stringResource(id = R.string.search_results)
+    var titleText by remember { mutableStateOf(popularTitle) }
+
+    LaunchedEffect(searchQuery.value.text) {
+        if (previousSearchQuery.value.isNotEmpty() && searchQuery.value.text.isEmpty()) {
+            isSearchQueryCleared = true
+        } else {
+            isSearchQueryCleared = false
+        }
+        previousSearchQuery.value = searchQuery.value.text
+    }
+
+    LaunchedEffect(isBoxClicked.value) {
+        if (isBoxClicked.value) {
+            isAdvancedSearchPressed = true
+        } else {
+            isAdvancedSearchPressed = false
+        }
+    }
+
+    LaunchedEffect(searchQuery.value.text, isAdvancedSearchPressed) {
+        titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
+            popularTitle
+        } else {
+            searchResultsTitle
+        }
+    }
 
     Column(
         modifier = modifier.fillMaxSize()
     ) {
         var isSearchBarFocused by remember { mutableStateOf(false) }
         val tabs = listOf("Recent", "Advanced Search")
-        val coroutineScope = rememberCoroutineScope()
-        val pagerState = rememberPagerState()
 
         SearchBar(
             searchQuery = searchQuery,
@@ -172,12 +204,10 @@ private fun SearchContent(
             },
         )
 
-
         if (!isSearchBarFocused) {
             if (collectionMovies.isEmpty()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 ) {
                     Text(
                         text = "No results found",
@@ -187,18 +217,20 @@ private fun SearchContent(
                     )
                 }
             } else {
-                Box(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    TitleText(text = stringResource(id = R.string.popular))
-                }
                 LazyVerticalGrid(
                     state = gridState,
                     columns = GridCells.Adaptive(posterWidth),
                     modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Box(
+                            modifier = Modifier.fillMaxWidth(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TitleText(text = titleText)
+                        }
+                    }
                     items(collectionMovies.size) { index ->
                         CreateSearchPoster(
                             searchViewModel,
@@ -234,7 +266,6 @@ private fun SearchContent(
                             }
                         }
                     }
-
                 }
             }
         } else {
@@ -250,6 +281,7 @@ private fun SearchContent(
                 onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) },
                 searchQuery = searchQuery,
                 searchViewModel = searchViewModel,
+                isBoxClicked = isBoxClicked
             )
         }
     }
@@ -267,6 +299,7 @@ private fun SearchTabs(
     onRemoveRecentSearch: (String) -> Unit,
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
+    isBoxClicked: MutableState<Boolean>
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -362,7 +395,8 @@ private fun SearchTabs(
                         searchViewModel,
                         updateSearchType = {
                             searchViewModel.searchType.value = true
-                        }
+                        },
+                        isBoxClicked = isBoxClicked
                     )
                 }
             }
@@ -377,7 +411,7 @@ fun TabContent(
     tabs: List<String>,
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
-    onTabSelected: (Int) -> Unit
+    onTabSelected: (Int) -> Unit,
 ) {
 
     TabRow(
@@ -394,7 +428,7 @@ fun TabContent(
                     .fillMaxWidth()
                     .height(4.dp)
                     .background(
-                        color = Color(0xFFFFD700),
+                        color = MaterialTheme.colorScheme.primary,
                         shape = RoundedCornerShape(topStartPercent = 50, topEndPercent = 50)
                     )
             )
@@ -495,6 +529,7 @@ fun AdvancedSearch(
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
     updateSearchType: () -> Unit,
+    isBoxClicked: MutableState<Boolean>
 ) {
     val categories = mapOf(
         "Streaming Services" to mapOf(
@@ -572,8 +607,8 @@ fun AdvancedSearch(
             categories.forEach { (categoryTitle, categoryItems) ->
                 CategorySection(
                     categoryTitle = categoryTitle,
-                    availableCategoryNames = categoryItems.keys.toList(),  // Get list of category keys (display names)
-                    availableCategoryValues = categoryItems.values.toList(), // Get list of category values (actual values)
+                    availableCategoryNames = categoryItems.keys.toList(),
+                    availableCategoryValues = categoryItems.values.toList(),
                     selectedCategories = searchViewModel.selectedCategories,
                     onCategorySelected = { key, value, isSelected ->
                         searchViewModel.onCategorySelected(categoryTitle, key, value, isSelected)
@@ -586,10 +621,11 @@ fun AdvancedSearch(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(
-                    color = Color(0xFFFFD700),
+                    color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
+                    isBoxClicked.value = true
                     updateSearchType()
                     searchViewModel.discoverMovies(
                         searchQuery.value.text,
@@ -600,7 +636,7 @@ fun AdvancedSearch(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "See Results", color = Color.Black
+                text = "See Results", color = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
@@ -609,10 +645,10 @@ fun AdvancedSearch(
 @Composable
 fun CategorySection(
     categoryTitle: String,
-    availableCategoryNames: List<String>, // List of items for that category
-    availableCategoryValues: List<String>, // List of values for that category
-    selectedCategories: Map<String, Map<String, String>>, // Track selected items
-    onCategorySelected: (String, String, Boolean) -> Unit // Callback for item selection
+    availableCategoryNames: List<String>,
+    availableCategoryValues: List<String>,
+    selectedCategories: Map<String, Map<String, String>>,
+    onCategorySelected: (String, String, Boolean) -> Unit
 ) {
     Column {
         Text(
@@ -622,7 +658,6 @@ fun CategorySection(
         )
 
         LazyRow {
-            // Display all items in the current category
             availableCategoryNames.forEachIndexed { index, categoryName ->
                 val isSelected =
                     selectedCategories[categoryTitle]?.containsKey(categoryName) == true

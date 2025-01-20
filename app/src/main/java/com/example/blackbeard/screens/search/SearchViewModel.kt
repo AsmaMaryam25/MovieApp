@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.RecentSearchRepository
+import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
@@ -74,7 +75,7 @@ class SearchViewModel() : ViewModel() {
                         mutableSearchUIState.value = SearchUIModel.NoConnection
                     }
                 }
-            } catch (e: TimeoutCancellationException) {
+            } catch (e: Exception) {
                 mutableSearchUIState.value = SearchUIModel.NoConnection
 
                 initialConnectivityFlow.stateIn(
@@ -88,21 +89,25 @@ class SearchViewModel() : ViewModel() {
                         mutableSearchUIState.value = SearchUIModel.NoConnection
                     }
                 }
-            } catch (e: UnknownHostException) {
-                mutableSearchUIState.value = SearchUIModel.NoConnection
             }
         }
     }
 
     private suspend fun loadPopularMovies() {
         mutableSearchUIState.value = SearchUIModel.Loading
-        /*
-        movieRepository.getPopularMovies().collect { popular ->
-            popularMovies = popular
-            mutableSearchUIState.value = SearchUIModel.Data(popular, 1)
+
+        movieRepository.getPopularMovies().collect { result ->
+            when(result) {
+                is Result.Error -> {
+
+                }
+                is Result.Success -> {
+                    popularMovies = result.data
+                    mutableSearchUIState.value = SearchUIModel.Data(result.data, 1)
+                }
+            }
         }
 
-         */
     }
 
     fun searchMovies(query: String, pageNum: Int, isAdvanced: Boolean = false) {
@@ -248,21 +253,26 @@ class SearchViewModel() : ViewModel() {
 
 
     fun onCategorySelected(categoryTitle: String, key: String, value: String, isSelected: Boolean) {
-        val currentCategoryItems =
-            selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
+        val currentItems = selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
 
-        Log.d(
-            "OnCategorySelected",
-            "CategoryTitle: $categoryTitle, Key: $key, Value: $value, isSelected: $isSelected"
-        )
-        if (isSelected) {
-            currentCategoryItems[key] = value
+        if (categoryTitle == "Decade") {
+            if (isSelected) {
+                currentItems.clear()
+                currentItems[key] = value
+            } else {
+                currentItems.remove(key)
+            }
         } else {
-            currentCategoryItems.remove(key)
+            if (isSelected) {
+                currentItems[key] = value
+            } else {
+                currentItems.remove(key)
+            }
         }
 
-        selectedCategories[categoryTitle] = currentCategoryItems
+        selectedCategories[categoryTitle] = currentItems
     }
+
 
     fun addRecentSearch(query: String) {
         viewModelScope.launch {

@@ -1,9 +1,9 @@
 package com.example.blackbeard
 
 import android.content.Intent
-import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.view.MotionEvent
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -68,6 +68,11 @@ class MainActivity : ComponentActivity() {
         NavItem("Settings", Icons.Outlined.Settings)
     )
 
+    // https://stackoverflow.com/a/69914674
+    override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
+        return ev?.pointerCount == 1 && super.dispatchTouchEvent(ev)
+    }
+
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -129,7 +134,10 @@ class MainActivity : ComponentActivity() {
                         },
                         bottomBar = {
                             if (!canNavigateBack) {
-                                NavigationBar {
+                                NavigationBar(
+                                    containerColor = MaterialTheme.colorScheme.surface,
+                                    contentColor = MaterialTheme.colorScheme.onSurface
+                                ) {
                                     navItemList.forEach { navItem ->
                                         NavigationBarItem(
                                             icon = {
@@ -138,7 +146,6 @@ class MainActivity : ComponentActivity() {
                                                     contentDescription = null
                                                 )
                                             },
-                                            //colors = Color(),
                                             label = {
                                                 Text(navItem.label)
                                             },
