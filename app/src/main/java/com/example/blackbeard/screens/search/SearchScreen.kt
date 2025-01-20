@@ -587,7 +587,13 @@ fun AdvancedSearch(
             "1920's" to "1920",
             "1910's" to "1910",
             "1900's" to "1900"
-        )
+        ),
+        "Runtime" to mapOf(
+            "180+" to "180",
+            "120+" to "120",
+            "90+" to "90",
+            "60+" to "60",
+        ),
     )
 
     Column(

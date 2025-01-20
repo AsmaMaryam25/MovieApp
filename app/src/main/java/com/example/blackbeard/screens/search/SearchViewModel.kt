@@ -156,6 +156,11 @@ class SearchViewModel() : ViewModel() {
                 var releaseDateLte: String? = null
                 var withGenres: String? = null
                 var withWatchProviders: String? = null
+                var runtime: Int? = null
+
+                if (selectedCategories["Runtime"] != null && selectedCategories["Runtime"]?.values?.isNotEmpty() == true) {
+                    runtime = selectedCategories["Runtime"]?.values?.first()?.toInt()
+                }
 
                 if (selectedCategories["Decade"] != null && selectedCategories["Decade"]?.values?.isNotEmpty() == true) {
                     val decade = selectedCategories["Decade"]?.values?.first()
@@ -186,7 +191,8 @@ class SearchViewModel() : ViewModel() {
                     null,
                     "DK",
                     withGenres,
-                    withWatchProviders
+                    withWatchProviders,
+                    runtime
                 ).collect { searchResults ->
                     collectMovies(pageNum, searchResults, currentMovies)
                 }

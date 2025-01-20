@@ -125,6 +125,7 @@ class MovieRepository(
         watchRegion: String?,
         withGenres: String?,
         withWatchProviders: String?,
+        runtime: Int?
     ): Flow<MovieSearchResult> = flow {
         val response = remoteMovieDataSource.discoverMovies(
             pageNum,
@@ -134,6 +135,7 @@ class MovieRepository(
             watchRegion,
             withGenres,
             withWatchProviders,
+            runtime
         )
         val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
         emit(MovieSearchResult(movies, response.totalPages))

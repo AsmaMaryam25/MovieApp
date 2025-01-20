@@ -38,6 +38,7 @@ class RemoteMovieDataSource(private val retrofit: Retrofit) {
         watchRegion: String?,
         withGenres: String?,
         withWatchProviders: String?,
+        runtime: Int?,
     ): QueryDao {
         val queryParams = mutableMapOf<String, String>().apply {
             put("page", pageNum.toString())
