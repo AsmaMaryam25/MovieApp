@@ -173,7 +173,7 @@ private fun MainContent(
     val simpleContent = @Composable {
         SimpleContent(
             genres = genres,
-            title = localMovie.originalTitle,
+            title = localMovie.title,
             overview = localMovie.overview,
             posterPath = localMovie.posterPath,
             ageRating = ageRating,

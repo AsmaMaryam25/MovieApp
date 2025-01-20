@@ -224,7 +224,7 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
 suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) =
     LocalMovie(
         id = id ?: 0,
-        title = originalTitle.orEmpty(),
+        title = title.orEmpty(),
         overview = overview.orEmpty(),
         posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
         backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
