@@ -6,8 +6,6 @@ import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
-import com.example.blackbeard.utils.SnackbarController
-import com.example.blackbeard.utils.SnackbarEvent
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -123,20 +121,6 @@ class HomeViewModel : ViewModel() {
             popularCollectionMovies = popularCollectionMovies,
             topRatedCollectionMovies = topRatedCollectionMovies
         )
-        if (failedCollections.isNotEmpty()) {
-            if (failedCollections.size != 4) {
-                SnackbarController.sendEvent(
-                    SnackbarEvent(
-                        "There were certain movie that could not be loaded"
-                    )
-                )
-            }
-            SnackbarController.sendEvent(
-                SnackbarEvent(
-                    "No movies could be loaded"
-                )
-            )
-        }
     }
 
     sealed class HomeUIModel {

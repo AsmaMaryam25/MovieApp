@@ -79,7 +79,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
             HomeUIModel.Loading -> LoadingScreen(modifier.padding(it))
             HomeUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
             is HomeUIModel.Data -> HomeContent(
-                modifier.padding(it),
+                modifier,
                 homeUIModel,
                 onNavigateToDetailsScreen,
                 nowPlayingState,
