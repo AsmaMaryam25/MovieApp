@@ -31,6 +31,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -76,6 +77,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.example.blackbeard.screens.APIErrorScreen
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -94,33 +96,33 @@ fun SearchScreen(
     val isBoxClicked = remember { mutableStateOf(false) }
 
 
-    when (searchUIModel) {
-        SearchUIModel.Empty -> SearchContent(
-            modifier,
-            searchQuery,
-            posterWidth,
-            onNavigateToDetailsScreen,
-            emptyList(),
-            searchViewModel,
-            gridState,
-            isBoxClicked
-        )
-
-        SearchUIModel.Loading -> LoadingScreen(modifier.padding())
-
-        SearchUIModel.NoConnection -> NoConnectionScreen(modifier.padding())
-
-        is SearchUIModel.Data -> {
-            SearchContent(
+    Scaffold {
+        when (searchUIModel) {
+            SearchUIModel.Loading -> LoadingScreen(modifier.padding(it))
+            SearchUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
+            SearchUIModel.ApiError -> APIErrorScreen(modifier.padding(it))
+            SearchUIModel.Empty -> SearchContent(
                 modifier,
                 searchQuery,
                 posterWidth,
                 onNavigateToDetailsScreen,
-                searchUIModel.collectionMovies,
+                emptyList(),
                 searchViewModel,
                 gridState,
                 isBoxClicked
             )
+            is SearchUIModel.Data -> {
+                SearchContent(
+                    modifier,
+                    searchQuery,
+                    posterWidth,
+                    onNavigateToDetailsScreen,
+                    searchUIModel.collectionMovies,
+                    searchViewModel,
+                    gridState,
+                    isBoxClicked
+                )
+            }
         }
     }
 }

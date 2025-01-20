@@ -12,6 +12,7 @@ import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
+import com.example.blackbeard.screens.details.DetailsViewModel.DetailsUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import retrofit2.HttpException
 import java.net.UnknownHostException
 
 class SearchViewModel() : ViewModel() {
@@ -75,6 +77,8 @@ class SearchViewModel() : ViewModel() {
                         mutableSearchUIState.value = SearchUIModel.NoConnection
                     }
                 }
+            } catch (e: HttpException) {
+                mutableSearchUIState.value = SearchUIModel.ApiError
             } catch (e: Exception) {
                 mutableSearchUIState.value = SearchUIModel.NoConnection
 
@@ -99,7 +103,7 @@ class SearchViewModel() : ViewModel() {
         movieRepository.getPopularMovies().collect { result ->
             when (result) {
                 is Result.Error -> {
-
+                    mutableSearchUIState.value = SearchUIModel.ApiError
                 }
 
                 is Result.Success -> {
@@ -297,6 +301,7 @@ class SearchViewModel() : ViewModel() {
         data object Empty : SearchUIModel()
         data object Loading : SearchUIModel()
         data object NoConnection : SearchUIModel()
+        data object ApiError : SearchUIModel()
         data class Data(
             val collectionMovies: List<Movie>,
             val totalPages: Int?
