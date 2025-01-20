@@ -95,8 +95,6 @@ class MovieRepository(
             remoteMovieDataSource.getMovie(externalId.toString())
                 .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
         )
-    }.catch {
-        emit(LocalMovie())
     }
 
     fun discoverMovies(
