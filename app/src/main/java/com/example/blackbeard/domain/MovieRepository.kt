@@ -44,60 +44,44 @@ class MovieRepository(
         37 to "Western"
     )
 
-    fun getNowPlayingMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
+    fun getNowPlayingMovies(): Flow<List<CollectionMovie>?> = flow {
         val response = remoteMovieDataSource.getNowPlayingMovies().results?.map {
             it.mapToMovie(
                 MovieCategory.NOW_PLAYING,
                 movieGenres
             )
         }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
+        emit(response)
     }
 
-    fun getPopularMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
+    fun getPopularMovies(): Flow<List<CollectionMovie>?> = flow {
         val response = remoteMovieDataSource.getPopularMovies().results?.map {
             it.mapToMovie(
                 MovieCategory.POPULAR,
                 movieGenres
             )
         }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
+        emit(response)
     }
 
-    fun getTopRatedMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
+    fun getTopRatedMovies(): Flow<List<CollectionMovie>?> = flow {
         val response = remoteMovieDataSource.getTopRatedMovies().results?.map {
             it.mapToMovie(
                 MovieCategory.TOP_RATED,
                 movieGenres
             )
         }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
+        emit(response)
     }
 
-    fun getUpcomingMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
+    fun getUpcomingMovies(): Flow<List<CollectionMovie>?> = flow {
         val response = remoteMovieDataSource.getUpcomingMovies().results?.map {
             it.mapToMovie(
                 MovieCategory.UPCOMING,
                 movieGenres
             )
         }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
-    }
-
-    private fun <T> handleCollectionResponse(response: List<T>?): Result<List<T>, NetworkError> {
-        return if (!response.isNullOrEmpty()) {
-            Result.Success(response)
-        } else {
-            Result.Error(NetworkError.EMPTY_RESPONSE)
-        }
+        emit(response)
     }
 
     fun searchMovies(query: String, pageNum: Int): Flow<MovieSearchResult> = flow {
@@ -150,8 +134,6 @@ class MovieRepository(
             .results
             ?.firstOrNull { it.official == true && it.type == "Trailer" && it.site == "YouTube" }?.key
         )
-    }.catch {
-        emit("")
     }
 
     fun getStreamingServices(externalId: Int): Flow<List<StreamingService>?> = flow {
@@ -160,8 +142,6 @@ class MovieRepository(
                 "DK"
             )?.mapToStreamingServices()
         )
-    }.catch {
-        emit(emptyList())
     }
 
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
@@ -178,13 +158,6 @@ class MovieRepository(
 
     fun getAgeRating(externalId: Int): Flow<AgeRating> = flow {
         emit(remoteMovieDataSource.getReleaseDates(externalId.toString()).mapToAgeRating())
-    }.catch {
-        emit(
-            AgeRating(
-                "",
-                -1
-            )
-        )
     }
 
     suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
@@ -359,8 +332,3 @@ fun ProviderDao.mapToStreamingService() = StreamingService(
     logoPath = "https://image.tmdb.org/t/p/original/$logoPath",
     providerName = providerName.orEmpty()
 )
-
-enum class NetworkError : Error {
-    UNKNOWN,
-    EMPTY_RESPONSE
-}

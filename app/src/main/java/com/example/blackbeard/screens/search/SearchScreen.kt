@@ -65,6 +65,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.R
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
+import com.example.blackbeard.screens.APIErrorScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.TitleText
@@ -109,6 +110,7 @@ fun SearchScreen(
         SearchUIModel.Loading -> LoadingScreen(modifier.padding())
 
         SearchUIModel.NoConnection -> NoConnectionScreen(modifier.padding())
+        SearchUIModel.ApiError -> APIErrorScreen(modifier.padding())
 
         is SearchUIModel.Data -> {
             SearchContent(

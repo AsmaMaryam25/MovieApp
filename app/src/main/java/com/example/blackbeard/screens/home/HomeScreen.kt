@@ -78,6 +78,7 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
             HomeUIModel.Empty -> EmptyScreen(modifier.padding(it))
             HomeUIModel.Loading -> LoadingScreen(modifier.padding(it))
             HomeUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
+            HomeUIModel.ApiError -> APIErrorScreen(modifier.padding(it))
             is HomeUIModel.Data -> HomeContent(
                 modifier,
                 homeUIModel,

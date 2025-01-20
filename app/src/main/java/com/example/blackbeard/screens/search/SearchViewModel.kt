@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.RecentSearchRepository
-import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
@@ -22,6 +21,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import retrofit2.HttpException
 import java.net.UnknownHostException
 
 class SearchViewModel() : ViewModel() {
@@ -75,6 +75,8 @@ class SearchViewModel() : ViewModel() {
                         mutableSearchUIState.value = SearchUIModel.NoConnection
                     }
                 }
+            } catch (e: HttpException) {
+                mutableSearchUIState.value = SearchUIModel.ApiError
             } catch (e: Exception) {
                 mutableSearchUIState.value = SearchUIModel.NoConnection
 
@@ -97,18 +99,11 @@ class SearchViewModel() : ViewModel() {
         mutableSearchUIState.value = SearchUIModel.Loading
 
         movieRepository.getPopularMovies().collect { result ->
-            when (result) {
-                is Result.Error -> {
-
-                }
-
-                is Result.Success -> {
-                    popularMovies = result.data
-                    mutableSearchUIState.value = SearchUIModel.Data(result.data, 1)
-                }
+            if (result != null) {
+                popularMovies = result
+                mutableSearchUIState.value = SearchUIModel.Data(result, 1)
             }
         }
-
     }
 
     fun searchMovies(query: String, pageNum: Int, isAdvanced: Boolean = false) {
@@ -297,6 +292,7 @@ class SearchViewModel() : ViewModel() {
         data object Empty : SearchUIModel()
         data object Loading : SearchUIModel()
         data object NoConnection : SearchUIModel()
+        data object ApiError : SearchUIModel()
         data class Data(
             val collectionMovies: List<Movie>,
             val totalPages: Int?
