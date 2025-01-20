@@ -327,7 +327,12 @@ fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
     imageResource = getImageId(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
 )
 
-fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
+fun CountryDao.mapToStreamingServices(): List<StreamingService> = listOf(flatrate, rent, buy)
+    .flatMap { innerList ->
+        innerList?.map { it.mapToStreamingService() } ?: emptyList()
+    }.distinctBy { it.providerName }
+
+
 
 fun ProviderDao.mapToStreamingService() = StreamingService(
     logoPath = "https://image.tmdb.org/t/p/original/$logoPath",
