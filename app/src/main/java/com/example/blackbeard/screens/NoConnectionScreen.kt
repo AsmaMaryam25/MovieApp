@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.sp
 import com.example.blackbeard.R
 
 @Composable
-fun NoConnectionScreen() {
+fun NoConnectionScreen(modifier: Modifier) {
     val image = painterResource(id = R.drawable.no_connection)
 
-    Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(16.dp)) {
+    Column(verticalArrangement = Arrangement.Center, modifier = modifier.padding(16.dp)) {
         Image(
             painter = image,
             contentDescription = stringResource(id = R.string.no_connection),

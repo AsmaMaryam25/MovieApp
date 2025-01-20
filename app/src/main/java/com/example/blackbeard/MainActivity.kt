@@ -1,7 +1,6 @@
 package com.example.blackbeard
 
-import android.content.Intent
-import android.net.Uri
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.MotionEvent
 import androidx.activity.ComponentActivity
@@ -9,10 +8,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 import androidx.compose.material.icons.automirrored.outlined.FormatListBulleted
 import androidx.compose.material.icons.filled.Favorite
@@ -21,27 +18,22 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.PlayCircle
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -65,6 +57,7 @@ class MainActivity : ComponentActivity() {
         return ev?.pointerCount == 1 && super.dispatchTouchEvent(ev)
     }
 
+    @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
@@ -87,11 +80,8 @@ class MainActivity : ComponentActivity() {
                     var canNavigateBack by remember { mutableStateOf(false) }
                     var currentScreenTitle by remember { mutableStateOf("") }
                     var isNavigationBarAction by remember { mutableStateOf(false) }
-                    var topBarShown by remember { mutableStateOf(false) }
                     var selectedItem by remember { mutableStateOf(navItemList[0].label) }
                     var videoLink by remember { mutableStateOf<String?>(null) }
-
-                    val context = LocalContext.current
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
                         if (!isNavigationBarAction) {
@@ -122,7 +112,6 @@ class MainActivity : ComponentActivity() {
                                             onClick = {
                                                 isNavigationBarAction = true
                                                 canNavigateBack = false
-                                                topBarShown = false
                                                 selectedItem = navItem.label
                                                 navItemList.clear()
                                                 navItemList.addAll(
@@ -156,8 +145,6 @@ class MainActivity : ComponentActivity() {
                                                                 "Favorites",
                                                                 Icons.Filled.Favorite
                                                             )
-                                                        topBarShown = true
-
                                                     }
 
                                                     "Search" -> {
@@ -184,7 +171,6 @@ class MainActivity : ComponentActivity() {
                                                             "Watchlist",
                                                             Icons.AutoMirrored.Filled.FormatListBulleted
                                                         )
-                                                        topBarShown = true
                                                     }
                                                 }
                                             }
@@ -193,28 +179,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         },
-                        topBar = {
-                            if (topBarShown) {
+                        /*topBar = {
                                 TopAppBar(
-                                    actions = {
-                                        if (videoLink != null) {
-                                            IconButton(onClick = {
-                                                val intent = Intent(
-                                                    Intent.ACTION_VIEW,
-                                                    Uri.parse("https://www.youtube.com/watch?v=$videoLink")
-                                                ).apply {
-                                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                }
-                                                context.startActivity(intent)
-                                            }) {
-                                                Icon(
-                                                    imageVector = Icons.Outlined.PlayCircle,
-                                                    contentDescription = "Open video trailer",
-                                                    modifier = Modifier.fillMaxSize()
-                                                )
-                                            }
-                                        }
-                                    },
                                     title = {
                                         Text(
                                             text = currentScreenTitle,
@@ -228,8 +194,6 @@ class MainActivity : ComponentActivity() {
                                         if (canNavigateBack) {
                                             IconButton(onClick = {
                                                 navController.popBackStack()
-                                                topBarShown = false
-                                                videoLink = null
                                             }) {
                                                 Icon(
                                                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -239,15 +203,12 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                 )
-                            }
-                        }
+                        }*/
                     ) {
                         MainNavHost(
                             navController = navController,
                             onRouteChanged = { route -> currentScreenTitle = route.title },
                             modifier = Modifier.padding(it),
-                            showTopBar = { topBarShown = true },
-                            setVideoLink = { link: String? -> videoLink = link }
                         )
                     }
                 }

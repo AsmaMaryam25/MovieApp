@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,10 +32,12 @@ fun SettingsScreen(
     onNavigateToAppearanceScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    LazyColumn {
+    LazyColumn(
+        modifier = modifier
+    ) {
         item {
             Card(
-                modifier = modifier.size(
+                modifier = Modifier.size(
                     width = LocalConfiguration.current.screenWidthDp.dp,
                     height = LocalConfiguration.current.screenHeightDp.dp / 8
                 ),
@@ -48,8 +51,9 @@ fun SettingsScreen(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(10.dp)
+                        .fillMaxSize()
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Visibility,
@@ -74,7 +78,7 @@ fun SettingsScreen(
         item {
             Card(
                 onClick = onNavigateToAboutScreen,
-                modifier = modifier.size(
+                modifier = Modifier.size(
                     width = LocalConfiguration.current.screenWidthDp.dp,
                     height = LocalConfiguration.current.screenHeightDp.dp / 8
                 ),
@@ -87,8 +91,9 @@ fun SettingsScreen(
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    modifier = modifier
+                    modifier = Modifier
                         .padding(10.dp)
+                        .fillMaxSize()
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Info,

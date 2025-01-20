@@ -106,9 +106,9 @@ fun SearchScreen(
             isBoxClicked
         )
 
-        SearchUIModel.Loading -> LoadingScreen()
+        SearchUIModel.Loading -> LoadingScreen(modifier.padding())
 
-        SearchUIModel.NoConnection -> NoConnectionScreen()
+        SearchUIModel.NoConnection -> NoConnectionScreen(modifier.padding())
 
         is SearchUIModel.Data -> {
             SearchContent(
@@ -148,28 +148,21 @@ private fun SearchContent(
     var titleText by remember { mutableStateOf(popularTitle) }
 
     LaunchedEffect(searchQuery.value.text) {
-        if (previousSearchQuery.value.isNotEmpty() && searchQuery.value.text.isEmpty()) {
-            isSearchQueryCleared = true
-        } else {
-            isSearchQueryCleared = false
-        }
+        isSearchQueryCleared = previousSearchQuery.value.isNotEmpty() && searchQuery.value.text.isEmpty()
         previousSearchQuery.value = searchQuery.value.text
     }
 
     LaunchedEffect(isBoxClicked.value) {
-        if (isBoxClicked.value) {
-            isAdvancedSearchPressed = true
-        } else {
-            isAdvancedSearchPressed = false
-        }
+        isAdvancedSearchPressed = isBoxClicked.value
     }
 
     LaunchedEffect(searchQuery.value.text, isAdvancedSearchPressed) {
-        titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
-            popularTitle
-        } else {
-            searchResultsTitle
-        }
+        titleText =
+            if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
+                popularTitle
+            } else {
+                searchResultsTitle
+            }
     }
 
     Column(
@@ -213,7 +206,9 @@ private fun SearchContent(
                         text = "No results found",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(10.dp).align(Alignment.Center)
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .align(Alignment.Center)
                     )
                 }
             } else {

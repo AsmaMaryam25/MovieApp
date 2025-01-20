@@ -2,7 +2,6 @@ package com.example.blackbeard.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
@@ -55,10 +54,11 @@ class HomeViewModel : ViewModel() {
 
     private suspend fun fetchNowPlayingMovies() {
         movieRepository.getNowPlayingMovies().collect { result ->
-            when(result) {
+            when (result) {
                 is Result.Error -> {
-                   failedCollections.add("now playing")
+                    failedCollections.add("now playing")
                 }
+
                 is Result.Success -> {
                     nowPlayingCollectionMovies.addAll(result.data)
                 }
@@ -68,10 +68,11 @@ class HomeViewModel : ViewModel() {
 
     private suspend fun fetchPopularMovies() {
         movieRepository.getPopularMovies().collect { result ->
-            when(result) {
+            when (result) {
                 is Result.Error -> {
                     failedCollections.add("popular")
                 }
+
                 is Result.Success -> {
                     popularCollectionMovies.addAll(result.data)
                 }
@@ -80,25 +81,27 @@ class HomeViewModel : ViewModel() {
     }
 
     private suspend fun fetchUpcomingMovies() {
-            movieRepository.getUpcomingMovies().collect { result ->
-                when(result) {
-                    is Result.Error -> {
-                        failedCollections.add("upcoming")
-                    }
-                    is Result.Success -> {
-                        upcomingCollectionMovies.addAll(result.data)
-                    }
+        movieRepository.getUpcomingMovies().collect { result ->
+            when (result) {
+                is Result.Error -> {
+                    failedCollections.add("upcoming")
+                }
+
+                is Result.Success -> {
+                    upcomingCollectionMovies.addAll(result.data)
                 }
             }
+        }
     }
 
     private fun fetchTopRatedMovies() {
         viewModelScope.launch {
             movieRepository.getTopRatedMovies().collect { result ->
-                when(result) {
+                when (result) {
                     is Result.Error -> {
                         failedCollections.add("top rated")
                     }
+
                     is Result.Success -> {
                         topRatedCollectionMovies.addAll(result.data)
                     }

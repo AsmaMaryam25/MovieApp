@@ -1,6 +1,7 @@
 package com.example.blackbeard
 
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
@@ -22,13 +23,11 @@ fun MainNavHost(
     navController: androidx.navigation.NavHostController,
     onRouteChanged: (Route) -> Unit,
     modifier: Modifier = Modifier,
-    showTopBar: () -> Unit,
-    setVideoLink: (String?) -> Unit
 ) {
     NavHost(
         navController = navController,
         startDestination = Route.HomeScreen,
-        modifier = modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
         composable<Route.HomeScreen> {
             LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
@@ -37,7 +36,7 @@ fun MainNavHost(
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = modifier.fillMaxSize()
             )
         }
 
@@ -45,7 +44,9 @@ fun MainNavHost(
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
             FavoriteScreen(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 })
@@ -55,7 +56,8 @@ fun MainNavHost(
             SearchScreen(
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
-                }
+                },
+                modifier = modifier.fillMaxSize()
             )
         }
 
@@ -70,7 +72,9 @@ fun MainNavHost(
                 onNavigateToAppearanceScreen = {
                     navController.navigate(Route.AppearanceScreen)
                 },
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .fillMaxSize()
             )
         }
 
@@ -78,7 +82,9 @@ fun MainNavHost(
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
             WatchlistScreen(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 })
@@ -86,15 +92,24 @@ fun MainNavHost(
 
         composable<Route.AboutScreen> { backStackEntry ->
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
-            AboutScreen(showTopBar = showTopBar, modifier = Modifier.fillMaxSize())
+            AboutScreen(
+                //showTopBar = showTopBar,
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .fillMaxSize(),
+                popBackStack = { navController.popBackStack() }
+            )
         }
 
         composable<Route.AppearanceScreen> { backStackEntry ->
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
 
             AppearanceScreen(
-                showTopBar = showTopBar,
-                modifier = Modifier.fillMaxSize()
+                //showTopBar = showTopBar,
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .fillMaxSize(),
+                popBackStack = { navController.popBackStack() }
             )
         }
 
@@ -102,9 +117,10 @@ fun MainNavHost(
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>()) }
             DetailsScreen(
                 movieId = backStackEntry.arguments?.getInt("movieId")!!,
-                showTopBar = showTopBar,
-                modifier = Modifier.fillMaxSize(),
-                setVideoLink = setVideoLink
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .fillMaxSize(),
+                popBackStack = { navController.popBackStack() }
             )
         }
     }
