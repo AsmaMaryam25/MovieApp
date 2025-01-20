@@ -624,7 +624,7 @@ private fun MovieRatingSection(
                 .weight(1f),
             horizontalAlignment = Alignment.End){
             Text(
-                text = String.format(Locale.US, "%.2f", averageRatingTMDB),
+                text = String.format(Locale.US, "%.2f", averageRatingTMDB)+"/10",
                 fontWeight = FontWeight.Bold,
                 color = MaterialTheme.colorScheme.onBackground
             )
