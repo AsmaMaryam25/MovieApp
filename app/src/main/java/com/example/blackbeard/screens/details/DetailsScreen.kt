@@ -29,8 +29,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.StarOutline
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -970,34 +972,35 @@ private fun RatingStars(
 ) {
     val movieRatingFloor = floor(movieRating ?: 0.0).toInt()
 
+
     val iconList = remember {
-        mutableStateListOf<Int>().apply {
+        mutableStateListOf<ImageVector>().apply {
             repeat(movieRatingFloor) {
-                add(R.drawable.chest_open)
+                add(Icons.Filled.Star)
             }
             repeat(5 - movieRatingFloor) {
-                add(R.drawable.chest_closed)
+                add(Icons.Outlined.StarOutline)
             }
         }
     }
     Row {
         for (i in 0 until 5) {
             Icon(
-                painter = painterResource(iconList[i]),
+                imageVector = (iconList[i]),
                 contentDescription = "Star Rating ${i + 1}",
                 modifier = modifier
                     .size(30.dp)
                     .clickable(onClick = {
                         for (j in 0 until 5) {
-                            if (iconList[i] == R.drawable.chest_closed) {
-                                iconList[j] = R.drawable.chest_open
+                            if (iconList[i] == Icons.Outlined.StarOutline/*R.drawable.chest_closed*/) {
+                                iconList[j] = Icons.Filled.Star
                             } else if (j > i) {
-                                iconList[j] = R.drawable.chest_closed
+                                iconList[j] = Icons.Outlined.StarOutline
                             }
                         }
                         onMovieRating((i + 1).toDouble())
                     }),
-                tint = Color.Unspecified
+                tint = if (iconList[i] == Icons.Filled.Star) Color(0xFFFFD700) else Color(0xFFFFD700)
             )
         }
     }
