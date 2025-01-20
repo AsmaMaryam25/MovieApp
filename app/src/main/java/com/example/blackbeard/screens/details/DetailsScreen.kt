@@ -1,7 +1,9 @@
 package com.example.blackbeard.screens.details
 
+import android.content.Intent
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -27,14 +29,20 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material.icons.outlined.PlayCircle
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,6 +60,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -93,50 +102,100 @@ import java.util.Locale
 import kotlin.math.floor
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailsScreen(
     modifier: Modifier = Modifier,
     movieId: Int,
-    showTopBar: () -> Unit,
-    setVideoLink: (String?) -> Unit
+    popBackStack: () -> Unit
 ) {
-
-    LaunchedEffect(Unit) {
-        showTopBar()
-    }
 
     val detailsViewModel = viewModel<DetailsViewModel>(factory = DetailsViewModelFactory(movieId))
     val detailsUIModel = detailsViewModel.detailsUIState.collectAsState().value
+    val context = LocalContext.current
+    var videoLink by remember { mutableStateOf<String?>(null) }
+    var title: String? by remember { mutableStateOf(null) }
 
-    when (detailsUIModel) {
-        DetailsViewModel.DetailsUIModel.Empty -> EmptyScreen()
-        DetailsViewModel.DetailsUIModel.Loading -> LoadingScreen()
-        DetailsViewModel.DetailsUIModel.NoConnection -> NoConnectionScreen()
-        is DetailsViewModel.DetailsUIModel.Data -> MainContent(
-            localMovie = detailsUIModel.localMovie,
-            credits = detailsUIModel.credits,
-            setVideoLink = setVideoLink,
-            videoLink = detailsUIModel.videoLink,
-            isFavorite = detailsUIModel.isFavorite,
-            isWatchList = detailsUIModel.isWatchlist,
-            averageRating = detailsUIModel.averageRating,
-            genres = detailsUIModel.localMovie.genres,
-            ageRating = detailsUIModel.ageRating,
-            streamingServices = detailsUIModel.streamingServices,
-            onMovieRating = { rating ->
-                detailsViewModel.addRating(
-                    movieId.toString(),
-                    rating,
-                    detailsUIModel.installationID
-                )
-            },
-            movieRating = detailsUIModel.movieRating,
-            onWatchlistToggle = { detailsViewModel.toggleWatchlist(detailsUIModel.localMovie) },
-            onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie) },
-            voterCountLiveData = detailsViewModel.getVoterCount(
-                movieId.toString(),
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = title ?: "",
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.Bold
+                        ),
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center
+                    )
+                },
+                actions = {
+                    if (videoLink != null) {
+                        IconButton(onClick = {
+                            val intent = Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://www.youtube.com/watch?v=$videoLink")
+                            ).apply {
+                                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            }
+                            context.startActivity(intent)
+                        }) {
+                            Icon(
+                                imageVector = Icons.Outlined.PlayCircle,
+                                contentDescription = "Open video trailer",
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        }
+                    }
+                },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        popBackStack()
+                    }) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Arrow back"
+                        )
+                    }
+                }
+
             )
-        )
+        },
+        modifier = modifier
+    ) {
+
+        when (detailsUIModel) {
+            DetailsViewModel.DetailsUIModel.Empty -> EmptyScreen(modifier.padding(it))
+            DetailsViewModel.DetailsUIModel.Loading -> LoadingScreen(modifier.padding(it))
+            DetailsViewModel.DetailsUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
+            is DetailsViewModel.DetailsUIModel.Data -> MainContent(
+                localMovie = detailsUIModel.localMovie,
+                credits = detailsUIModel.credits,
+                videoLink = detailsUIModel.videoLink,
+                isFavorite = detailsUIModel.isFavorite,
+                isWatchList = detailsUIModel.isWatchlist,
+                averageRating = detailsUIModel.averageRating,
+                genres = detailsUIModel.localMovie.genres,
+                ageRating = detailsUIModel.ageRating,
+                streamingServices = detailsUIModel.streamingServices,
+                onMovieRating = { rating ->
+                    detailsViewModel.addRating(
+                        movieId.toString(),
+                        rating,
+                        detailsUIModel.installationID
+                    )
+                },
+                movieRating = detailsUIModel.movieRating,
+                onWatchlistToggle = { detailsViewModel.toggleWatchlist(detailsUIModel.localMovie) },
+                onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie) },
+                voterCountLiveData = detailsViewModel.getVoterCount(
+                    movieId.toString(),
+                ),
+                modifier = modifier.padding(it),
+                setVideoLink = { videoLink = it },
+                setTitle = { title = it }
+            )
+        }
     }
 
 }
@@ -146,7 +205,6 @@ fun DetailsScreen(
 private fun MainContent(
     localMovie: LocalMovie,
     credits: Credits,
-    setVideoLink: (String?) -> Unit,
     videoLink: String?,
     isFavorite: Boolean,
     isWatchList: Boolean,
@@ -158,7 +216,10 @@ private fun MainContent(
     onMovieRating: (Double) -> Unit,
     onWatchlistToggle: () -> Unit,
     onFavoriteToggle: () -> Unit,
-    voterCountLiveData: LiveData<Int>
+    voterCountLiveData: LiveData<Int>,
+    modifier: Modifier = Modifier,
+    setVideoLink: (String?) -> Unit,
+    setTitle: (String?) -> Unit
 ) {
     val voterCount by voterCountLiveData.observeAsState(0)
     var shouldBeSticky by remember { mutableStateOf(true) }
@@ -176,12 +237,12 @@ private fun MainContent(
     }
 
     LaunchedEffect(Unit) {
+        setTitle(localMovie.title)
         setVideoLink(videoLink)
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
     ) {
         BackgroundPoster(localMovie.posterPath)
         LazyColumn(
@@ -396,7 +457,10 @@ private fun SecondaryContent(
     ) {
         sections.forEachIndexed { index, section ->
             if (index > 0) {
-                HorizontalDivider(Modifier.padding(vertical = 10.dp), color = MaterialTheme.colorScheme.onBackground)
+                HorizontalDivider(
+                    Modifier.padding(vertical = 10.dp),
+                    color = MaterialTheme.colorScheme.onBackground
+                )
             }
             section()
         }
@@ -420,8 +484,10 @@ private fun SaveAndBookmarkSection(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .background(color = MaterialTheme.colorScheme.secondaryContainer
-                    , shape = RoundedCornerShape(8.dp))
+                .background(
+                    color = MaterialTheme.colorScheme.secondaryContainer,
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .clickable {
                     isWatchListed = !isWatchListed
                     onBookmarkToggle.invoke()
@@ -434,8 +500,10 @@ private fun SaveAndBookmarkSection(
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
 
                     Icon(
                         imageVector = if (isWatchListed) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
@@ -460,7 +528,10 @@ private fun SaveAndBookmarkSection(
         Box(
             modifier = Modifier
                 .weight(1f)
-                .background(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(8.dp))
+                .background(
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    shape = RoundedCornerShape(8.dp)
+                )
                 .clickable {
                     isFavorited = !isFavorited
                     onFavoriteToggle.invoke()
@@ -473,8 +544,10 @@ private fun SaveAndBookmarkSection(
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
                     Icon(
                         imageVector = if (isFavorited) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = "Favorite",

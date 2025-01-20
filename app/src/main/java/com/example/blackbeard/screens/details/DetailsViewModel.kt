@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.di.DataModule
-import com.example.blackbeard.domain.NetworkError
-import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.AgeRating
 import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie

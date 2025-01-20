@@ -9,10 +9,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun LoadingScreen() {
+fun LoadingScreen(modifier: Modifier) {
     Box(
         contentAlignment = Alignment.Center,
-        modifier = Modifier.size(50.dp)
+        modifier = modifier.size(50.dp)
     ) {
         CircularProgressIndicator(modifier = Modifier.size(50.dp))
     }

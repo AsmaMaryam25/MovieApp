@@ -99,10 +99,11 @@ class SearchViewModel() : ViewModel() {
         mutableSearchUIState.value = SearchUIModel.Loading
 
         movieRepository.getPopularMovies().collect { result ->
-            when(result) {
+            when (result) {
                 is Result.Error -> {
 
                 }
+
                 is Result.Success -> {
                     popularMovies = result.data
                     mutableSearchUIState.value = SearchUIModel.Data(result.data, 1)
