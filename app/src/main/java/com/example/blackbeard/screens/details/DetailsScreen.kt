@@ -50,6 +50,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -91,6 +92,8 @@ import com.example.blackbeard.utils.TimeUtils
 import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.floor
+import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.graphics.vector.ImageVector
 
 
 @Composable
@@ -135,7 +138,9 @@ fun DetailsScreen(
             onFavoriteToggle = { detailsViewModel.toggleFavorite(detailsUIModel.localMovie) },
             voterCountLiveData = detailsViewModel.getVoterCount(
                 movieId.toString(),
-            )
+            ),
+            //averrageVote = detailsUIModel.localMovie.voteAverage,
+            //voteCount = detailsUIModel.localMovie.voteCount
         )
     }
 
@@ -363,7 +368,9 @@ private fun SecondaryContent(
                 userRatings = voterCount,
                 movieRating = movieRating,
                 averageRating = averageRating,
-                onMovieRating = onMovieRating
+                onMovieRating = onMovieRating,
+                averageRatingTMDB = localMovie.voteAverage,
+                voteCount = localMovie.voteCount
             )
         },
         { CastSection(credits.cast) },
@@ -420,12 +427,14 @@ private fun SaveAndBookmarkSection(
         Box(
             modifier = Modifier
                 .weight(1f)
+
                 .background(color = MaterialTheme.colorScheme.secondaryContainer
                     , shape = RoundedCornerShape(8.dp))
                 .clickable {
                     isWatchListed = !isWatchListed
                     onBookmarkToggle.invoke()
                 }
+
                 .padding(vertical = 4.dp, horizontal = 8.dp),
             contentAlignment = Alignment.Center
         )
@@ -460,11 +469,13 @@ private fun SaveAndBookmarkSection(
         Box(
             modifier = Modifier
                 .weight(1f)
+
                 .background(color = MaterialTheme.colorScheme.tertiaryContainer, shape = RoundedCornerShape(8.dp))
                 .clickable {
                     isFavorited = !isFavorited
                     onFavoriteToggle.invoke()
                 }
+
                 .padding(vertical = 4.dp, horizontal = 8.dp),
             contentAlignment = Alignment.Center
 
@@ -531,7 +542,9 @@ private fun MovieRatingSection(
     userRatings: Int,
     movieRating: Double?,
     averageRating: Double,
-    onMovieRating: (Double) -> Unit
+    onMovieRating: (Double) -> Unit,
+    averageRatingTMDB: Double,
+    voteCount: Int
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -583,6 +596,36 @@ private fun MovieRatingSection(
                 }
             }
         }
+    }
+    Row (
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ){
+        Column(Modifier
+            .fillMaxWidth()
+            .weight(1f)) {
+            Image(
+                modifier = Modifier.width(100.dp),
+                painter = painterResource(R.drawable.tmdb_icon),
+                contentDescription = "TMDB icon"
+            )
+        }
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalAlignment = Alignment.End){
+            Text(
+                text = String.format(Locale.US, "%.2f", averageRatingTMDB)+"/10",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+        }
+        /*
+        Text(
+            text = stringResource(id = R.string.release_date) + " ($voteCount)",
+        )*/
     }
 }
 
