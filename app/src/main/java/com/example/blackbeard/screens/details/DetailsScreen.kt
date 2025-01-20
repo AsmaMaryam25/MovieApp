@@ -1000,7 +1000,7 @@ private fun RatingStars(
                         }
                         onMovieRating((i + 1).toDouble())
                     }),
-                tint = if (iconList[i] == Icons.Filled.Star) Color(0xFFFFD700) else Color(0xFFFFD700)
+                tint = MaterialTheme.colorScheme.primary
             )
         }
     }
