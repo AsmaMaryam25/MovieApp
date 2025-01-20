@@ -39,9 +39,7 @@ class WatchlistViewModel : ViewModel() {
                 getWatchlist(isInitiallyConnected)
 
 
-            } catch (e: TimeoutCancellationException) {
-                getWatchlist(isInitiallyConnected = false)
-            } catch (e: UnknownHostException) {
+            } catch (e: Exception) {
                 getWatchlist(isInitiallyConnected = false)
             }
         }
