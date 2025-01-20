@@ -115,8 +115,6 @@ class MovieRepository(
             remoteMovieDataSource.getMovie(externalId.toString())
                 .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
         )
-    }.catch {
-        emit(LocalMovie())
     }
 
     fun discoverMovies(
@@ -249,7 +247,7 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
 suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) =
     LocalMovie(
         id = id ?: 0,
-        title = originalTitle.orEmpty(),
+        title = title.orEmpty(),
         overview = overview.orEmpty(),
         posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
         backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
@@ -273,7 +271,9 @@ suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieR
         status = status.orEmpty(),
         video = video == true,
         category = category,
-        avgRating = movieRepository.getAverageRating(id.toString())
+        avgRating = movieRepository.getAverageRating(id.toString()),
+        voteAverage = voteAverage ?: 0.0,
+        voteCount = voteCount ?: 0
     )
 
 fun SearchMovieDao.mapToMovie() = SearchMovie(
@@ -348,7 +348,12 @@ fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
     imageResource = getImageId(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
 )
 
-fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
+fun CountryDao.mapToStreamingServices(): List<StreamingService> = listOf(flatrate, rent, buy)
+    .flatMap { innerList ->
+        innerList?.map { it.mapToStreamingService() } ?: emptyList()
+    }.distinctBy { it.providerName }
+
+
 
 fun ProviderDao.mapToStreamingService() = StreamingService(
     logoPath = "https://image.tmdb.org/t/p/original/$logoPath",

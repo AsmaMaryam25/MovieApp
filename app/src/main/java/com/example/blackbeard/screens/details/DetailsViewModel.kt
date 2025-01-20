@@ -11,7 +11,6 @@ import com.example.blackbeard.models.Credits
 import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.models.StreamingService
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +19,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
-import java.net.UnknownHostException
+import retrofit2.HttpException
 
 class DetailsViewModel(private val movieId: Int) : ViewModel() {
 
@@ -43,10 +42,11 @@ class DetailsViewModel(private val movieId: Int) : ViewModel() {
                 } else {
                     mutableDetailsUIState.value = DetailsUIModel.NoConnection
                 }
-            } catch (e: TimeoutCancellationException) {
-                mutableDetailsUIState.value = DetailsUIModel.NoConnection
 
-            } catch (e: UnknownHostException) {
+            } catch (e: HttpException) {
+                mutableDetailsUIState.value = DetailsUIModel.ApiError
+
+            } catch (e: Exception) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
             }
         }
@@ -142,6 +142,7 @@ class DetailsViewModel(private val movieId: Int) : ViewModel() {
         data object Empty : DetailsUIModel()
         data object Loading : DetailsUIModel()
         data object NoConnection : DetailsUIModel()
+        data object ApiError: DetailsUIModel()
         data class Data(
             val localMovie: LocalMovie,
             val credits: Credits,

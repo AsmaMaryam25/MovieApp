@@ -93,6 +93,7 @@ import com.example.blackbeard.models.isReleaseDateInvalid
 import com.example.blackbeard.models.isRevenueInvalid
 import com.example.blackbeard.models.isRuntimeInvalid
 import com.example.blackbeard.models.isSpokenLanguagesInvalid
+import com.example.blackbeard.screens.APIErrorScreen
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
@@ -168,6 +169,7 @@ fun DetailsScreen(
             DetailsViewModel.DetailsUIModel.Empty -> EmptyScreen(modifier.padding(it))
             DetailsViewModel.DetailsUIModel.Loading -> LoadingScreen(modifier.padding(it))
             DetailsViewModel.DetailsUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
+            DetailsViewModel.DetailsUIModel.ApiError -> APIErrorScreen(modifier.padding(it))
             is DetailsViewModel.DetailsUIModel.Data -> MainContent(
                 localMovie = detailsUIModel.localMovie,
                 credits = detailsUIModel.credits,
