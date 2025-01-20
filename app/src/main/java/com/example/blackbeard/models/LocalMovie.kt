@@ -23,7 +23,9 @@ data class LocalMovie(
     val spokenLanguages: List<SpokenLanguage> = emptyList(),
     val status: String = "",
     val avgRating: Double = 0.0,
-    val category: MovieCategory = MovieCategory.NOW_PLAYING
+    val category: MovieCategory = MovieCategory.NOW_PLAYING,
+    val voteAverage: Double = 0.0,
+    val voteCount: Int = 0
 ) : Movie
 
 fun isReleaseDateInvalid(releaseDate: LocalDate) = releaseDate == LocalDate.MIN

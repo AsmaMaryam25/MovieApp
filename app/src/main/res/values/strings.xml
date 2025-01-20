@@ -16,7 +16,7 @@
     <string name="no_crew_available">No crew members available</string>
 
     <!-- Rating section -->
-    <string name="rating">Rating</string>
+    <string name="rating">Ratings</string>
     <string name="give_opinion">Give your opinion on the movie by rating it</string>
 
     <!-- Users section -->
@@ -43,6 +43,7 @@
     <string name="add_to_favorite">Add to favorite</string>
     <string name="remove_from_watchlist">Remove from watchlist</string>
     <string name="add_to_watchlist">Add to watchlist</string>
+    <string name="tmdb_rating">TMDB</string>
 
     <!-- Miscellaneous -->
     <string name="title_not_available">Title not available</string>

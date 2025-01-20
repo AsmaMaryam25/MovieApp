@@ -250,7 +250,9 @@ suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieR
         status = status.orEmpty(),
         video = video == true,
         category = category,
-        avgRating = movieRepository.getAverageRating(id.toString())
+        avgRating = movieRepository.getAverageRating(id.toString()),
+        voteAverage = voteAverage ?: 0.0,
+        voteCount = voteCount ?: 0
     )
 
 fun SearchMovieDao.mapToMovie() = SearchMovie(
