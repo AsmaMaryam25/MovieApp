@@ -26,6 +26,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.NorthWest
+import androidx.compose.material.icons.filled.West
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
@@ -102,6 +103,7 @@ fun SearchScreen(
             SearchUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
             SearchUIModel.ApiError -> APIErrorScreen(modifier.padding(it))
             SearchUIModel.Empty -> SearchContent(
+                searchUIModel,
                 modifier,
                 searchQuery,
                 posterWidth,
@@ -113,6 +115,7 @@ fun SearchScreen(
             )
             is SearchUIModel.Data -> {
                 SearchContent(
+                    searchUIModel,
                     modifier,
                     searchQuery,
                     posterWidth,
@@ -130,6 +133,7 @@ fun SearchScreen(
 @OptIn(ExperimentalLayoutApi::class, ExperimentalPagerApi::class)
 @Composable
 private fun SearchContent(
+    searchUIModel : SearchUIModel,
     modifier: Modifier,
     searchQuery: MutableState<TextFieldValue>,
     posterWidth: Dp,
@@ -158,13 +162,23 @@ private fun SearchContent(
         isAdvancedSearchPressed = isBoxClicked.value
     }
 
-    LaunchedEffect(searchQuery.value.text, isAdvancedSearchPressed) {
-        titleText =
-            if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
-                popularTitle
-            } else {
-                searchResultsTitle
+    LaunchedEffect(searchViewModel.lastActiveTab.value) {
+        if (pagerState.currentPage != searchViewModel.lastActiveTab.value) {
+            pagerState.scrollToPage(searchViewModel.lastActiveTab.value)
+        }
+    }
+
+    LaunchedEffect(searchUIModel) {
+        titleText = when (searchUIModel) {
+            is SearchUIModel.Data -> {
+                if (searchUIModel.collectionMovies == searchViewModel.popularMovies) {
+                    popularTitle
+                } else {
+                    searchResultsTitle
+                }
             }
+            else -> popularTitle
+        }
     }
 
     Column(
@@ -200,6 +214,42 @@ private fun SearchContent(
         )
 
         if (!isSearchBarFocused) {
+            if (titleText == searchResultsTitle) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.West,
+                        contentDescription = "Back",
+                        modifier = Modifier
+                            .padding(end = 8.dp)
+                            .clickable {
+                                isSearchBarFocused = true
+                                coroutineScope.launch {
+                                    pagerState.animateScrollToPage(searchViewModel.lastActiveTab.value) // Respect lastActiveTab
+                                }
+                            }
+                    )
+                    TitleText(text = titleText)
+                }
+            } else {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    TitleText(text = titleText)
+                }
+            }
+        }
+
+        if (!isSearchBarFocused) {
             if (collectionMovies.isEmpty()) {
                 Box(
                     modifier = Modifier.fillMaxSize()
@@ -220,14 +270,6 @@ private fun SearchContent(
                     modifier = Modifier.fillMaxSize(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            TitleText(text = titleText)
-                        }
-                    }
                     items(collectionMovies.size) { index ->
                         CreateSearchPoster(
                             searchViewModel,
@@ -304,13 +346,15 @@ private fun SearchTabs(
         modifier = Modifier.fillMaxSize()
     ) {
         TabContent(tabs, pagerState, coroutineScope, onTabSelected = { index ->
+            searchViewModel.lastActiveTab.value = index
             if (index == 1) {
                 keyboardController?.hide()
             } else {
                 keyboardController?.show()
                 searchViewModel.searchType.value = false
             }
-        })
+        },
+            searchViewModel)
 
         HorizontalPager(
             count = tabs.size,
@@ -351,6 +395,7 @@ private fun SearchTabs(
                                             .clickable {
                                                 onRecentSearchClick(search)
                                                 searchViewModel.searchMovies(search, 1)
+                                                searchViewModel.lastActiveTab.value = 0
                                             },
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -377,6 +422,7 @@ private fun SearchTabs(
                                                             search,
                                                             TextRange(search.length)
                                                         )
+                                                    searchViewModel.lastActiveTab.value = 0
                                                 }
                                         )
                                     }
@@ -409,6 +455,7 @@ fun TabContent(
     pagerState: PagerState,
     coroutineScope: CoroutineScope,
     onTabSelected: (Int) -> Unit,
+    searchViewModel: SearchViewModel
 ) {
 
     TabRow(
@@ -452,6 +499,7 @@ fun TabContent(
                         pagerState.animateScrollToPage(index)
 
                     }
+                    searchViewModel.lastActiveTab.value = index
                     onTabSelected(index)
                 }
             )
@@ -628,6 +676,7 @@ fun AdvancedSearch(
                         searchQuery.value.text,
                         1,
                     )
+                    searchViewModel.lastActiveTab.value = 1
                 }
                 .padding(16.dp),
             contentAlignment = Alignment.Center

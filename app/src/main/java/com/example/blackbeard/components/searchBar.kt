@@ -115,12 +115,18 @@ fun SearchBar(
         if (isSearchBarFocused) {
             TextButton(
                 onClick = {
-                    keyboardController?.hide()
                     searchQuery.value = TextFieldValue("")
                     onSearchBarFocusChange(false)
+                    searchViewModel.apply {
+                        searchType.value = false
+                        selectedCategories.clear()
+                        lastActiveTab.value = 0
+                        isViewingSearchResults.value = false
+                        resetToPopularMovies() // Reset to popular movies
+
+                    }
+                    keyboardController?.hide()
                     focusManager.clearFocus()
-                    searchViewModel.searchType.value = false
-                    searchViewModel.selectedCategories.clear()
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {

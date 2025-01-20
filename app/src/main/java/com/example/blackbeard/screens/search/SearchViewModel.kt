@@ -44,6 +44,9 @@ class SearchViewModel() : ViewModel() {
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches: StateFlow<List<String>> = _recentSearches
 
+    var isViewingSearchResults = mutableStateOf(false)
+    var lastActiveTab = mutableStateOf(0)
+
     private val recentSearchRepository: RecentSearchRepository = DataModule.recentSearchRepository
 
     init {
@@ -121,10 +124,14 @@ class SearchViewModel() : ViewModel() {
                 mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
                 currentPage.intValue = 1
                 totalPages.value = 0
+                isViewingSearchResults.value = false
+                lastActiveTab.value = 0
                 return@launch
             }
 
             addRecentSearch(query)
+            isViewingSearchResults.value = true
+            lastActiveTab.value = if (isAdvanced) 1 else 0
 
             val currentMovies =
                 (mutableSearchUIState.value as? SearchUIModel.Data)?.collectionMovies ?: emptyList()
@@ -150,6 +157,8 @@ class SearchViewModel() : ViewModel() {
                     mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
                     currentPage.intValue = 1
                     totalPages.value = 0
+                    isViewingSearchResults.value = false
+                    lastActiveTab.value = 0
                     return@launch
                 }
 
@@ -161,6 +170,8 @@ class SearchViewModel() : ViewModel() {
                 var withGenres: String? = null
                 var withWatchProviders: String? = null
 
+                isViewingSearchResults.value = true
+                lastActiveTab.value = 1
                 if (selectedCategories["Decade"] != null && selectedCategories["Decade"]?.values?.isNotEmpty() == true) {
                     val decade = selectedCategories["Decade"]?.values?.first()
                     releaseDateGte = "$decade-01-01"
@@ -294,6 +305,15 @@ class SearchViewModel() : ViewModel() {
     fun clearRecentSearches() {
         viewModelScope.launch {
             recentSearchRepository.clearRecentSearches()
+            isViewingSearchResults.value = false
+            lastActiveTab.value = 0
+        }
+    }
+
+    fun resetToPopularMovies() {
+        viewModelScope.launch {
+            mutableSearchUIState.value = SearchUIModel.Loading
+            loadPopularMovies()
         }
     }
 
