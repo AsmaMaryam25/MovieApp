@@ -39,9 +39,7 @@ class FavoriteViewModel : ViewModel() {
                 getFavorites(isInitiallyConnected)
 
 
-            } catch (e: TimeoutCancellationException) {
-                getFavorites(isInitiallyConnected = false)
-            } catch (e: UnknownHostException) {
+            } catch (e: Exception) {
                 getFavorites(isInitiallyConnected = false)
             }
         }

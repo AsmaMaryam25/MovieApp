@@ -42,8 +42,10 @@ class DetailsViewModel(private val movieId: Int) : ViewModel() {
                 } else {
                     mutableDetailsUIState.value = DetailsUIModel.NoConnection
                 }
+
             } catch (e: HttpException) {
                 mutableDetailsUIState.value = DetailsUIModel.ApiError
+
             } catch (e: Exception) {
                 mutableDetailsUIState.value = DetailsUIModel.NoConnection
             }
