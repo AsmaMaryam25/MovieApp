@@ -76,7 +76,7 @@ class HomeViewModel : ViewModel() {
     }
 
     private suspend fun fetchTopRatedMovies() {
-        movieRepository.getUpcomingMovies().collect { result ->
+        movieRepository.getTopRatedMovies().collect { result ->
             if (result != null) {
                 topRatedCollectionMovies.addAll(result)
             }

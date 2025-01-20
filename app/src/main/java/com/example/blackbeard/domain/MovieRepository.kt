@@ -137,9 +137,11 @@ class MovieRepository(
     }
 
     fun getStreamingServices(externalId: Int): Flow<List<StreamingService>?> = flow {
+        val result = remoteMovieDataSource.getStreamingServices(externalId.toString()).results
         emit(
-            remoteMovieDataSource.getStreamingServices(externalId.toString()).results?.getValue(
-                "DK"
+            result?.getOrDefault(
+                "DK",
+                defaultValue = CountryDao()
             )?.mapToStreamingServices()
         )
     }
