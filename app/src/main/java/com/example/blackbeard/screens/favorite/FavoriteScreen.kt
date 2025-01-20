@@ -15,10 +15,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -214,10 +216,10 @@ fun CreateFavCard(
                 modifier = Modifier.weight(0.5f)
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.chest_closed),
+                    imageVector = Icons.Filled.Star,
                     contentDescription = "Rating",
                     modifier = modifier.size(24.dp),
-                    tint = Color.Unspecified
+                    tint = MaterialTheme.colorScheme.primary
                 )
                 Text(
                     text = String.format(Locale.getDefault(), "%.2f", favoriteMovie.rating),
