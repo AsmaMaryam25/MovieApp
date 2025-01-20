@@ -45,35 +45,55 @@ class MovieRepository(
     )
 
     fun getNowPlayingMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getNowPlayingMovies().results?.map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres) }
+        val response = remoteMovieDataSource.getNowPlayingMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.NOW_PLAYING,
+                movieGenres
+            )
+        }
         emit(handleCollectionResponse(response))
     }.catch {
         emit(Result.Error(NetworkError.UNKNOWN))
     }
 
     fun getPopularMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getPopularMovies().results?.map { it.mapToMovie(MovieCategory.POPULAR, movieGenres) }
+        val response = remoteMovieDataSource.getPopularMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.POPULAR,
+                movieGenres
+            )
+        }
         emit(handleCollectionResponse(response))
     }.catch {
         emit(Result.Error(NetworkError.UNKNOWN))
     }
 
     fun getTopRatedMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getTopRatedMovies().results?.map { it.mapToMovie(MovieCategory.TOP_RATED, movieGenres) }
+        val response = remoteMovieDataSource.getTopRatedMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.TOP_RATED,
+                movieGenres
+            )
+        }
         emit(handleCollectionResponse(response))
     }.catch {
         emit(Result.Error(NetworkError.UNKNOWN))
     }
 
     fun getUpcomingMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getUpcomingMovies().results?.map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) }
+        val response = remoteMovieDataSource.getUpcomingMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.UPCOMING,
+                movieGenres
+            )
+        }
         emit(handleCollectionResponse(response))
     }.catch {
         emit(Result.Error(NetworkError.UNKNOWN))
     }
 
-    private fun <T> handleCollectionResponse(response:  List<T>?): Result<List<T>, NetworkError> {
-        return if(!response.isNullOrEmpty()) {
+    private fun <T> handleCollectionResponse(response: List<T>?): Result<List<T>, NetworkError> {
+        return if (!response.isNullOrEmpty()) {
             Result.Success(response)
         } else {
             Result.Error(NetworkError.EMPTY_RESPONSE)
@@ -128,7 +148,8 @@ class MovieRepository(
     fun getVideoLink(externalId: Int): Flow<String?> = flow {
         emit(remoteMovieDataSource.getVideos(externalId.toString())
             .results
-            ?.firstOrNull { it.official == true && it.type == "Trailer" && it.site == "YouTube" }?.key)
+            ?.firstOrNull { it.official == true && it.type == "Trailer" && it.site == "YouTube" }?.key
+        )
     }.catch {
         emit("")
     }
@@ -158,9 +179,11 @@ class MovieRepository(
     fun getAgeRating(externalId: Int): Flow<AgeRating> = flow {
         emit(remoteMovieDataSource.getReleaseDates(externalId.toString()).mapToAgeRating())
     }.catch {
-        emit(AgeRating(
-            "",
-            -1)
+        emit(
+            AgeRating(
+                "",
+                -1
+            )
         )
     }
 
@@ -224,7 +247,7 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
 suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) =
     LocalMovie(
         id = id ?: 0,
-        title = originalTitle.orEmpty(),
+        title = title.orEmpty(),
         overview = overview.orEmpty(),
         posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
         backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
@@ -325,7 +348,12 @@ fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
     imageResource = getImageId(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
 )
 
-fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
+fun CountryDao.mapToStreamingServices(): List<StreamingService> = listOf(flatrate, rent, buy)
+    .flatMap { innerList ->
+        innerList?.map { it.mapToStreamingService() } ?: emptyList()
+    }.distinctBy { it.providerName }
+
+
 
 fun ProviderDao.mapToStreamingService() = StreamingService(
     logoPath = "https://image.tmdb.org/t/p/original/$logoPath",

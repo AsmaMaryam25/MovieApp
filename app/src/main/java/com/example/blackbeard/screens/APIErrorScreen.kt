@@ -19,10 +19,10 @@ import androidx.compose.ui.unit.sp
 import com.example.blackbeard.R
 
 @Composable
-fun APIErrorScreen() {
+fun APIErrorScreen(modifier: Modifier) {
     val image = painterResource(id = R.drawable.api_error)
 
-    Column(verticalArrangement = Arrangement.Center, modifier = Modifier.padding(16.dp)) {
+    Column(verticalArrangement = Arrangement.Center, modifier = modifier.padding(16.dp)) {
         Image(
             painter = image,
             contentDescription = stringResource(id = R.string.api_error),
