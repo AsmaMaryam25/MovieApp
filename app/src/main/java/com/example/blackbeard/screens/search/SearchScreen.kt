@@ -127,6 +127,7 @@ fun SearchScreen(
                 )
             }
         }
+
     }
 }
 
@@ -297,7 +298,7 @@ private fun SearchContent(
                                         )
                                     }
                                 },
-                                modifier = modifier
+                                modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 10.dp),
                             ) {
