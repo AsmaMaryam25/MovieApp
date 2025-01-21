@@ -239,7 +239,7 @@ private fun SearchContent(
                                 .clickable {
                                     isSearchBarFocused = true
                                     coroutineScope.launch {
-                                        pagerState.animateScrollToPage(searchViewModel.lastActiveTab.value) // Respect lastActiveTab
+                                        pagerState.animateScrollToPage(searchViewModel.lastActiveTab.value)
                                     }
                                 }.weight(0.1f)
                         )
@@ -372,10 +372,8 @@ private fun SearchTabs(
             onTabSelected = { index ->
                 searchViewModel.lastActiveTab.value = index
                 if (index == 1) {
-                    // Hide the keyboard when switching to Advanced Search
                     keyboardController?.hide()
                 } else {
-                    // Hide the keyboard when switching to Recent Search
                     keyboardController?.hide()
                     searchViewModel.searchType.value = false
                 }
@@ -709,7 +707,7 @@ private fun AdvancedSearch(
                         1,
                     )
                     searchViewModel.lastActiveTab.value = 1
-                    onHideKeyboard() // Hide keyboard when "See Results" is clicked
+                    onHideKeyboard()
                 }
                 .padding(16.dp),
             contentAlignment = Alignment.Center
