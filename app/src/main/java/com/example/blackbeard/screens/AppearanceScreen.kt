@@ -17,9 +17,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,6 +44,8 @@ fun AppearanceScreen(
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
     var switchIsOn = remember { mutableStateOf(isDarkTheme) }
     val coroutineScope = rememberCoroutineScope()
+    var isClickAble by remember { mutableStateOf(true) }
+
 
     Scaffold(
         modifier = modifier,
@@ -59,7 +63,14 @@ fun AppearanceScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        popBackStack()
+                        if (isClickAble) {
+                            popBackStack()
+                            isClickAble = false
+                            coroutineScope.launch {
+                                kotlinx.coroutines.delay(1000)
+                                isClickAble = true
+                            }
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
