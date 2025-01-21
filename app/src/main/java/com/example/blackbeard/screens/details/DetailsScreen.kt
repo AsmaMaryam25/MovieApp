@@ -431,7 +431,9 @@ private fun SecondaryContent(
                 userRatings = voterCount,
                 movieRating = movieRating,
                 averageRating = averageRating,
-                onMovieRating = onMovieRating
+                onMovieRating = onMovieRating,
+                averageRatingTMDB = localMovie.voteAverage,
+                voteCount = localMovie.voteCount
             )
         },
         { CastSection(credits.cast) },
@@ -611,7 +613,9 @@ private fun MovieRatingSection(
     userRatings: Int,
     movieRating: Double?,
     averageRating: Double,
-    onMovieRating: (Double) -> Unit
+    onMovieRating: (Double) -> Unit,
+    averageRatingTMDB: Double,
+    voteCount: Int
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
