@@ -611,7 +611,9 @@ private fun MovieRatingSection(
     userRatings: Int,
     movieRating: Double?,
     averageRating: Double,
-    onMovieRating: (Double) -> Unit
+    onMovieRating: (Double) -> Unit,
+    averageRatingTMDB: Double,
+    voteCount: Int
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
