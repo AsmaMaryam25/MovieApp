@@ -10,6 +10,7 @@ import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
+import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
@@ -140,7 +141,7 @@ class SearchViewModel() : ViewModel() {
     fun discoverMovies(query: String, pageNum: Int) {
         viewModelScope.launch {
 
-            Log.d("SearchViewModel", "SelectedCategories: $selectedCategories")
+            Log.d("SearchViewModel", "1: "+"SelectedCategories: $selectedCategories")
             if (query.isBlank()) {
                 if (selectedCategories.isEmpty()) {
                     mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
@@ -156,10 +157,10 @@ class SearchViewModel() : ViewModel() {
                 var releaseDateLte: String? = null
                 var withGenres: String? = null
                 var withWatchProviders: String? = null
-                var runtime: Int? = null
+                var withRuntimeGte: Int? = null
 
                 if (selectedCategories["Runtime"] != null && selectedCategories["Runtime"]?.values?.isNotEmpty() == true) {
-                    runtime = selectedCategories["Runtime"]?.values?.first()?.toInt()
+                    withRuntimeGte = selectedCategories["Runtime"]?.values?.first()?.toInt()
                 }
 
                 if (selectedCategories["Decade"] != null && selectedCategories["Decade"]?.values?.isNotEmpty() == true) {
@@ -179,8 +180,8 @@ class SearchViewModel() : ViewModel() {
 
                 Log.d(
                     "SearchViewModel",
-                    "ReleaseDateGte: $releaseDateGte, ReleaseDateLte: $releaseDateLte, " +
-                            "WithGenres: $withGenres"
+                    "2: "+"ReleaseDateGte: $releaseDateGte, ReleaseDateLte: $releaseDateLte, " +
+                            "WithGenres: $withGenres, " + "WithRuntimeGte: $withRuntimeGte"
                 )
 
                 mutableSearchUIState.value = SearchUIModel.Loading
@@ -192,13 +193,13 @@ class SearchViewModel() : ViewModel() {
                     "DK",
                     withGenres,
                     withWatchProviders,
-                    runtime
+                    withRuntimeGte
                 ).collect { searchResults ->
                     collectMovies(pageNum, searchResults, currentMovies)
                 }
             } else {
 
-                Log.d("SearchViewModel", "Query: $selectedCategories")
+                Log.d("SearchViewModel", "3: "+"Query: $selectedCategories")
                 if (selectedCategories.values.all { it.isEmpty() } || selectedCategories.isEmpty()) {
                     searchMovies(query, pageNum, false)
                 } else {
@@ -212,19 +213,23 @@ class SearchViewModel() : ViewModel() {
     private fun collectAdvancedMovies(
         searchResults: MovieSearchResult,
     ) {
+
         val updatedMovies =
-            searchResults.movies.filter { movie ->
-                var releaseDates: List<Int> = emptyList()
-                Log.d("SearchViewModel", "ReleaseDates: $releaseDates")
-                movie.genres?.filter { genre ->
+            searchResults.movies
+                .filter { movie ->
+                    var releaseDates: List<Int> = emptyList()
+                    movie.genres?.filter { genre ->
                     selectedCategories["Popular Genres"]?.values?.contains(genre.toString()) == true
                 }?.isNotEmpty() == true ||
+
                         selectedCategories["Decade"]?.values?.any { decade ->
                             for (i in 0..9) {
                                 releaseDates += decade.toInt() + i
                             }
                             releaseDates.contains(decade.toInt())
-                        } == true
+                        } == true ||
+                            selectedCategories["Runtime"]?.values?.contains(withRuntimeGte.toString()) == true
+
             }
 
         mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
@@ -242,6 +247,7 @@ class SearchViewModel() : ViewModel() {
         searchResults: MovieSearchResult,
         currentMovies: List<Movie>
     ) {
+        Log.d("SearchViewModel", "5: "+"CurrentMovies: $currentMovies")
         val updatedMovies =
             if (pageNum == 1) {
                 searchResults.movies
@@ -263,6 +269,15 @@ class SearchViewModel() : ViewModel() {
         val currentItems = selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
 
         if (categoryTitle == "Decade") {
+            if (isSelected) {
+                currentItems.clear()
+                currentItems[key] = value
+            } else {
+                currentItems.remove(key)
+            }
+
+            }
+        else if (categoryTitle == "Runtime") {
             if (isSelected) {
                 currentItems.clear()
                 currentItems[key] = value
