@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -72,19 +73,22 @@ fun HomeScreen(onNavigateToDetailsScreen: (String, Int) -> Unit, modifier: Modif
     val upcomingState = rememberSaveable(saver = LazyListState.Saver) { LazyListState() }
 
 
-    when (homeUIModel) {
-        HomeUIModel.Empty -> EmptyScreen()
-        HomeUIModel.Loading -> LoadingScreen()
-        HomeUIModel.NoConnection -> NoConnectionScreen()
-        is HomeUIModel.Data -> HomeContent(
-            modifier,
-            homeUIModel,
-            onNavigateToDetailsScreen,
-            nowPlayingState,
-            popularState,
-            topRatedState,
-            upcomingState
-        )
+    Scaffold {
+        when (homeUIModel) {
+            HomeUIModel.Empty -> EmptyScreen(modifier.padding(it))
+            HomeUIModel.Loading -> LoadingScreen(modifier.padding(it))
+            HomeUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
+            HomeUIModel.ApiError -> APIErrorScreen(modifier.padding(it))
+            is HomeUIModel.Data -> HomeContent(
+                modifier,
+                homeUIModel,
+                onNavigateToDetailsScreen,
+                nowPlayingState,
+                popularState,
+                topRatedState,
+                upcomingState
+            )
+        }
     }
 }
 
@@ -112,9 +116,21 @@ private fun HomeContent(
                     homeUIModel.nowPlayingCollectionMovies,
                     nowPlayingState
                 ),
-                MovieCarousel(stringResource(id = R.string.popular), homeUIModel.popularCollectionMovies, popularState),
-                MovieCarousel(stringResource(id = R.string.top_rated), homeUIModel.topRatedCollectionMovies, topRatedState),
-                MovieCarousel(stringResource(id = R.string.upcoming), homeUIModel.upcomingCollectionMovies, upcomingState),
+                MovieCarousel(
+                    stringResource(id = R.string.popular),
+                    homeUIModel.popularCollectionMovies,
+                    popularState
+                ),
+                MovieCarousel(
+                    stringResource(id = R.string.top_rated),
+                    homeUIModel.topRatedCollectionMovies,
+                    topRatedState
+                ),
+                MovieCarousel(
+                    stringResource(id = R.string.upcoming),
+                    homeUIModel.upcomingCollectionMovies,
+                    upcomingState
+                ),
             )
             for (movieCarousel in movieCarousels) {
                 if (movieCarousel.movies.isEmpty()) {
@@ -131,8 +147,8 @@ private fun HomeContent(
 
             }
 
-            if(emptyMovies == 4) {
-                APIErrorScreen()
+            if (emptyMovies == 4) {
+                APIErrorScreen(modifier = modifier)
             }
         }
     }
@@ -206,12 +222,13 @@ private fun CreatePoster(
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically,
-            ){
+            ) {
                 GenreItemContainer(collectionMovie.genres)
             }
             Text(
                 modifier = Modifier.fillMaxWidth(),
-                text = collectionMovie.overview ?: stringResource(id = R.string.no_overview_available),
+                text = collectionMovie.overview
+                    ?: stringResource(id = R.string.no_overview_available),
                 maxLines = 5,
                 overflow = TextOverflow.Ellipsis,
                 style = TextStyle(

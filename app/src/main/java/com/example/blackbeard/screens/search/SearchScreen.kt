@@ -31,6 +31,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -65,6 +66,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.R
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
+import com.example.blackbeard.screens.APIErrorScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.TitleText
@@ -76,6 +78,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import com.example.blackbeard.screens.APIErrorScreen
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -94,33 +97,34 @@ fun SearchScreen(
     val isBoxClicked = remember { mutableStateOf(false) }
 
 
-    when (searchUIModel) {
-        SearchUIModel.Empty -> SearchContent(
-            modifier,
-            searchQuery,
-            posterWidth,
-            onNavigateToDetailsScreen,
-            emptyList(),
-            searchViewModel,
-            gridState,
-            isBoxClicked
-        )
 
-        SearchUIModel.Loading -> LoadingScreen()
-
-        SearchUIModel.NoConnection -> NoConnectionScreen()
-
-        is SearchUIModel.Data -> {
-            SearchContent(
+    Scaffold {
+        when (searchUIModel) {
+            SearchUIModel.Loading -> LoadingScreen(modifier.padding(it))
+            SearchUIModel.NoConnection -> NoConnectionScreen(modifier.padding(it))
+            SearchUIModel.ApiError -> APIErrorScreen(modifier.padding(it))
+            SearchUIModel.Empty -> SearchContent(
                 modifier,
                 searchQuery,
                 posterWidth,
                 onNavigateToDetailsScreen,
-                searchUIModel.collectionMovies,
+                emptyList(),
                 searchViewModel,
                 gridState,
                 isBoxClicked
             )
+            is SearchUIModel.Data -> {
+                SearchContent(
+                    modifier,
+                    searchQuery,
+                    posterWidth,
+                    onNavigateToDetailsScreen,
+                    searchUIModel.collectionMovies,
+                    searchViewModel,
+                    gridState,
+                    isBoxClicked
+                )
+            }
         }
     }
 }
@@ -148,28 +152,21 @@ private fun SearchContent(
     var titleText by remember { mutableStateOf(popularTitle) }
 
     LaunchedEffect(searchQuery.value.text) {
-        if (previousSearchQuery.value.isNotEmpty() && searchQuery.value.text.isEmpty()) {
-            isSearchQueryCleared = true
-        } else {
-            isSearchQueryCleared = false
-        }
+        isSearchQueryCleared = previousSearchQuery.value.isNotEmpty() && searchQuery.value.text.isEmpty()
         previousSearchQuery.value = searchQuery.value.text
     }
 
     LaunchedEffect(isBoxClicked.value) {
-        if (isBoxClicked.value) {
-            isAdvancedSearchPressed = true
-        } else {
-            isAdvancedSearchPressed = false
-        }
+        isAdvancedSearchPressed = isBoxClicked.value
     }
 
     LaunchedEffect(searchQuery.value.text, isAdvancedSearchPressed) {
-        titleText = if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
-            popularTitle
-        } else {
-            searchResultsTitle
-        }
+        titleText =
+            if (searchQuery.value.text.isEmpty() && !isSearchQueryCleared && !isAdvancedSearchPressed) {
+                popularTitle
+            } else {
+                searchResultsTitle
+            }
     }
 
     Column(
@@ -213,7 +210,9 @@ private fun SearchContent(
                         text = "No results found",
                         fontSize = 30.sp,
                         fontWeight = FontWeight.Bold,
-                        modifier = Modifier.padding(10.dp).align(Alignment.Center)
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .align(Alignment.Center)
                     )
                 }
             } else {
@@ -258,7 +257,7 @@ private fun SearchContent(
                                         )
                                     }
                                 },
-                                modifier = modifier
+                                modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 10.dp),
                             ) {
@@ -592,7 +591,13 @@ fun AdvancedSearch(
             "1920's" to "1920",
             "1910's" to "1910",
             "1900's" to "1900"
-        )
+        ),
+        "Runtime" to mapOf(
+            "180+" to "180",
+            "120+" to "120",
+            "90+" to "90",
+            "60+" to "60",
+        ),
     )
 
     Column(

@@ -2,13 +2,9 @@ package com.example.blackbeard.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.blackbeard.di.DataModule
-import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
-import com.example.blackbeard.utils.SnackbarController
-import com.example.blackbeard.utils.SnackbarEvent
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,6 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import retrofit2.HttpException
 import java.net.UnknownHostException
 
 class HomeViewModel : ViewModel() {
@@ -29,8 +26,6 @@ class HomeViewModel : ViewModel() {
     private val popularCollectionMovies = mutableListOf<CollectionMovie>()
     private val topRatedCollectionMovies = mutableListOf<CollectionMovie>()
     private val upcomingCollectionMovies = mutableListOf<CollectionMovie>()
-
-    private val failedCollections = mutableListOf<String>()
 
     init {
         viewModelScope.launch {
@@ -48,7 +43,8 @@ class HomeViewModel : ViewModel() {
                     mutableHomeUIState.value = HomeUIModel.NoConnection
                 }
 
-
+            } catch (e: HttpException) {
+                mutableHomeUIState.value = HomeUIModel.ApiError
             } catch (e: Exception) {
                 mutableHomeUIState.value = HomeUIModel.NoConnection
             }
@@ -57,54 +53,32 @@ class HomeViewModel : ViewModel() {
 
     private suspend fun fetchNowPlayingMovies() {
         movieRepository.getNowPlayingMovies().collect { result ->
-            when(result) {
-                is Result.Error -> {
-                   failedCollections.add("now playing")
-                }
-                is Result.Success -> {
-                    nowPlayingCollectionMovies.addAll(result.data)
-                }
+            if (result != null) {
+                nowPlayingCollectionMovies.addAll(result)
             }
         }
     }
 
     private suspend fun fetchPopularMovies() {
         movieRepository.getPopularMovies().collect { result ->
-            when(result) {
-                is Result.Error -> {
-                    failedCollections.add("popular")
-                }
-                is Result.Success -> {
-                    popularCollectionMovies.addAll(result.data)
-                }
+            if (result != null) {
+                popularCollectionMovies.addAll(result)
             }
         }
     }
 
     private suspend fun fetchUpcomingMovies() {
-            movieRepository.getUpcomingMovies().collect { result ->
-                when(result) {
-                    is Result.Error -> {
-                        failedCollections.add("upcoming")
-                    }
-                    is Result.Success -> {
-                        upcomingCollectionMovies.addAll(result.data)
-                    }
-                }
+        movieRepository.getUpcomingMovies().collect { result ->
+            if (result != null) {
+                upcomingCollectionMovies.addAll(result)
             }
+        }
     }
 
-    private fun fetchTopRatedMovies() {
-        viewModelScope.launch {
-            movieRepository.getTopRatedMovies().collect { result ->
-                when(result) {
-                    is Result.Error -> {
-                        failedCollections.add("top rated")
-                    }
-                    is Result.Success -> {
-                        topRatedCollectionMovies.addAll(result.data)
-                    }
-                }
+    private suspend fun fetchTopRatedMovies() {
+        movieRepository.getTopRatedMovies().collect { result ->
+            if (result != null) {
+                topRatedCollectionMovies.addAll(result)
             }
         }
     }
@@ -120,26 +94,13 @@ class HomeViewModel : ViewModel() {
             popularCollectionMovies = popularCollectionMovies,
             topRatedCollectionMovies = topRatedCollectionMovies
         )
-        if(failedCollections.isNotEmpty()) {
-            if(failedCollections.size != 4) {
-                SnackbarController.sendEvent(
-                    SnackbarEvent(
-                        "There were certain movie that could not be loaded"
-                    )
-                )
-            }
-            SnackbarController.sendEvent(
-                SnackbarEvent(
-                    "No movies could be loaded"
-                )
-            )
-        }
     }
 
     sealed class HomeUIModel {
         data object Empty : HomeUIModel()
         data object Loading : HomeUIModel()
         data object NoConnection : HomeUIModel()
+        data object ApiError : HomeUIModel()
         data class Data(
             val nowPlayingCollectionMovies: List<CollectionMovie>,
             val popularCollectionMovies: List<CollectionMovie>,

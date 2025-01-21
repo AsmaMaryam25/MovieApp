@@ -44,40 +44,44 @@ class MovieRepository(
         37 to "Western"
     )
 
-    fun getNowPlayingMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getNowPlayingMovies().results?.map { it.mapToMovie(MovieCategory.NOW_PLAYING, movieGenres) }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
-    }
-
-    fun getPopularMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getPopularMovies().results?.map { it.mapToMovie(MovieCategory.POPULAR, movieGenres) }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
-    }
-
-    fun getTopRatedMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getTopRatedMovies().results?.map { it.mapToMovie(MovieCategory.TOP_RATED, movieGenres) }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
-    }
-
-    fun getUpcomingMovies(): Flow<Result<List<CollectionMovie>, NetworkError>> = flow {
-        val response = remoteMovieDataSource.getUpcomingMovies().results?.map { it.mapToMovie(MovieCategory.UPCOMING, movieGenres) }
-        emit(handleCollectionResponse(response))
-    }.catch {
-        emit(Result.Error(NetworkError.UNKNOWN))
-    }
-
-    private fun <T> handleCollectionResponse(response:  List<T>?): Result<List<T>, NetworkError> {
-        return if(!response.isNullOrEmpty()) {
-            Result.Success(response)
-        } else {
-            Result.Error(NetworkError.EMPTY_RESPONSE)
+    fun getNowPlayingMovies(): Flow<List<CollectionMovie>?> = flow {
+        val response = remoteMovieDataSource.getNowPlayingMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.NOW_PLAYING,
+                movieGenres
+            )
         }
+        emit(response)
+    }
+
+    fun getPopularMovies(): Flow<List<CollectionMovie>?> = flow {
+        val response = remoteMovieDataSource.getPopularMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.POPULAR,
+                movieGenres
+            )
+        }
+        emit(response)
+    }
+
+    fun getTopRatedMovies(): Flow<List<CollectionMovie>?> = flow {
+        val response = remoteMovieDataSource.getTopRatedMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.TOP_RATED,
+                movieGenres
+            )
+        }
+        emit(response)
+    }
+
+    fun getUpcomingMovies(): Flow<List<CollectionMovie>?> = flow {
+        val response = remoteMovieDataSource.getUpcomingMovies().results?.map {
+            it.mapToMovie(
+                MovieCategory.UPCOMING,
+                movieGenres
+            )
+        }
+        emit(response)
     }
 
     fun searchMovies(query: String, pageNum: Int): Flow<MovieSearchResult> = flow {
@@ -95,8 +99,6 @@ class MovieRepository(
             remoteMovieDataSource.getMovie(externalId.toString())
                 .mapToMovie(MovieCategory.SPECIFIC, this@MovieRepository)
         )
-    }.catch {
-        emit(LocalMovie())
     }
 
     fun discoverMovies(
@@ -107,6 +109,7 @@ class MovieRepository(
         watchRegion: String?,
         withGenres: String?,
         withWatchProviders: String?,
+        withRuntimeGte: String?
     ): Flow<MovieSearchResult> = flow {
         val response = remoteMovieDataSource.discoverMovies(
             pageNum,
@@ -116,6 +119,7 @@ class MovieRepository(
             watchRegion,
             withGenres,
             withWatchProviders,
+            withRuntimeGte
         )
         val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
         emit(MovieSearchResult(movies, response.totalPages))
@@ -130,19 +134,18 @@ class MovieRepository(
     fun getVideoLink(externalId: Int): Flow<String?> = flow {
         emit(remoteMovieDataSource.getVideos(externalId.toString())
             .results
-            ?.firstOrNull { it.official == true && it.type == "Trailer" && it.site == "YouTube" }?.key)
-    }.catch {
-        emit("")
+            ?.firstOrNull { it.official == true && it.type == "Trailer" && it.site == "YouTube" }?.key
+        )
     }
 
     fun getStreamingServices(externalId: Int): Flow<List<StreamingService>?> = flow {
+        val result = remoteMovieDataSource.getStreamingServices(externalId.toString()).results
         emit(
-            remoteMovieDataSource.getStreamingServices(externalId.toString()).results?.getValue(
-                "DK"
+            result?.getOrDefault(
+                "DK",
+                defaultValue = CountryDao()
             )?.mapToStreamingServices()
         )
-    }.catch {
-        emit(emptyList())
     }
 
     fun getFavorites() = localFavoriteMovieDataSource.getFavorites()
@@ -159,11 +162,6 @@ class MovieRepository(
 
     fun getAgeRating(externalId: Int): Flow<AgeRating> = flow {
         emit(remoteMovieDataSource.getReleaseDates(externalId.toString()).mapToAgeRating())
-    }.catch {
-        emit(AgeRating(
-            "",
-            -1)
-        )
     }
 
     suspend fun setTheme(enabled: Boolean) = localThemeDataSource.setDarkModeEnabled(enabled)
@@ -226,7 +224,7 @@ fun CollectionMovieDao.mapToMovie(category: MovieCategory, movieGenres: Map<Int,
 suspend fun MovieDao.mapToMovie(category: MovieCategory, movieRepository: MovieRepository) =
     LocalMovie(
         id = id ?: 0,
-        title = originalTitle.orEmpty(),
+        title = title.orEmpty(),
         overview = overview.orEmpty(),
         posterPath = "https://image.tmdb.org/t/p/original/${posterPath.orEmpty()}",
         backdropPath = "https://image.tmdb.org/t/p/original/${backdropPath.orEmpty()}",
@@ -272,6 +270,7 @@ fun SearchMovieDao.mapToMovie() = SearchMovie(
     video = video == true,
     voteAverage = voteAverage ?: 0.0,
     genres = genreIds,
+    runtime = runtime ?: 0
 )
 
 fun GenreDao.mapToGenre() = Genre(
@@ -327,14 +326,14 @@ fun ReleaseDatesDao.mapToAgeRating() = AgeRating(
     imageResource = getImageId(results.firstOrNull { it.iso31661 == "DK" }?.releaseDates?.firstOrNull()?.certification)
 )
 
-fun CountryDao.mapToStreamingServices() = flatrate?.map { it.mapToStreamingService() }
+fun CountryDao.mapToStreamingServices(): List<StreamingService> = listOf(flatrate, rent, buy)
+    .flatMap { innerList ->
+        innerList?.map { it.mapToStreamingService() } ?: emptyList()
+    }.distinctBy { it.providerName }
+
+
 
 fun ProviderDao.mapToStreamingService() = StreamingService(
     logoPath = "https://image.tmdb.org/t/p/original/$logoPath",
     providerName = providerName.orEmpty()
 )
-
-enum class NetworkError : Error {
-    UNKNOWN,
-    EMPTY_RESPONSE
-}
