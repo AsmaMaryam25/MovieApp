@@ -10,6 +10,7 @@ import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
+import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
 import com.example.blackbeard.screens.details.DetailsViewModel.DetailsUIModel
@@ -150,8 +151,6 @@ class SearchViewModel() : ViewModel() {
 
     fun discoverMovies(query: String, pageNum: Int) {
         viewModelScope.launch {
-
-            Log.d("SearchViewModel", "SelectedCategories: $selectedCategories")
             if (query.isBlank()) {
                 if (selectedCategories.isEmpty()) {
                     mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
@@ -169,6 +168,11 @@ class SearchViewModel() : ViewModel() {
                 var releaseDateLte: String? = null
                 var withGenres: String? = null
                 var withWatchProviders: String? = null
+                var withRuntimeGte: String? = null
+
+                if (selectedCategories["Runtime"] != null && selectedCategories["Runtime"]?.values?.isNotEmpty() == true) {
+                    withRuntimeGte = selectedCategories["Runtime"]?.values?.first()
+                }
 
                 isViewingSearchResults.value = true
                 lastActiveTab.value = 1
@@ -187,12 +191,6 @@ class SearchViewModel() : ViewModel() {
                         selectedCategories["Streaming Services"]?.values?.joinToString("|")
                 }
 
-                Log.d(
-                    "SearchViewModel",
-                    "ReleaseDateGte: $releaseDateGte, ReleaseDateLte: $releaseDateLte, " +
-                            "WithGenres: $withGenres"
-                )
-
                 mutableSearchUIState.value = SearchUIModel.Loading
                 movieRepository.discoverMovies(
                     pageNum,
@@ -201,13 +199,12 @@ class SearchViewModel() : ViewModel() {
                     null,
                     "DK",
                     withGenres,
-                    withWatchProviders
+                    withWatchProviders,
+                    withRuntimeGte
                 ).collect { searchResults ->
                     collectMovies(pageNum, searchResults, currentMovies)
                 }
             } else {
-
-                Log.d("SearchViewModel", "Query: $selectedCategories")
                 if (selectedCategories.values.all { it.isEmpty() } || selectedCategories.isEmpty()) {
                     searchMovies(query, pageNum, false)
                 } else {
@@ -221,20 +218,25 @@ class SearchViewModel() : ViewModel() {
     private fun collectAdvancedMovies(
         searchResults: MovieSearchResult,
     ) {
+
         val updatedMovies =
-            searchResults.movies.filter { movie ->
-                var releaseDates: List<Int> = emptyList()
-                Log.d("SearchViewModel", "ReleaseDates: $releaseDates")
-                movie.genres?.filter { genre ->
+            searchResults.movies
+                .filter { movie ->
+                    var releaseDates: List<Int> = emptyList()
+                    movie.genres?.filter { genre ->
                     selectedCategories["Popular Genres"]?.values?.contains(genre.toString()) == true
                 }?.isNotEmpty() == true ||
+
                         selectedCategories["Decade"]?.values?.any { decade ->
                             for (i in 0..9) {
                                 releaseDates += decade.toInt() + i
                             }
                             releaseDates.contains(decade.toInt())
-                        } == true
-            }
+                        } == true || selectedCategories["Runtime"]?.values?.any { runtime -> runtime.toIntOrNull() != null } == true
+
+
+                }
+
 
         mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
             SearchUIModel.Empty
@@ -272,6 +274,15 @@ class SearchViewModel() : ViewModel() {
         val currentItems = selectedCategories[categoryTitle]?.toMutableMap() ?: mutableMapOf()
 
         if (categoryTitle == "Decade") {
+            if (isSelected) {
+                currentItems.clear()
+                currentItems[key] = value
+            } else {
+                currentItems.remove(key)
+            }
+
+            }
+        else if (categoryTitle == "Runtime") {
             if (isSelected) {
                 currentItems.clear()
                 currentItems[key] = value
