@@ -140,8 +140,6 @@ class SearchViewModel() : ViewModel() {
 
     fun discoverMovies(query: String, pageNum: Int) {
         viewModelScope.launch {
-
-            Log.d("SearchViewModel", "1: "+"SelectedCategories: $selectedCategories")
             if (query.isBlank()) {
                 if (selectedCategories.isEmpty()) {
                     mutableSearchUIState.value = SearchUIModel.Data(popularMovies, 1)
@@ -157,10 +155,10 @@ class SearchViewModel() : ViewModel() {
                 var releaseDateLte: String? = null
                 var withGenres: String? = null
                 var withWatchProviders: String? = null
-                var withRuntimeGte: Int? = null
+                var withRuntimeGte: String? = null
 
                 if (selectedCategories["Runtime"] != null && selectedCategories["Runtime"]?.values?.isNotEmpty() == true) {
-                    withRuntimeGte = selectedCategories["Runtime"]?.values?.first()?.toInt()
+                    withRuntimeGte = selectedCategories["Runtime"]?.values?.first()
                 }
 
                 if (selectedCategories["Decade"] != null && selectedCategories["Decade"]?.values?.isNotEmpty() == true) {
@@ -178,12 +176,6 @@ class SearchViewModel() : ViewModel() {
                         selectedCategories["Streaming Services"]?.values?.joinToString("|")
                 }
 
-                Log.d(
-                    "SearchViewModel",
-                    "2: "+"ReleaseDateGte: $releaseDateGte, ReleaseDateLte: $releaseDateLte, " +
-                            "WithGenres: $withGenres, " + "WithRuntimeGte: $withRuntimeGte"
-                )
-
                 mutableSearchUIState.value = SearchUIModel.Loading
                 movieRepository.discoverMovies(
                     pageNum,
@@ -198,8 +190,6 @@ class SearchViewModel() : ViewModel() {
                     collectMovies(pageNum, searchResults, currentMovies)
                 }
             } else {
-
-                Log.d("SearchViewModel", "3: "+"Query: $selectedCategories")
                 if (selectedCategories.values.all { it.isEmpty() } || selectedCategories.isEmpty()) {
                     searchMovies(query, pageNum, false)
                 } else {
@@ -227,10 +217,11 @@ class SearchViewModel() : ViewModel() {
                                 releaseDates += decade.toInt() + i
                             }
                             releaseDates.contains(decade.toInt())
-                        } == true ||
-                            selectedCategories["Runtime"]?.values?.contains(withRuntimeGte.toString()) == true
+                        } == true || selectedCategories["Runtime"]?.values?.any { runtime -> runtime.toIntOrNull() != null } == true
 
-            }
+
+                }
+
 
         mutableSearchUIState.value = if (updatedMovies.isEmpty()) {
             SearchUIModel.Empty
@@ -247,7 +238,6 @@ class SearchViewModel() : ViewModel() {
         searchResults: MovieSearchResult,
         currentMovies: List<Movie>
     ) {
-        Log.d("SearchViewModel", "5: "+"CurrentMovies: $currentMovies")
         val updatedMovies =
             if (pageNum == 1) {
                 searchResults.movies

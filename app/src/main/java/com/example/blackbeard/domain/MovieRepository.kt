@@ -125,7 +125,7 @@ class MovieRepository(
         watchRegion: String?,
         withGenres: String?,
         withWatchProviders: String?,
-        runtime: Int?
+        withRuntimeGte: String?
     ): Flow<MovieSearchResult> = flow {
         val response = remoteMovieDataSource.discoverMovies(
             pageNum,
@@ -135,7 +135,7 @@ class MovieRepository(
             watchRegion,
             withGenres,
             withWatchProviders,
-            runtime
+            withRuntimeGte
         )
         val movies = response.results?.map { it.mapToMovie() } ?: emptyList()
         emit(MovieSearchResult(movies, response.totalPages))
@@ -295,6 +295,7 @@ fun SearchMovieDao.mapToMovie() = SearchMovie(
     video = video == true,
     voteAverage = voteAverage ?: 0.0,
     genres = genreIds,
+
 )
 
 fun GenreDao.mapToGenre() = Genre(
