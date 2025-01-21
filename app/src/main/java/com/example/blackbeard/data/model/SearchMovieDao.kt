@@ -45,5 +45,9 @@ data class SearchMovieDao(
     val voteAverage: Double? = 0.0,
 
     @SerialName("vote_count")
-    val voteCount: Int? = 0
+    val voteCount: Int? = 0,
+
+    @SerialName("runtime")
+    val runtime: Int? = 0
+
 )

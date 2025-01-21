@@ -295,7 +295,7 @@ fun SearchMovieDao.mapToMovie() = SearchMovie(
     video = video == true,
     voteAverage = voteAverage ?: 0.0,
     genres = genreIds,
-
+    runtime = runtime ?: 0
 )
 
 fun GenreDao.mapToGenre() = Genre(

@@ -16,4 +16,5 @@ data class SearchMovie(
     override val popularity: Double,
     override val video: Boolean,
     val voteAverage: Double,
+    val runtime: Int
 ) : Movie
