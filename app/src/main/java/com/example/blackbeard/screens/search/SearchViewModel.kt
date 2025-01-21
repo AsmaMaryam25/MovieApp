@@ -11,6 +11,7 @@ import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
+import com.example.blackbeard.screens.details.DetailsViewModel.DetailsUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
 import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
