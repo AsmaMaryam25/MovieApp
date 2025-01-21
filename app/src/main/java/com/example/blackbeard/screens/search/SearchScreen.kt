@@ -134,7 +134,7 @@ fun SearchScreen(
 @OptIn(ExperimentalLayoutApi::class, ExperimentalPagerApi::class)
 @Composable
 private fun SearchContent(
-    searchUIModel : SearchUIModel,
+    searchUIModel: SearchUIModel,
     modifier: Modifier,
     searchQuery: MutableState<TextFieldValue>,
     posterWidth: Dp,
@@ -187,6 +187,10 @@ private fun SearchContent(
     ) {
         var isSearchBarFocused by remember { mutableStateOf(false) }
         val tabs = listOf("Recent", "Advanced Search")
+
+        val hideKeyboardAndUnfocus = {
+            isSearchBarFocused = false
+        }
 
         SearchBar(
             searchQuery = searchQuery,
@@ -328,12 +332,14 @@ private fun SearchContent(
                 recentSearches = recentSearches,
                 onRecentSearchClick = {
                     searchQuery.value = TextFieldValue(it, TextRange(it.length))
+                    hideKeyboardAndUnfocus()
                 },
                 onClearRecentSearches = { searchViewModel.clearRecentSearches() },
                 onRemoveRecentSearch = { searchViewModel.removeRecentSearch(it) },
                 searchQuery = searchQuery,
                 searchViewModel = searchViewModel,
-                isBoxClicked = isBoxClicked
+                isBoxClicked = isBoxClicked,
+                onHideKeyboard = hideKeyboardAndUnfocus
             )
         }
     }
@@ -351,23 +357,31 @@ private fun SearchTabs(
     onRemoveRecentSearch: (String) -> Unit,
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
-    isBoxClicked: MutableState<Boolean>
+    isBoxClicked: MutableState<Boolean>,
+    onHideKeyboard: () -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TabContent(tabs, pagerState, coroutineScope, onTabSelected = { index ->
-            searchViewModel.lastActiveTab.value = index
-            if (index == 1) {
-                keyboardController?.hide()
-            } else {
-                keyboardController?.show()
-                searchViewModel.searchType.value = false
-            }
-        },
-            searchViewModel)
+        TabContent(
+            tabs = tabs,
+            pagerState = pagerState,
+            coroutineScope = coroutineScope,
+            onTabSelected = { index ->
+                searchViewModel.lastActiveTab.value = index
+                if (index == 1) {
+                    // Hide the keyboard when switching to Advanced Search
+                    keyboardController?.hide()
+                } else {
+                    // Hide the keyboard when switching to Recent Search
+                    keyboardController?.hide()
+                    searchViewModel.searchType.value = false
+                }
+            },
+            searchViewModel = searchViewModel
+        )
 
         HorizontalPager(
             count = tabs.size,
@@ -408,7 +422,6 @@ private fun SearchTabs(
                                             .clickable {
                                                 onRecentSearchClick(search)
                                                 searchViewModel.searchMovies(search, 1)
-                                                searchViewModel.lastActiveTab.value = 0
                                             },
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -435,7 +448,6 @@ private fun SearchTabs(
                                                             search,
                                                             TextRange(search.length)
                                                         )
-                                                    searchViewModel.lastActiveTab.value = 0
                                                 }
                                         )
                                     }
@@ -452,14 +464,14 @@ private fun SearchTabs(
                         updateSearchType = {
                             searchViewModel.searchType.value = true
                         },
-                        isBoxClicked = isBoxClicked
+                        isBoxClicked = isBoxClicked,
+                        onHideKeyboard = onHideKeyboard
                     )
                 }
             }
         }
     }
 }
-
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -530,6 +542,8 @@ private fun CreateSearchPoster(
 ) {
     var isClickAble by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
+    val keyboardController = LocalSoftwareKeyboardController.current
+
     Column(
         modifier = modifier.padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -551,6 +565,8 @@ private fun CreateSearchPoster(
                     .clip(RoundedCornerShape(30.dp))
                     .clickable(enabled = isClickAble) {
                         if (isClickAble) {
+                            keyboardController?.hide()
+
                             onNavigateToDetailsScreen(
                                 movie.title,
                                 movie.id
@@ -569,6 +585,8 @@ private fun CreateSearchPoster(
             modifier = modifier
                 .width(posterWidth)
                 .clickable {
+                    keyboardController?.hide()
+
                     onNavigateToDetailsScreen(
                         movie.title,
                         movie.id
@@ -583,11 +601,12 @@ private fun CreateSearchPoster(
 }
 
 @Composable
-fun AdvancedSearch(
+private fun AdvancedSearch(
     searchQuery: MutableState<TextFieldValue>,
     searchViewModel: SearchViewModel,
     updateSearchType: () -> Unit,
-    isBoxClicked: MutableState<Boolean>
+    isBoxClicked: MutableState<Boolean>,
+    onHideKeyboard: () -> Unit
 ) {
     val categories = mapOf(
         "Streaming Services" to mapOf(
@@ -690,6 +709,7 @@ fun AdvancedSearch(
                         1,
                     )
                     searchViewModel.lastActiveTab.value = 1
+                    onHideKeyboard() // Hide keyboard when "See Results" is clicked
                 }
                 .padding(16.dp),
             contentAlignment = Alignment.Center
@@ -700,6 +720,7 @@ fun AdvancedSearch(
         }
     }
 }
+
 
 @Composable
 fun CategorySection(
