@@ -664,6 +664,39 @@ private fun MovieRatingSection(
             }
         }
     }
+
+    Row (
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+        //
+    ){
+        Column(Modifier
+            .fillMaxWidth()
+            .weight(1f)) {
+            Image(
+                modifier = Modifier.width(100.dp),
+                painter = painterResource(R.drawable.tmdb_icon),
+                contentDescription = "TMDB icon"
+            )
+        }
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .weight(1f),
+            horizontalAlignment = Alignment.End){
+            Text(
+                text = String.format(Locale.US, "%.2f", averageRatingTMDB)+"/10",
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.onBackground
+            )
+
+        }
+        /*
+        Text(
+            text = stringResource(id = R.string.release_date) + " ($voteCount)",
+        )*/
+    }
+
 }
 
 
