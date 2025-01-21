@@ -17,6 +17,7 @@ import com.example.blackbeard.screens.details.DetailsScreen
 import com.example.blackbeard.screens.favorite.FavoriteScreen
 import com.example.blackbeard.screens.home.HomeScreen
 import com.example.blackbeard.screens.search.SearchScreen
+import com.example.blackbeard.screens.search.tabsearch.AdvancedSearchScreen
 import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
 @Composable
@@ -58,9 +59,9 @@ fun MainNavHost(
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
-                /*onNavigateToSearchContentScreen = {
-                    navController.navigate(Route.SearchContentScreen())
-                }*/
+                onSearchBarFocus = {
+                    navController.navigate(Route.AdvancedSearchScreen)
+                },
                 modifier = modifier.fillMaxSize()
             )
         }
@@ -128,21 +129,15 @@ fun MainNavHost(
             )
         }
 
-        /*composable<Route.SearchContentScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchContentScreen>()) }
-            SearchContent(
-                modifier = Modifier
-                    .safeDrawingPadding()
-                    .fillMaxSize(),
-                searchQuery = backStackEntry.arguments?.getString("query")!!,
-                onNavigateToDetailsScreen = { name, movieId ->
-                    navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
-                },
-                collectionMovies = backStackEntry.arguments?.getList("query")!!,
-                searchViewModel = TODO(),
-                gridState = TODO(),
-                isBoxClicked = TODO(),
+        composable<Route.AdvancedSearchScreen> { backStackEntry ->
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
+
+            AdvancedSearchScreen(
+                modifier = modifier.fillMaxSize(),
+                onCancelClicked = {
+                    navController.popBackStack()
+                }
             )
-        }*/
+        }
     }
 }

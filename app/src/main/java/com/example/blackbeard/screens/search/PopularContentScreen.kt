@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,13 +12,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
-import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,71 +33,69 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
+import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.screens.home.TitleText
-import com.google.accompanist.pager.ExperimentalPagerApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalPagerApi::class)
 @Composable
 fun PopularContentScreen(
-    modifier: Modifier,
-    onNavigateToDetailsScreen: (String, Int) -> Unit,
-    collectionMovies: List<CollectionMovie>,
-    searchViewModel: SearchViewModel,
-    gridState: LazyGridState = rememberLazyGridState(),
+    onSearchBarFocus: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
+    val gridState = rememberLazyGridState()
+
+    val viewmodel: SearchViewModel = viewModel()
+
+    val collectionMovies = viewmodel.popularMovies
 
     val posterWidth = 170.dp
-
     Column(
-        modifier = modifier.fillMaxSize()
+        modifier = modifier
     ) {
-        var isSearchBarFocused by remember { mutableStateOf(false) }
-        val tabs = listOf("Recent", "Advanced Search")
+        SearchBar(
+            onSearchBarFocus = onSearchBarFocus,
+            isFocused = false
+        )
 
-
-
-        if (!isSearchBarFocused) {
-            if (collectionMovies.isEmpty()) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = "No results found",
-                        fontSize = 30.sp,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .padding(10.dp)
-                            .align(Alignment.Center)
-                    )
+        if (collectionMovies.isEmpty()) {
+            Box(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                Text(
+                    text = "No results found",
+                    fontSize = 30.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .align(Alignment.Center)
+                )
+            }
+        } else {
+            LazyVerticalGrid(
+                state = gridState,
+                columns = GridCells.Adaptive(posterWidth),
+                modifier = Modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Box(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        TitleText(text = stringResource(id = R.string.popular))
+                    }
                 }
-            } else {
-                LazyVerticalGrid(
-                    state = gridState,
-                    columns = GridCells.Adaptive(posterWidth),
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
-                        Box(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            TitleText(text = stringResource(id = R.string.popular))
-                        }
-                    }
-                    items(collectionMovies.size) { index ->
-                        CreateSearchPoster(
-                            searchViewModel,
-                            posterWidth = posterWidth,
-                            onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                            movie = collectionMovies[index]
-                        )
-                    }
+                items(collectionMovies.size) { index ->
+                    CreateSearchPoster(
+                        posterWidth = posterWidth,
+                        onNavigateToDetailsScreen = { _, _ -> {} },
+                        movie = collectionMovies[index]
+                    )
                 }
             }
         }
@@ -109,7 +104,6 @@ fun PopularContentScreen(
 
 @Composable
 private fun CreateSearchPoster(
-    searchViewModel: SearchViewModel,
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,

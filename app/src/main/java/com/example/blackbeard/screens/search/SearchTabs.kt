@@ -29,6 +29,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -39,34 +40,33 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun AdvancedSearchScreen(
-    tabs: List<String>,
-    pagerState: PagerState,
-    coroutineScope: CoroutineScope,
+fun SearchTabs(
     recentSearches: List<String>,
     onRecentSearchClick: (String) -> Unit,
     onClearRecentSearches: () -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
-    searchQuery: MutableState<TextFieldValue>,
-    searchContentViewModel: SearchContentViewModel,
-    isBoxClicked: MutableState<Boolean>
 ) {
+    val pagerState = rememberPagerState()
+    val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
 
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
+        val tabs = listOf("Recent", "Advanced Search")
         TabContent(tabs, pagerState, coroutineScope, onTabSelected = { index ->
             if (index == 1) {
                 keyboardController?.hide()
             } else {
                 keyboardController?.show()
-                searchContentViewModel.searchType.value = false
+                //searchContentViewModel.searchType.value = false
             }
         })
 
@@ -82,23 +82,16 @@ fun AdvancedSearchScreen(
             when (page) {
                 0 -> {
                     RecentSearchesTab(
-                        recentSearches,
-                        onClearRecentSearches,
-                        onRecentSearchClick,
-                        searchContentViewModel,
-                        onRemoveRecentSearch,
-                        searchQuery
+                        recentSearches = recentSearches,
+                        onClearRecentSearches = onClearRecentSearches,
+                        onRecentSearchClick = onRecentSearchClick,
+                        onRemoveRecentSearch = onRemoveRecentSearch,
                     )
                 }
 
                 1 -> {
                     AdvancedSearchTab(
-                        searchQuery,
-                        searchContentViewModel,
-                        updateSearchType = {
-                            searchContentViewModel.searchType.value = true
-                        },
-                        isBoxClicked = isBoxClicked
+                        selectedCategories = emptyMap(),
                     )
                 }
             }
@@ -111,9 +104,7 @@ private fun RecentSearchesTab(
     recentSearches: List<String>,
     onClearRecentSearches: () -> Unit,
     onRecentSearchClick: (String) -> Unit,
-    searchContentViewModel: SearchContentViewModel,
-    onRemoveRecentSearch: (String) -> Unit,
-    searchQuery: MutableState<TextFieldValue>
+    onRemoveRecentSearch: (String) -> Unit
 ) {
     if (recentSearches.isNotEmpty()) {
         val reverseOrderOfSearches = recentSearches.reversed()
@@ -142,7 +133,7 @@ private fun RecentSearchesTab(
                             .padding(8.dp)
                             .clickable {
                                 onRecentSearchClick(search)
-                                searchContentViewModel.searchMovies(search, 1)
+                                //searchContentViewModel.searchMovies(search, 1)
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -164,11 +155,6 @@ private fun RecentSearchesTab(
                                 .padding(start = 8.dp)
                                 .clickable {
                                     onRecentSearchClick(search)
-                                    searchQuery.value =
-                                        TextFieldValue(
-                                            search,
-                                            TextRange(search.length)
-                                        )
                                 }
                         )
                     }
@@ -239,10 +225,7 @@ fun TabContent(
 
 @Composable
 private fun AdvancedSearchTab(
-    searchQuery: MutableState<TextFieldValue>,
-    searchContentViewModel: SearchContentViewModel,
-    updateSearchType: () -> Unit,
-    isBoxClicked: MutableState<Boolean>
+    selectedCategories: Map<String, Map<String, String>>
 ) {
     val categories = mapOf(
         "Streaming Services" to mapOf(
@@ -328,9 +311,9 @@ private fun AdvancedSearchTab(
                     categoryTitle = categoryTitle,
                     availableCategoryNames = categoryItems.keys.toList(),
                     availableCategoryValues = categoryItems.values.toList(),
-                    selectedCategories = searchContentViewModel.selectedCategories,
+                    selectedCategories = selectedCategories,
                     onCategorySelected = { key, value, isSelected ->
-                        searchContentViewModel.onCategorySelected(categoryTitle, key, value, isSelected)
+                        //searchContentViewModel.onCategorySelected(categoryTitle, key, value, isSelected)
                     }
                 )
             }
@@ -344,12 +327,12 @@ private fun AdvancedSearchTab(
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
-                    isBoxClicked.value = true
+                    /*
                     updateSearchType()
                     searchContentViewModel.discoverMovies(
                         searchQuery.value.text,
                         1,
-                    )
+                    )*/
                 }
                 .padding(16.dp),
             contentAlignment = Alignment.Center

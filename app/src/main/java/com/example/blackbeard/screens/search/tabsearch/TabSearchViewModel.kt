@@ -1,4 +1,4 @@
-package com.example.blackbeard.screens.search
+package com.example.blackbeard.screens.search.tabSearch
 
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -15,11 +15,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class SearchContentViewModel(): ViewModel() {
+class TabSearchViewModel(): ViewModel() {
     
     private val movieRepository = DataModule.movieRepository
-    private val mutableSearchContentUIState = MutableStateFlow<SearchContentUIModel>(SearchContentUIModel.Empty)
-    val searchContentUIState: StateFlow<SearchContentUIModel> = mutableSearchContentUIState
+    private val mutabletabSearchUIState = MutableStateFlow<TabSearchUIModel>(
+        TabSearchUIModel.Empty
+    )
+    val tabSearchUIState: StateFlow<TabSearchUIModel> = mutabletabSearchUIState
 
     val initialConnectivityFlow: Flow<Boolean> = isConnected
     var currentPage = mutableIntStateOf(1)
@@ -57,10 +59,10 @@ class SearchContentViewModel(): ViewModel() {
                 }
 
 
-        mutableSearchContentUIState.value = if (updatedMovies.isEmpty()) {
-            SearchContentUIModel.Empty
+        mutabletabSearchUIState.value = if (updatedMovies.isEmpty()) {
+            TabSearchUIModel.Empty
         } else {
-            SearchContentUIModel.Data(updatedMovies, 0)
+            TabSearchUIModel.Data(updatedMovies, 0)
         }
 
         totalPages.value = 0
@@ -79,10 +81,10 @@ class SearchContentViewModel(): ViewModel() {
                 currentMovies + searchResults.movies
             }
 
-        mutableSearchContentUIState.value = if (updatedMovies.isEmpty()) {
-            SearchContentUIModel.Empty
+        mutabletabSearchUIState.value = if (updatedMovies.isEmpty()) {
+            TabSearchUIModel.Empty
         } else {
-            SearchContentUIModel.Data(updatedMovies, searchResults.totalPages)
+            TabSearchUIModel.Data(updatedMovies, searchResults.totalPages)
         }
         totalPages.value = searchResults.totalPages
         currentPage.intValue = pageNum
@@ -91,7 +93,7 @@ class SearchContentViewModel(): ViewModel() {
     fun searchMovies(query: String, pageNum: Int, isAdvanced: Boolean = false) {
         viewModelScope.launch {
             if (query.isBlank()) {
-                mutableSearchContentUIState.value = SearchContentUIModel.NoResults
+                mutabletabSearchUIState.value = TabSearchUIModel.NoResults
                 currentPage.intValue = 1
                 totalPages.value = 0
                 return@launch
@@ -100,9 +102,9 @@ class SearchContentViewModel(): ViewModel() {
             addRecentSearch(query)
 
             val currentMovies =
-                (mutableSearchContentUIState.value as? SearchContentUIModel.Data)?.collectionMovies ?: emptyList()
+                (mutabletabSearchUIState.value as? TabSearchUIModel.Data)?.searchMovies ?: emptyList()
 
-            mutableSearchContentUIState.value = SearchContentUIModel.Loading
+            mutabletabSearchUIState.value = TabSearchUIModel.Loading
 
             movieRepository.searchMovies(query, pageNum).collect { searchResults ->
                 if (isAdvanced) {
@@ -124,14 +126,14 @@ class SearchContentViewModel(): ViewModel() {
         viewModelScope.launch {
             if (query.isBlank()) {
                 if (selectedCategories.isEmpty()) {
-                    mutableSearchContentUIState.value = SearchContentUIModel.NoResults
+                    mutabletabSearchUIState.value = TabSearchUIModel.NoResults
                     currentPage.intValue = 1
                     totalPages.value = 0
                     return@launch
                 }
 
                 val currentMovies =
-                    (mutableSearchContentUIState.value as? SearchContentUIModel.Data)?.collectionMovies
+                    (mutabletabSearchUIState.value as? TabSearchUIModel.Data)?.searchMovies
                         ?: emptyList()
                 var releaseDateGte: String? = null
                 var releaseDateLte: String? = null
@@ -158,7 +160,7 @@ class SearchContentViewModel(): ViewModel() {
                         selectedCategories["Streaming Services"]?.values?.joinToString("|")
                 }
 
-                mutableSearchContentUIState.value = SearchContentUIModel.Loading
+                mutabletabSearchUIState.value = TabSearchUIModel.Loading
                 movieRepository.discoverMovies(
                     pageNum,
                     releaseDateGte,
@@ -225,15 +227,15 @@ class SearchContentViewModel(): ViewModel() {
         }
     }
 
-    sealed class SearchContentUIModel {
-        data object Empty : SearchContentUIModel()
-        data object Loading : SearchContentUIModel()
-        data object NoConnection : SearchContentUIModel()
-        data object ApiError : SearchContentUIModel()
-        data object NoResults : SearchContentUIModel()
+    sealed class TabSearchUIModel {
+        data object Empty : TabSearchUIModel()
+        data object Loading : TabSearchUIModel()
+        data object NoConnection : TabSearchUIModel()
+        data object ApiError : TabSearchUIModel()
+        data object NoResults : TabSearchUIModel()
         data class Data(
-            val collectionMovies: List<SearchMovie>,
+            val searchMovies: List<SearchMovie>,
             val totalPages: Int?
-        ) : SearchContentUIModel()
+        ) : TabSearchUIModel()
     }
 }
