@@ -431,7 +431,9 @@ private fun SecondaryContent(
                 userRatings = voterCount,
                 movieRating = movieRating,
                 averageRating = averageRating,
-                onMovieRating = onMovieRating
+                onMovieRating = onMovieRating,
+                averageRatingTMDB = localMovie.voteAverage,
+                voteCount = localMovie.voteCount
             )
         },
         { CastSection(credits.cast) },
