@@ -228,7 +228,7 @@ private fun SearchContent(
                         }
                     }
                     items(collectionMovies.size) { index ->
-                        CreateSearchPoster(
+                        SearchPoster(
                             posterWidth = posterWidth,
                             onNavigateToDetailsScreen = onNavigateToDetailsScreen,
                             movie = collectionMovies[index]
@@ -458,7 +458,7 @@ fun TabContent(
 }
 
 @Composable
-private fun CreateSearchPoster(
+private fun SearchPoster(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
