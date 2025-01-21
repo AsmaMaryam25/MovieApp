@@ -352,16 +352,23 @@ private fun SearchTabs(
     Column(
         modifier = Modifier.fillMaxSize()
     ) {
-        TabContent(tabs, pagerState, coroutineScope, onTabSelected = { index ->
-            searchViewModel.lastActiveTab.value = index
-            if (index == 1) {
-                keyboardController?.hide()
-            } else {
-                keyboardController?.show()
-                searchViewModel.searchType.value = false
-            }
-        },
-            searchViewModel)
+        TabContent(
+            tabs = tabs,
+            pagerState = pagerState,
+            coroutineScope = coroutineScope,
+            onTabSelected = { index ->
+                searchViewModel.lastActiveTab.value = index
+                if (index == 1) {
+                    // Hide the keyboard when switching to Advanced Search
+                    keyboardController?.hide()
+                } else {
+                    // Hide the keyboard when switching to Recent Search
+                    keyboardController?.hide()
+                    searchViewModel.searchType.value = false
+                }
+            },
+            searchViewModel = searchViewModel
+        )
 
         HorizontalPager(
             count = tabs.size,
@@ -402,7 +409,6 @@ private fun SearchTabs(
                                             .clickable {
                                                 onRecentSearchClick(search)
                                                 searchViewModel.searchMovies(search, 1)
-                                                searchViewModel.lastActiveTab.value = 0
                                             },
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -429,8 +435,6 @@ private fun SearchTabs(
                                                             search,
                                                             TextRange(search.length)
                                                         )
-                                                    searchViewModel.lastActiveTab.value = 0
-                                                    onHideKeyboard()
                                                 }
                                         )
                                     }
