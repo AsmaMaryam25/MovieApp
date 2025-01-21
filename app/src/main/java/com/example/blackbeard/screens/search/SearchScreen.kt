@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -215,26 +216,38 @@ private fun SearchContent(
 
         if (!isSearchBarFocused) {
             if (titleText == searchResultsTitle) {
-                Row(
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
+
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.West,
-                        contentDescription = "Back",
+                    Row(
                         modifier = Modifier
-                            .padding(end = 8.dp)
-                            .clickable {
-                                isSearchBarFocused = true
-                                coroutineScope.launch {
-                                    pagerState.animateScrollToPage(searchViewModel.lastActiveTab.value) // Respect lastActiveTab
-                                }
-                            }
-                    )
-                    TitleText(text = titleText)
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.West,
+                            contentDescription = "Back",
+                            modifier = Modifier
+                                .clickable {
+                                    isSearchBarFocused = true
+                                    coroutineScope.launch {
+                                        pagerState.animateScrollToPage(searchViewModel.lastActiveTab.value) // Respect lastActiveTab
+                                    }
+                                }.weight(0.1f)
+                        )
+
+                        Box(
+                            modifier = Modifier.weight(0.7f),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            TitleText(text = titleText)
+                        }
+                        Spacer(modifier = Modifier.weight(0.1f))
+                    }
                 }
             } else {
                 Row(
