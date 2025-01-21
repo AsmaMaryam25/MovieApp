@@ -66,6 +66,7 @@ import coil3.compose.AsyncImage
 import com.example.blackbeard.R
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.models.Movie
+import com.example.blackbeard.screens.APIErrorScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.TitleText
@@ -94,6 +95,7 @@ fun SearchScreen(
     val searchQuery = remember { mutableStateOf(TextFieldValue("")) }
     val gridState = rememberSaveable(saver = LazyGridState.Saver) { LazyGridState() }
     val isBoxClicked = remember { mutableStateOf(false) }
+
 
 
     Scaffold {

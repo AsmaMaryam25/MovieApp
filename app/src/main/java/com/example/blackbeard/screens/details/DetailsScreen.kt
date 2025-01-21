@@ -761,13 +761,13 @@ private fun MovieDetailsSection(
                 )
             },
             {
-                if (!isRuntimeInvalid(runtime)) MovieDetailSingleLine(
+                if (!isRuntimeInvalid(runtime) && runtime != 0) MovieDetailSingleLine(
                     stringResource(id = R.string.runtime),
                     TimeUtils.convertMinutesToHoursAndMinutes(runtime ?: 0)
                 )
             },
             {
-                if (!isRevenueInvalid(revenue) || revenue != 0L) MovieDetailSingleLine(
+                if (!isRevenueInvalid(revenue)) MovieDetailSingleLine(
                     stringResource(id = R.string.revenue),
                     format.format(revenue)
                 )

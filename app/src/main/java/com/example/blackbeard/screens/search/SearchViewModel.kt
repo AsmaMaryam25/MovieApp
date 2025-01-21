@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.RecentSearchRepository
-import com.example.blackbeard.domain.Result
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
@@ -101,18 +100,11 @@ class SearchViewModel() : ViewModel() {
         mutableSearchUIState.value = SearchUIModel.Loading
 
         movieRepository.getPopularMovies().collect { result ->
-            when (result) {
-                is Result.Error -> {
-                    mutableSearchUIState.value = SearchUIModel.ApiError
-                }
-
-                is Result.Success -> {
-                    popularMovies = result.data
-                    mutableSearchUIState.value = SearchUIModel.Data(result.data, 1)
-                }
+            if (result != null) {
+                popularMovies = result
+                mutableSearchUIState.value = SearchUIModel.Data(result, 1)
             }
         }
-
     }
 
     fun searchMovies(query: String, pageNum: Int, isAdvanced: Boolean = false) {
