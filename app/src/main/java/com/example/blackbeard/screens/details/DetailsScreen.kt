@@ -600,6 +600,7 @@ private fun MovieRatingSection(
     Row (
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
+        //
     ){
         Column(Modifier
             .fillMaxWidth()
