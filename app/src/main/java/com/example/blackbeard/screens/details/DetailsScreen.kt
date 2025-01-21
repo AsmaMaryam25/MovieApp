@@ -150,6 +150,8 @@ fun DetailsScreen(
                                 modifier = Modifier.fillMaxSize()
                             )
                         }
+                    } else {
+                        IconButton(onClick = {}) {} // Empty Icon button for to keep title center
                     }
                 },
                 navigationIcon = {
