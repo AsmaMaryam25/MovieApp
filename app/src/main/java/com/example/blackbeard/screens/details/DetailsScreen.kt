@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -317,13 +318,16 @@ private fun SimpleContent(
         )
         Row(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .height(30.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             AgeRatingIcon(ageRating = ageRating)
             GenreItemContainer(genres)
+            Spacer(modifier = Modifier.fillMaxHeight().weight(0.1f))
         }
+        Spacer(Modifier.height(10.dp))
         if (overview.isNullOrEmpty()) {
             Text(
                 text = "No overview available",
@@ -356,9 +360,10 @@ private fun SimpleContent(
 private fun AgeRatingIcon(ageRating: AgeRating) {
     if (ageRating.imageResource == -1) return
     Image(
-        modifier = Modifier.size(50.dp),
+        modifier = Modifier
+            .fillMaxHeight(),
         painter = painterResource(ageRating.imageResource),
-        contentDescription = "Age rating icon for ${ageRating.rating}"
+        contentDescription = "Age rating icon for ${ageRating.rating}",
     )
 }
 
@@ -668,7 +673,7 @@ private fun MovieRatingSection(
             }
         }
     }
-
+    Spacer(Modifier.height(10.dp))
     Row (
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
@@ -1005,10 +1010,8 @@ private fun CollapsibleBodyText(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenreItemContainer(genres: List<Genre>) {
-
     LazyRow(
         modifier = Modifier
-            .padding(vertical = 10.dp)
             .fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(5.dp, Alignment.CenterHorizontally),
     ) {
@@ -1024,12 +1027,13 @@ private fun GenreItem(genre: Genre) {
         Modifier
             .background(Color.Gray, shape = RoundedCornerShape(4.dp))
             .padding(horizontal = 8.dp, vertical = 2.dp)
-            .wrapContentSize()
+            .fillMaxHeight(),
+        contentAlignment = Alignment.Center
     ) {
         Text(
             text = genre.name,
             color = Color.White,
-            fontSize = 15.sp,
+            fontSize = 15.sp
         )
     }
 }
