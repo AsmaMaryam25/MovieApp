@@ -1,4 +1,4 @@
-package com.example.blackbeard.screens.search
+package com.example.blackbeard.screens.search.content
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,42 +30,101 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
 import coil3.compose.AsyncImage
-import com.example.blackbeard.R
 import com.example.blackbeard.components.SearchBar
-import com.example.blackbeard.models.CollectionMovie
+import com.example.blackbeard.models.SearchMovie
+import com.example.blackbeard.screens.APIErrorScreen
+import com.example.blackbeard.screens.EmptyScreen
+import com.example.blackbeard.screens.LoadingScreen
+import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.TitleText
+import com.example.blackbeard.screens.search.content.SearchContentViewModel.SearchContentUIModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+
 @Composable
-fun PopularContentScreen(
+fun SearchContentScreen(
+    modifier: Modifier,
+    onMoviePosterClicked: (String, Int) -> Unit,
     onSearchBarFocus: () -> Unit,
-    modifier: Modifier = Modifier
+    query: String,
+    isAdvancedSearch: Boolean,
 ) {
+    val posterWidth = 170.dp
+    val searchContentViewModel: SearchContentViewModel = viewModel(
+        factory = viewModelFactory {
+            initializer {
+                SearchContentViewModel(query, isAdvancedSearch)
+            }
+        }
+    )
+    val searchContentUIModel = searchContentViewModel.searchContentUIState.collectAsState().value
+
     val gridState = rememberLazyGridState()
 
-    val viewmodel: SearchViewModel = viewModel()
+    when (searchContentUIModel) {
+        SearchContentUIModel.Empty -> {
+            EmptyScreen(modifier)
+        }
 
-    val collectionMovies = viewmodel.popularMovies
+        SearchContentUIModel.ApiError -> {
+            APIErrorScreen(modifier)
+        }
 
-    val posterWidth = 170.dp
+        SearchContentUIModel.Loading -> {
+            LoadingScreen(modifier)
+        }
+        SearchContentUIModel.NoConnection -> {
+            NoConnectionScreen(modifier)
+        }
+        SearchContentUIModel.NoResults -> {
+            // No results
+        }
+        is SearchContentUIModel.Data -> {
+            Content(
+                modifier,
+                onSearchBarFocus,
+                searchContentUIModel.searchMovies,
+                gridState,
+                posterWidth,
+                onMoviePosterClicked,
+                searchContentViewModel,
+                query,
+                isAdvancedSearch
+            )
+        }
+    }
+}
+
+@Composable
+private fun Content(
+    modifier: Modifier,
+    onSearchBarFocus: () -> Unit,
+    searchMovies: List<SearchMovie>,
+    gridState: LazyGridState,
+    posterWidth: Dp,
+    onMoviePosterClicked: (String, Int) -> Unit,
+    searchContentViewModel: SearchContentViewModel,
+    query: String,
+    isAdvancedSearch: Boolean
+) {
     Column(
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         SearchBar(
-            onSearchBarFocus = onSearchBarFocus,
             isFocused = false,
+            onSearchBarFocus = onSearchBarFocus,
         )
-
-        if (collectionMovies.isEmpty()) {
+        if (searchMovies.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize()
             ) {
@@ -87,15 +149,36 @@ fun PopularContentScreen(
                         modifier = Modifier.fillMaxWidth(),
                         contentAlignment = Alignment.Center
                     ) {
-                        TitleText(text = stringResource(id = R.string.popular))
+                        TitleText(text = "Search Results")
                     }
                 }
-                items(collectionMovies.size) { index ->
+                items(searchMovies.size) { index ->
                     CreateSearchPoster(
                         posterWidth = posterWidth,
-                        onNavigateToDetailsScreen = { _, _ -> {} },
-                        movie = collectionMovies[index]
+                        onNavigateToDetailsScreen = onMoviePosterClicked,
+                        movie = searchMovies[index]
                     )
+                }
+
+                item(span = { GridItemSpan(2) }) {
+                    if (searchContentViewModel.currentPage.intValue < (searchContentViewModel.totalPages.value
+                            ?: 0)
+                    ) {
+                        Button(
+                            onClick = {
+                                if(isAdvancedSearch) {
+                                    searchContentViewModel.discoverMovies(query, searchContentViewModel.currentPage.intValue + 1)
+                                } else {
+                                    searchContentViewModel.searchMovies(query, searchContentViewModel.currentPage.intValue + 1)
+                                }
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 10.dp),
+                        ) {
+                            Text(text = "Load more")
+                        }
+                    }
                 }
             }
         }
@@ -107,7 +190,7 @@ private fun CreateSearchPoster(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,
-    movie: CollectionMovie
+    movie: SearchMovie
 ) {
     var isClickAble by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()

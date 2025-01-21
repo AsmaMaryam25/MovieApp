@@ -33,8 +33,10 @@ fun SearchBar(
     //currentTabIndex: Int,
     onSearchBarFocus: () -> Unit = {},
     onCancelClicked: () -> Unit = {},
-    isFocused: Boolean
-) {
+    isFocused: Boolean,
+    onSearchClicked: (String, Boolean) -> Unit = {_, _ -> {}},
+    addToRecent: (String) -> Unit = {_ -> {}}
+    ) {
     //val keyboardController = LocalSoftwareKeyboardController.current
     //val focusManager = LocalFocusManager.current
     var searchText by remember { mutableStateOf("") }
@@ -101,8 +103,8 @@ fun SearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    //val isAdvancedSearch = currentTabIndex == 1
-                    //onSearchQueryChange(searchQuery.value.text, isAdvancedSearch)
+                    onSearchClicked(searchText, false)
+                    addToRecent(searchText)
                 }
             )
         )

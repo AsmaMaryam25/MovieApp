@@ -28,14 +28,11 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -52,6 +49,8 @@ fun SearchTabs(
     onRecentSearchClick: (String) -> Unit,
     onClearRecentSearches: () -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
+    onCategorySelected: (String, String, String, Boolean) -> Unit,
+    selectedCategories: Map<String, Map<String, String>>
 ) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -66,7 +65,6 @@ fun SearchTabs(
                 keyboardController?.hide()
             } else {
                 keyboardController?.show()
-                //searchContentViewModel.searchType.value = false
             }
         })
 
@@ -91,7 +89,8 @@ fun SearchTabs(
 
                 1 -> {
                     AdvancedSearchTab(
-                        selectedCategories = emptyMap(),
+                        selectedCategories,
+                        onCategorySelected
                     )
                 }
             }
@@ -225,7 +224,8 @@ fun TabContent(
 
 @Composable
 private fun AdvancedSearchTab(
-    selectedCategories: Map<String, Map<String, String>>
+    selectedCategories: Map<String, Map<String, String>>,
+    onCategorySelected: (String, String, String, Boolean) -> Unit
 ) {
     val categories = mapOf(
         "Streaming Services" to mapOf(
@@ -313,7 +313,7 @@ private fun AdvancedSearchTab(
                     availableCategoryValues = categoryItems.values.toList(),
                     selectedCategories = selectedCategories,
                     onCategorySelected = { key, value, isSelected ->
-                        //searchContentViewModel.onCategorySelected(categoryTitle, key, value, isSelected)
+                        onCategorySelected(categoryTitle, key, value, isSelected)
                     }
                 )
             }

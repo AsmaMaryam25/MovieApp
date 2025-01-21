@@ -17,7 +17,8 @@ import com.example.blackbeard.screens.details.DetailsScreen
 import com.example.blackbeard.screens.favorite.FavoriteScreen
 import com.example.blackbeard.screens.home.HomeScreen
 import com.example.blackbeard.screens.search.SearchScreen
-import com.example.blackbeard.screens.search.tabsearch.AdvancedSearchScreen
+import com.example.blackbeard.screens.search.content.SearchContentScreen
+import com.example.blackbeard.screens.search.tab.AdvancedSearchScreen
 import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
 @Composable
@@ -136,7 +137,26 @@ fun MainNavHost(
                 modifier = modifier.fillMaxSize(),
                 onCancelClicked = {
                     navController.popBackStack()
+                },
+                onSearchClicked = { query, isAdvanceSearch ->
+                    navController.navigate(Route.SearchContentScreen(query = query, isAdvanceSearch = isAdvanceSearch))
                 }
+            )
+        }
+
+        composable<Route.SearchContentScreen> { backStackEntry ->
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchContentScreen>()) }
+
+            SearchContentScreen(
+                modifier = modifier.fillMaxSize(),
+                onMoviePosterClicked = { name, movieId ->
+                    navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
+                },
+                onSearchBarFocus = {
+                    navController.navigate(Route.AdvancedSearchScreen)
+                },
+                query = backStackEntry.arguments?.getString("query")!!,
+                isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
             )
         }
     }
