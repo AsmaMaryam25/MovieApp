@@ -5,7 +5,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -78,9 +77,7 @@ import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.example.blackbeard.screens.APIErrorScreen
 
-@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
@@ -129,7 +126,7 @@ fun SearchScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class, ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 private fun SearchContent(
     modifier: Modifier,
@@ -232,7 +229,6 @@ private fun SearchContent(
                     }
                     items(collectionMovies.size) { index ->
                         CreateSearchPoster(
-                            searchViewModel,
                             posterWidth = posterWidth,
                             onNavigateToDetailsScreen = onNavigateToDetailsScreen,
                             movie = collectionMovies[index]
@@ -463,7 +459,6 @@ fun TabContent(
 
 @Composable
 private fun CreateSearchPoster(
-    searchViewModel: SearchViewModel,
     posterWidth: Dp,
     modifier: Modifier = Modifier,
     onNavigateToDetailsScreen: (String, Int) -> Unit,

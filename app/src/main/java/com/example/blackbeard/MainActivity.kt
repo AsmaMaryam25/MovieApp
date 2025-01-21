@@ -20,7 +20,6 @@ import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material.icons.outlined.Settings
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -58,7 +57,6 @@ class MainActivity : ComponentActivity() {
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         ConnectivityObserver.initialize(this)
@@ -81,7 +79,6 @@ class MainActivity : ComponentActivity() {
                     var currentScreenTitle by remember { mutableStateOf("") }
                     var isNavigationBarAction by remember { mutableStateOf(false) }
                     var selectedItem by remember { mutableStateOf(navItemList[0].label) }
-                    var videoLink by remember { mutableStateOf<String?>(null) }
 
                     LaunchedEffect(navController.currentBackStackEntryAsState().value) {
                         if (!isNavigationBarAction) {

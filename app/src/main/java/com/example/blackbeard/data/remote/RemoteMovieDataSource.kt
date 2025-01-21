@@ -5,7 +5,7 @@ import com.example.blackbeard.BuildConfig
 import com.example.blackbeard.data.model.QueryDao
 import retrofit2.Retrofit
 
-class RemoteMovieDataSource(private val retrofit: Retrofit) {
+class RemoteMovieDataSource(retrofit: Retrofit) {
 
     private val apiKey = BuildConfig.TMDB_API
 

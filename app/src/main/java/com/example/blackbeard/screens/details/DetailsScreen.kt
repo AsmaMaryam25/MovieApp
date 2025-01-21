@@ -12,11 +12,9 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -444,7 +442,6 @@ private fun SecondaryContent(
                 averageRating = averageRating,
                 onMovieRating = onMovieRating,
                 averageRatingTMDB = localMovie.voteAverage,
-                voteCount = localMovie.voteCount
             )
         },
         { CastSection(credits.cast) },
@@ -626,7 +623,6 @@ private fun MovieRatingSection(
     averageRating: Double,
     onMovieRating: (Double) -> Unit,
     averageRatingTMDB: Double,
-    voteCount: Int
 ) {
     Row(
         horizontalArrangement = Arrangement.SpaceBetween,
@@ -965,55 +961,7 @@ private fun MoviePoster(
     }
 }
 
-// Credit: https://medium.com/@manuyadav644/jetpack-compose-conditionally-display-read-more-button-based-on-text-lines-c9c0c5f65556
-@Composable
-private fun CollapsibleBodyText(
-    text: String?,
-    onTextExpand: () -> Unit
-) {
-    val readMore = stringResource(id = R.string.read_more)
-    val minimumLineLength = 3
-    var expandedState by remember { mutableStateOf(false) }
-    var showReadMoreButtonState by remember { mutableStateOf(false) }
-    val maxLines = if (expandedState) 200 else minimumLineLength
 
-    Column(
-        modifier = Modifier
-            .fillMaxHeight()
-            .padding(start = 20.dp, end = 20.dp)
-            .clickable {
-                expandedState = !expandedState
-            }
-    ) {
-        if (text.isNullOrEmpty()) {
-            Text(
-                text = stringResource(id = R.string.no_overview_available),
-                modifier = Modifier.fillMaxWidth(),
-                textAlign = TextAlign.Center,
-                color = Color.White,
-                style = MaterialTheme.typography.titleMedium
-            )
-            return@Column
-        }
-        Text(
-            text = if (!showReadMoreButtonState) text.dropLast(readMore.length)
-                .plus(readMore) else text,
-            textAlign = TextAlign.Center,
-            color = Color.White,
-            overflow = TextOverflow.Clip,
-            maxLines = maxLines,
-            onTextLayout = { textLayoutResult ->
-                if (textLayoutResult.lineCount > minimumLineLength - 1) {
-                    if (textLayoutResult.hasVisualOverflow) {
-                        showReadMoreButtonState = true
-                    }
-                }
-            }
-        )
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun GenreItemContainer(genres: List<Genre>) {
 

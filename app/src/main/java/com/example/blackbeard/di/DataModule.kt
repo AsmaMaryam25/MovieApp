@@ -17,7 +17,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 
 object DataModule {
-    const val BASE_URL = "https://api.themoviedb.org/3/"
+    private const val BASE_URL = "https://api.themoviedb.org/3/"
     private const val CONTENT_TYPE = "application/json; charset=UTF8"
 
     private val json = Json {

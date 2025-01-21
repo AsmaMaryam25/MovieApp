@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.stringSetPreferencesKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class RecentSearchDataSource(private val context: Context) {
+class RecentSearchDataSource(context: Context) {
 
     private val dataStore = DataStoreSingleton.getInstance(context)
     private val recentSearchesKey = stringSetPreferencesKey("RECENT_SEARCHES")

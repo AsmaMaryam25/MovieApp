@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class WatchListMovieDataSource(private val context: Context) {
+class WatchListMovieDataSource(context: Context) {
 
     private val dataStore = DataStoreSingleton.getInstance(context)
     private val watchlistKey = stringPreferencesKey("WATCHLIST_MOVIES")

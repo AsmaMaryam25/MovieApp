@@ -1,6 +1,5 @@
 package com.example.blackbeard.screens.search
 
-import android.util.Log
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -9,12 +8,9 @@ import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.domain.RecentSearchRepository
 import com.example.blackbeard.models.CollectionMovie
-import com.example.blackbeard.models.LocalMovie
 import com.example.blackbeard.models.Movie
 import com.example.blackbeard.models.MovieSearchResult
-import com.example.blackbeard.screens.details.DetailsViewModel.DetailsUIModel
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -24,16 +20,15 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import retrofit2.HttpException
-import java.net.UnknownHostException
 
-class SearchViewModel() : ViewModel() {
+class SearchViewModel : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
     private val mutableSearchUIState = MutableStateFlow<SearchUIModel>(SearchUIModel.Empty)
     val searchUIState: StateFlow<SearchUIModel> = mutableSearchUIState
 
-    var popularMovies: List<CollectionMovie> = emptyList()
-    val initialConnectivityFlow: Flow<Boolean> = isConnected
+    private var popularMovies: List<CollectionMovie> = emptyList()
+    private val initialConnectivityFlow: Flow<Boolean> = isConnected
     var currentPage = mutableIntStateOf(1)
         private set
 
@@ -204,9 +199,9 @@ class SearchViewModel() : ViewModel() {
             searchResults.movies
                 .filter { movie ->
                     var releaseDates: List<Int> = emptyList()
-                    movie.genres?.filter { genre ->
-                    selectedCategories["Popular Genres"]?.values?.contains(genre.toString()) == true
-                }?.isNotEmpty() == true ||
+                    movie.genres?.any { genre ->
+                        selectedCategories["Popular Genres"]?.values?.contains(genre.toString()) == true
+                    } == true ||
 
                         selectedCategories["Decade"]?.values?.any { decade ->
                             for (i in 0..9) {
@@ -282,7 +277,7 @@ class SearchViewModel() : ViewModel() {
     }
 
 
-    fun addRecentSearch(query: String) {
+    private fun addRecentSearch(query: String) {
         viewModelScope.launch {
             recentSearchRepository.addRecentSearch(query)
         }

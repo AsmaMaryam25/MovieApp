@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.utils.ConnectivityObserver.isConnected
-import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,14 +12,13 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
 import retrofit2.HttpException
-import java.net.UnknownHostException
 
 class HomeViewModel : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
     private val mutableHomeUIState = MutableStateFlow<HomeUIModel>(HomeUIModel.Empty)
     val homeUIState: StateFlow<HomeUIModel> = mutableHomeUIState
-    val initialConnectivityFlow: Flow<Boolean> = isConnected
+    private val initialConnectivityFlow: Flow<Boolean> = isConnected
 
     private val nowPlayingCollectionMovies = mutableListOf<CollectionMovie>()
     private val popularCollectionMovies = mutableListOf<CollectionMovie>()

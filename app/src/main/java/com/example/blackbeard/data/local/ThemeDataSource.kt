@@ -6,7 +6,7 @@ import androidx.datastore.preferences.core.edit
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class ThemeDataSource(private val context: Context) {
+class ThemeDataSource(context: Context) {
 
     private val dataStore = DataStoreSingleton.getInstance(context)
     private val darkModeKey = booleanPreferencesKey("DARK_MODE_ENABLED")

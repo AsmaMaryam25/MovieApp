@@ -22,7 +22,7 @@ class MovieRepository(
     private val localWatchlistMovieDataSource: WatchListMovieDataSource,
     private val localThemeDataSource: ThemeDataSource,
 ) {
-    val movieGenres = mapOf(
+    private val movieGenres = mapOf(
         28 to "Action",
         12 to "Adventure",
         16 to "Animation",

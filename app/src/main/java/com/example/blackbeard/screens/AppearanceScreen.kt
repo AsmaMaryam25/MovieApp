@@ -42,7 +42,7 @@ fun AppearanceScreen(
 ) {
 
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
-    var switchIsOn = remember { mutableStateOf(isDarkTheme) }
+    val switchIsOn = remember { mutableStateOf(isDarkTheme) }
     val coroutineScope = rememberCoroutineScope()
     var isClickAble by remember { mutableStateOf(true) }
 

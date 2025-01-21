@@ -26,7 +26,7 @@ class DetailsViewModel(private val movieId: Int) : ViewModel() {
     private val movieRepository = DataModule.movieRepository
     private val mutableDetailsUIState = MutableStateFlow<DetailsUIModel>(DetailsUIModel.Empty)
     val detailsUIState: StateFlow<DetailsUIModel> = mutableDetailsUIState
-    val initialConnectivityFlow: Flow<Boolean> = isConnected
+    private val initialConnectivityFlow: Flow<Boolean> = isConnected
 
     init {
         viewModelScope.launch {

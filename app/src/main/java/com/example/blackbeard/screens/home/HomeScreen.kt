@@ -255,11 +255,10 @@ fun CreatePosters(
     collectionMovies: List<CollectionMovie>,
     state: LazyListState
 ) {
-    val rowState = state
-    val snapBehavior = rememberSnapFlingBehavior(lazyListState = rowState)
+    val snapBehavior = rememberSnapFlingBehavior(lazyListState = state)
 
     LazyRow(
-        state = rowState,
+        state = state,
         horizontalArrangement = Arrangement.spacedBy(20.dp),
         flingBehavior = snapBehavior,
         contentPadding = PaddingValues(start = 60.dp, end = 60.dp)

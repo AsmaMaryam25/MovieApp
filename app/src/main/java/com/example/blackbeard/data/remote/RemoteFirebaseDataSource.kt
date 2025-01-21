@@ -19,8 +19,8 @@ class RemoteFirebaseDataSource {
             val currentTotalRating = currentData["totalRating"] as Double
             val currentUserRatings = currentData["userRatings"] as Map<*, *>
 
-            var newRating: Double
-            var newTotalRating: Double
+            val newRating: Double
+            val newTotalRating: Double
             val newCurrentUserRatings = currentUserRatings.toMutableMap()
             newCurrentUserRatings[installationID] = mapOf("rating" to rating)
 
@@ -60,7 +60,7 @@ class RemoteFirebaseDataSource {
         return try {
             val document = firestore
                 .collection("ratings")
-                .document(movieId.toString())
+                .document(movieId)
                 .get()
                 .await()
 
