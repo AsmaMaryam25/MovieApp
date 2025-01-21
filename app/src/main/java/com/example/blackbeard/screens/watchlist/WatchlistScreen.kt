@@ -98,26 +98,24 @@ private fun WatchlistContent(
     watchlist: List<MovieItem>
 ) {
     val posterWidth = 140.dp
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-    ) {
-        if (watchlist.isEmpty()) {
-            item {
-                Column(
-                    modifier = modifier.fillParentMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.no_watchlist),
-                        style = TextStyle(
-                            fontSize = 25.sp,
-                            lineHeight = 30.sp,
-                        ),
-                    )
-                }
-            }
-        } else {
+    if(watchlist.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.no_watchlist),
+                style = TextStyle(
+                    fontSize = 25.sp,
+                    lineHeight = 30.sp,
+                ),
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+        ) {
             items(watchlist.size) { index ->
                 CreateWatchlistCard(
                     posterWidth,
