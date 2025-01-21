@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -20,7 +21,7 @@ import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
 @Composable
 fun MainNavHost(
-    navController: androidx.navigation.NavHostController,
+    navController: NavHostController,
     onRouteChanged: (Route) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -57,6 +58,9 @@ fun MainNavHost(
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
+                /*onNavigateToSearchContentScreen = {
+                    navController.navigate(Route.SearchContentScreen())
+                }*/
                 modifier = modifier.fillMaxSize()
             )
         }
@@ -123,5 +127,22 @@ fun MainNavHost(
                 popBackStack = { navController.popBackStack() }
             )
         }
+
+        /*composable<Route.SearchContentScreen> { backStackEntry ->
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchContentScreen>()) }
+            SearchContent(
+                modifier = Modifier
+                    .safeDrawingPadding()
+                    .fillMaxSize(),
+                searchQuery = backStackEntry.arguments?.getString("query")!!,
+                onNavigateToDetailsScreen = { name, movieId ->
+                    navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
+                },
+                collectionMovies = backStackEntry.arguments?.getList("query")!!,
+                searchViewModel = TODO(),
+                gridState = TODO(),
+                isBoxClicked = TODO(),
+            )
+        }*/
     }
 }

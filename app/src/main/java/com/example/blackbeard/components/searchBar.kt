@@ -28,6 +28,7 @@ import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import com.example.blackbeard.screens.search.SearchContentViewModel
 import com.example.blackbeard.screens.search.SearchViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -39,7 +40,7 @@ fun SearchBar(
     isSearchBarFocused: Boolean,
     currentTabIndex: Int,
     onSearchBarFocusChange: (Boolean) -> Unit,
-    searchViewModel: SearchViewModel
+    searchContentViewModel: SearchContentViewModel
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusManager = LocalFocusManager.current
@@ -119,8 +120,8 @@ fun SearchBar(
                     searchQuery.value = TextFieldValue("")
                     onSearchBarFocusChange(false)
                     focusManager.clearFocus()
-                    searchViewModel.searchType.value = false
-                    searchViewModel.selectedCategories.clear()
+                    searchContentViewModel.searchType.value = false
+                    searchContentViewModel.selectedCategories.clear()
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
