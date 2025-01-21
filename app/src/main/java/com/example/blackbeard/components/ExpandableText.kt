@@ -65,7 +65,7 @@ fun ExpandableText(
 
     // Box composable containing the Text composable.
     Box(modifier = Modifier
-        .clickable {
+        .clickable(clickable) {
             onTextExpand()
         }
         .then(modifier)
@@ -102,6 +102,9 @@ fun ExpandableText(
                 if (!isExpanded && textLayoutResult.hasVisualOverflow) {
                     clickable = true
                     lastCharIndex = textLayoutResult.getLineEnd(collapsedMaxLine - 1)
+                }
+                if(isExpanded && textLayoutResult.lineCount > collapsedMaxLine) {
+                    clickable = true
                 }
             },
             style = style,
