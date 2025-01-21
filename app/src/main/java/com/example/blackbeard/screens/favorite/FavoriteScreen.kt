@@ -98,37 +98,41 @@ private fun FavoriteContent(
     favorites: List<MovieItem>,
 ) {
     val posterWidth = 140.dp
-    LazyColumn(
-        modifier = modifier.fillMaxSize(),
-    ) {
-        if (favorites.isEmpty()) {
-            item {
-                Column(
-                    modifier = modifier.fillParentMaxSize(),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.no_favorites),
-                        style = TextStyle(
-                            fontSize = 25.sp,
-                            lineHeight = 30.sp,
-                        ),
+    if(favorites.isEmpty()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(id = R.string.no_favorites),
+                style = TextStyle(
+                    fontSize = 25.sp,
+                    lineHeight = 30.sp,
+                ),
+            )
+        }
+    } else {
+        LazyColumn(
+            modifier = modifier.fillMaxSize(),
+        ) {
+            if (favorites.isEmpty()) {
+                item {
+
+                }
+            } else {
+                items(favorites.size) { index ->
+                    CreateFavCard(
+                        posterWidth,
+                        onNavigateToDetailsScreen = onNavigateToDetailsScreen,
+                        favoriteMovie = favorites[index]
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 20.dp)
                     )
                 }
-            }
-        } else {
-            items(favorites.size) { index ->
-                CreateFavCard(
-                    posterWidth,
-                    onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                    favoriteMovie = favorites[index]
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 20.dp)
-                )
             }
         }
     }
