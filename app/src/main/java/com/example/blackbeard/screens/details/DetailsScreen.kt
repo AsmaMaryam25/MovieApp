@@ -53,6 +53,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -101,6 +102,7 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.utils.TimeUtils
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.floor
@@ -119,6 +121,8 @@ fun DetailsScreen(
     val context = LocalContext.current
     var videoLink by remember { mutableStateOf<String?>(null) }
     var title: String? by remember { mutableStateOf(null) }
+    var isClickAble by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -156,7 +160,14 @@ fun DetailsScreen(
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        popBackStack()
+                        if (isClickAble) {
+                            popBackStack()
+                            isClickAble = false
+                            coroutineScope.launch {
+                                kotlinx.coroutines.delay(1000)
+                                isClickAble = true
+                            }
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
