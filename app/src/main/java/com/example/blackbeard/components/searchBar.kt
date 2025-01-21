@@ -106,8 +106,13 @@ fun SearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    val isAdvancedSearch = currentTabIndex == 1
-                    onSearchQueryChange(searchQuery.value.text, isAdvancedSearch)
+                    onSearchQueryChange(searchQuery.value.text, currentTabIndex == 1)
+
+                    keyboardController?.hide()
+
+                    onSearchBarFocusChange(false)
+
+                    focusManager.clearFocus()
                 }
             )
         )
@@ -123,7 +128,6 @@ fun SearchBar(
                         lastActiveTab.value = 0
                         isViewingSearchResults.value = false
                         resetToPopularMovies() // Reset to popular movies
-
                     }
                     keyboardController?.hide()
                     focusManager.clearFocus()
