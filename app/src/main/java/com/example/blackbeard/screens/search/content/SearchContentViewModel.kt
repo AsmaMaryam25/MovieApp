@@ -168,7 +168,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
         }
     }
 
-    fun discoverMovies(query: Map<String, Map<String, String>>, pageNum: Int) {
+    private fun discoverMovies(query: Map<String, Map<String, String>>, pageNum: Int) {
         viewModelScope.launch {
             //if (query.isBlank()) {
                 if (query.isEmpty()) {

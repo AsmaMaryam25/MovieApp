@@ -375,7 +375,7 @@ private fun AdvancedSearchTab(
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
-                    if(selectedCategories.isEmpty()) {
+                    if(selectedCategories.values.all { it.isEmpty() } || selectedCategories.isEmpty()) {
                         openDialog.value = true
                         return@clickable
                     }
