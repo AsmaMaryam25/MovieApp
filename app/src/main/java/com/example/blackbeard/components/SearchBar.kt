@@ -49,6 +49,9 @@ fun SearchBar(
     addToRecent: (String) -> Unit = {_ -> {}}
     ) {
 
+    val focusRequester = remember { FocusRequester() }
+    var textFieldLoaded by remember { mutableStateOf(false) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -60,7 +63,14 @@ fun SearchBar(
                 if(focusState.isFocused && !isFocused) {
                     onSearchBarFocus()
                 }
-            }.weight(1f),
+            }.weight(1f)
+                .focusRequester(focusRequester)
+                .onGloballyPositioned { // Credit: https://stackoverflow.com/a/75104192
+                    if (!textFieldLoaded && isFocused) {
+                        focusRequester.requestFocus() // IMPORTANT
+                        textFieldLoaded = true // stop cyclic recompositions
+                    }
+                },
             value = searchBarText,
             onValueChange = onValueChanged,
             placeholder = {
@@ -119,6 +129,5 @@ fun SearchBar(
                 )
             }
         }
-
     }
 }
