@@ -45,6 +45,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PopularContentScreen(
     onSearchBarFocus: () -> Unit,
+    onMoviePosterClicked: (String, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val gridState = rememberLazyGridState()
@@ -94,7 +95,7 @@ fun PopularContentScreen(
                 items(collectionMovies.size) { index ->
                     CreateSearchPoster(
                         posterWidth = posterWidth,
-                        onNavigateToDetailsScreen = { _, _ -> {} },
+                        onMoviePosterClicked = onMoviePosterClicked,
                         movie = collectionMovies[index]
                     )
                 }
@@ -107,7 +108,7 @@ fun PopularContentScreen(
 private fun CreateSearchPoster(
     posterWidth: Dp,
     modifier: Modifier = Modifier,
-    onNavigateToDetailsScreen: (String, Int) -> Unit,
+    onMoviePosterClicked: (String, Int) -> Unit,
     movie: CollectionMovie
 ) {
     var isClickAble by remember { mutableStateOf(true) }
@@ -133,7 +134,7 @@ private fun CreateSearchPoster(
                     .clip(RoundedCornerShape(30.dp))
                     .clickable(enabled = isClickAble) {
                         if (isClickAble) {
-                            onNavigateToDetailsScreen(
+                            onMoviePosterClicked(
                                 movie.title,
                                 movie.id
                             )
@@ -151,7 +152,7 @@ private fun CreateSearchPoster(
             modifier = modifier
                 .width(posterWidth)
                 .clickable {
-                    onNavigateToDetailsScreen(
+                    onMoviePosterClicked(
                         movie.title,
                         movie.id
                     )

@@ -21,7 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.NorthWest
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.BasicAlertDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -63,7 +62,7 @@ fun SearchTabs(
     onRemoveRecentSearch: (String) -> Unit,
     onCategorySelected: (String, String, String, Boolean) -> Unit,
     selectedCategories: Map<String, Map<String, String>>,
-    onSeeResultsClicked: (String, Boolean) -> Unit
+    onAdvancedSearch: (String, Boolean) -> Unit
 ) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -104,7 +103,7 @@ fun SearchTabs(
                     AdvancedSearchTab(
                         selectedCategories,
                         onCategorySelected,
-                        onSeeResultsClicked
+                        onAdvancedSearch
                     )
                 }
             }
@@ -241,10 +240,11 @@ fun TabContent(
 private fun AdvancedSearchTab(
     selectedCategories: Map<String, Map<String, String>>,
     onCategorySelected: (String, String, String, Boolean) -> Unit,
-    onSeeResultsClicked: (String, Boolean) -> Unit
+    onAdvancedSearch: (String, Boolean) -> Unit
 ) {
     val openDialog = remember { mutableStateOf(false) }
 
+    // Credit: https://composables.com/material3/basicalertdialog
     if(openDialog.value) {
         BasicAlertDialog(
             onDismissRequest = {
@@ -379,7 +379,7 @@ private fun AdvancedSearchTab(
                         openDialog.value = true
                         return@clickable
                     }
-                    onSeeResultsClicked(
+                    onAdvancedSearch(
                         Json.encodeToString(selectedCategories),
                         true
                     )

@@ -76,9 +76,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onNavigateToDetailsScreen: (String, Int) -> Unit,
     onSearchBarFocus: () -> Unit,
-    //onNavigateToSearchContentScreen: () -> Unit
+    onMoviePosterClicked: (String, Int) -> Unit
 ) {
 
     val searchViewModel = viewModel<SearchViewModel>()
@@ -110,7 +109,8 @@ fun SearchScreen(
             is SearchUIModel.Data -> {
                 PopularContentScreen(
                     modifier = modifier,
-                    onSearchBarFocus = onSearchBarFocus
+                    onSearchBarFocus = onSearchBarFocus,
+                    onMoviePosterClicked = onMoviePosterClicked
                 )
             }
         }

@@ -33,10 +33,13 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
 
     var totalPages = mutableStateOf<Int?>(null)
 
-    val selectedCategories = (Json.decodeFromString(query) as Map<String, Map<String, String>>)
+    private lateinit var selectedCategories: Map<String, Map<String, String>>
 
     init {
         viewModelScope.launch {
+            if(isAdvancedSearch) {
+                selectedCategories = (Json.decodeFromString(query) as Map<String, Map<String, String>>)
+            }
             try {
                 mutableSearchContentUIState.value = SearchContentUIModel.Loading
 

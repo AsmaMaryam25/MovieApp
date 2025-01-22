@@ -57,7 +57,7 @@ fun MainNavHost(
 
         composable<Route.SearchScreen> {
             SearchScreen(
-                onNavigateToDetailsScreen = { name, movieId ->
+                onMoviePosterClicked = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
                 onSearchBarFocus = {
@@ -156,7 +156,10 @@ fun MainNavHost(
                     navController.navigate(Route.AdvancedSearchScreen)
                 },
                 query = backStackEntry.arguments?.getString("query")!!,
-                isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!
+                isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
+                onBackButtonClicked = {
+                    navController.popBackStack()
+                }
             )
         }
     }
