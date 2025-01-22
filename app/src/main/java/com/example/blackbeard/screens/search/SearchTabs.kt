@@ -62,7 +62,7 @@ fun SearchTabs(
     onRemoveRecentSearch: (String) -> Unit,
     onCategorySelected: (String, String, String, Boolean) -> Unit,
     selectedCategories: Map<String, Map<String, String>>,
-    onAdvancedSearch: (String, Boolean) -> Unit
+    onSearch: (String, Boolean) -> Unit
 ) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -96,6 +96,7 @@ fun SearchTabs(
                         onClearRecentSearches = onClearRecentSearches,
                         onRecentSearchClick = onRecentSearchClick,
                         onRemoveRecentSearch = onRemoveRecentSearch,
+                        onSearch = onSearch
                     )
                 }
 
@@ -103,7 +104,7 @@ fun SearchTabs(
                     AdvancedSearchTab(
                         selectedCategories,
                         onCategorySelected,
-                        onAdvancedSearch
+                        onSearch
                     )
                 }
             }
@@ -116,7 +117,8 @@ private fun RecentSearchesTab(
     recentSearches: List<String>,
     onClearRecentSearches: () -> Unit,
     onRecentSearchClick: (String) -> Unit,
-    onRemoveRecentSearch: (String) -> Unit
+    onRemoveRecentSearch: (String) -> Unit,
+    onSearch: (String, Boolean) -> Unit
 ) {
     if (recentSearches.isNotEmpty()) {
         val reverseOrderOfSearches = recentSearches.reversed()
@@ -145,7 +147,8 @@ private fun RecentSearchesTab(
                             .padding(8.dp)
                             .clickable {
                                 onRecentSearchClick(search)
-                                //searchContentViewModel.searchMovies(search, 1)
+
+                                onSearch(search, false)
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
