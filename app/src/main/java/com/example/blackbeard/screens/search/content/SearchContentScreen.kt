@@ -148,7 +148,7 @@ private fun Content(
                     .padding(end = 8.dp),
                 isFocused = false,
                 onSearchBarFocus = onSearchBarFocus,
-                searchBarText = ""
+                searchBarText = if(!isAdvancedSearch) {query} else {""},
             )
         }
         if (searchMovies.isEmpty()) {
@@ -194,7 +194,7 @@ private fun Content(
                         Button(
                             onClick = {
                                 if(isAdvancedSearch) {
-                                    //searchContentViewModel.discoverMovies(query, searchContentViewModel.currentPage.intValue + 1)
+                                    searchContentViewModel.discoverMovies(searchContentViewModel.selectedCategories, searchContentViewModel.currentPage.intValue + 1, query)
                                 } else {
                                     searchContentViewModel.searchMovies(query, searchContentViewModel.currentPage.intValue + 1)
                                 }
