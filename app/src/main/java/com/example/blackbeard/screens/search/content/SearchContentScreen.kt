@@ -127,6 +127,9 @@ private fun Content(
     isAdvancedSearch: Boolean,
     onBackButtonClicked: () -> Unit
 ) {
+    var isClickAble by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
+
     Column(
         modifier = modifier.fillMaxSize()
     ) {
@@ -135,7 +138,14 @@ private fun Content(
         ) {
             IconButton(
                 modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
-                onClick = onBackButtonClicked,
+                onClick = {
+                    onBackButtonClicked()
+                    isClickAble = false
+                    coroutineScope.launch {
+                        delay(1000)
+                        isClickAble = true
+                    }
+                },
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
