@@ -342,10 +342,10 @@ private fun AdvancedSearchTab(
             "1900's" to "1900"
         ),
         "Runtime" to mapOf(
-            "180+" to "180",
-            "120+" to "120",
-            "90+" to "90",
-            "60+" to "60",
+            "3h+" to "180",
+            "2h+" to "120",
+            "1h 30m+" to "90",
+            "1h+" to "60",
         ),
     )
 
