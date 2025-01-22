@@ -55,7 +55,7 @@ fun TabSearchScreen(
                         }
                     },
                     selectedCategories = tabSearchViewModel.selectedCategories,
-                    onAdvancedSearch = onSearchClicked
+                    onSearch = onSearchClicked
                 )
             }
         }
