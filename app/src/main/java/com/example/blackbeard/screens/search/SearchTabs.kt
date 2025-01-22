@@ -142,15 +142,16 @@ private fun RecentSearchesTab(
             }
             LazyColumn {
                 items(reverseOrderOfSearches.size) { index ->
-                    var search = reverseOrderOfSearches[index]
+                    val search = reverseOrderOfSearches[index].text
+                    var searchQuery = TextFieldValue(search)
                     Row(
                         Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                             .clickable {
-                                onRecentSearchClick(search)
+                                onRecentSearchClick(searchQuery)
 
-                                onSearch(search.text, false)
+                                onSearch(search, false)
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -159,10 +160,10 @@ private fun RecentSearchesTab(
                             contentDescription = "Remove search",
                             modifier = Modifier
                                 .padding(end = 8.dp)
-                                .clickable { onRemoveRecentSearch(search.text) }
+                                .clickable { onRemoveRecentSearch(search) }
                         )
                         Text(
-                            text = search.text,
+                            text = search,
                             modifier = Modifier.weight(1f)
                         )
                         Icon(
@@ -171,10 +172,11 @@ private fun RecentSearchesTab(
                             modifier = Modifier
                                 .padding(start = 8.dp)
                                 .clickable {
-                                    onRecentSearchClick(search)
-                                    search = TextFieldValue(
-                                        text = search.text,
-                                        selection = TextRange(search.text.length)
+                                    onRecentSearchClick(
+                                        TextFieldValue(
+                                            search,
+                                            TextRange(search.length)
+                                        )
                                     )
                                 }
                         )
