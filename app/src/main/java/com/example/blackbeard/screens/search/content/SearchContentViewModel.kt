@@ -33,7 +33,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
 
     var totalPages = mutableStateOf<Int?>(null)
 
-    private lateinit var selectedCategories: Map<String, Map<String, String>>
+    lateinit var selectedCategories: Map<String, Map<String, String>>
 
     init {
         viewModelScope.launch {
@@ -168,13 +168,11 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
         }
     }
 
-    private fun discoverMovies(query: Map<String, Map<String, String>>, pageNum: Int) {
+    fun discoverMovies(selectedCategories: Map<String, Map<String, String>>, pageNum: Int, query: String = "") {
         viewModelScope.launch {
-            //if (query.isBlank()) {
-                if (query.isEmpty()) {
-                    mutableSearchContentUIState.value = SearchContentUIModel.NoResults
-                    currentPage.intValue = 1
-                    totalPages.value = 0
+            if (query.isBlank()) {
+                if (selectedCategories.isEmpty()) {
+                    mutableSearchContentUIState.value = SearchContentUIModel.Empty
                     return@launch
                 }
 
@@ -187,23 +185,23 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
                 var withWatchProviders: String? = null
                 var withRuntimeGte: String? = null
 
-                if (query["Runtime"] != null && query["Runtime"]?.values?.isNotEmpty() == true) {
-                    withRuntimeGte = query["Runtime"]?.values?.first()
+                if (selectedCategories["Runtime"] != null && selectedCategories["Runtime"]?.values?.isNotEmpty() == true) {
+                    withRuntimeGte = selectedCategories["Runtime"]?.values?.first()
                 }
 
-                if (query["Decade"] != null && query["Decade"]?.values?.isNotEmpty() == true) {
-                    val decade = query["Decade"]?.values?.first()
+                if (selectedCategories["Decade"] != null && selectedCategories["Decade"]?.values?.isNotEmpty() == true) {
+                    val decade = selectedCategories["Decade"]?.values?.first()
                     releaseDateGte = "$decade-01-01"
                     releaseDateLte = (decade?.toInt()?.plus(9)).toString() + "-01-01"
                 }
 
-                if (query["Popular Genres"] != null) {
-                    withGenres = query["Popular Genres"]?.values?.joinToString(",")
+                if (selectedCategories["Popular Genres"] != null) {
+                    withGenres = selectedCategories["Popular Genres"]?.values?.joinToString(",")
                 }
 
-                if (query["Streaming Services"] != null) {
+                if (selectedCategories["Streaming Services"] != null) {
                     withWatchProviders =
-                        query["Streaming Services"]?.values?.joinToString("|")
+                        selectedCategories["Streaming Services"]?.values?.joinToString("|")
                 }
 
                 mutableSearchContentUIState.value = SearchContentUIModel.Loading
@@ -219,15 +217,13 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
                 ).collect { searchResults ->
                     collectMovies(pageNum, searchResults, currentMovies)
                 }
-            //} else {
-            /*
+            } else {
                 if (selectedCategories.values.all { it.isEmpty() } || selectedCategories.isEmpty()) {
                     searchMovies(query, pageNum, false)
                 } else {
                     searchMovies(query, pageNum, true)
                 }
             }
-            */
 
         }
     }
