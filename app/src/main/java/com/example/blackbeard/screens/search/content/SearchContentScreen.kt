@@ -216,7 +216,7 @@ private fun Content(
                         Button(
                             onClick = {
                                 if(isAdvancedSearch) {
-                                    searchContentViewModel.discoverMovies(searchContentViewModel.selectedCategories, searchContentViewModel.currentPage.intValue + 1, query)
+                                    searchContentViewModel.discoverMovies(searchContentViewModel.selectedCategories, searchContentViewModel.currentPage.intValue + 1)
                                 } else {
                                     searchContentViewModel.searchMovies(query, searchContentViewModel.currentPage.intValue + 1)
                                 }
