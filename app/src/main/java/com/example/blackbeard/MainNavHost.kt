@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
@@ -16,11 +17,13 @@ import com.example.blackbeard.screens.details.DetailsScreen
 import com.example.blackbeard.screens.favorite.FavoriteScreen
 import com.example.blackbeard.screens.home.HomeScreen
 import com.example.blackbeard.screens.search.SearchScreen
+import com.example.blackbeard.screens.search.content.SearchContentScreen
+import com.example.blackbeard.screens.search.tab.TabSearchScreen
 import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
 @Composable
 fun MainNavHost(
-    navController: androidx.navigation.NavHostController,
+    navController: NavHostController,
     onRouteChanged: (Route) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -54,8 +57,11 @@ fun MainNavHost(
 
         composable<Route.SearchScreen> {
             SearchScreen(
-                onNavigateToDetailsScreen = { name, movieId ->
+                onMoviePosterClicked = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
+                },
+                onSearchBarFocus = {
+                    navController.navigate(Route.AdvancedSearchScreen)
                 },
                 modifier = modifier.fillMaxSize()
             )
@@ -121,6 +127,39 @@ fun MainNavHost(
                     .safeDrawingPadding()
                     .fillMaxSize(),
                 popBackStack = { navController.popBackStack() }
+            )
+        }
+
+        composable<Route.AdvancedSearchScreen> { backStackEntry ->
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
+
+            TabSearchScreen(
+                modifier = modifier.fillMaxSize(),
+                onCancelClicked = {
+                    navController.popBackStack()
+                },
+                onSearchClicked = { query, isAdvanceSearch ->
+                    navController.navigate(Route.SearchContentScreen(query = query, isAdvanceSearch = isAdvanceSearch))
+                }
+            )
+        }
+
+        composable<Route.SearchContentScreen> { backStackEntry ->
+            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchContentScreen>()) }
+
+            SearchContentScreen(
+                modifier = modifier.fillMaxSize(),
+                onMoviePosterClicked = { name, movieId ->
+                    navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
+                },
+                onSearchBarFocus = {
+                    navController.navigate(Route.AdvancedSearchScreen)
+                },
+                query = backStackEntry.arguments?.getString("query")!!,
+                isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
+                onBackButtonClicked = {
+                    navController.popBackStack()
+                }
             )
         }
     }

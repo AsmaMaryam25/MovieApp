@@ -7,64 +7,74 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import com.example.blackbeard.screens.search.SearchViewModel
+import kotlinx.coroutines.delay
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchBar(
-    searchQuery: MutableState<TextFieldValue>,
-    onSearchQueryChange: (String, Boolean) -> Unit,
+    //onSearchQueryChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    isSearchBarFocused: Boolean,
-    currentTabIndex: Int,
-    onSearchBarFocusChange: (Boolean) -> Unit,
-    searchViewModel: SearchViewModel
-) {
+    //isSearchBarFocused: Boolean,
+    //currentTabIndex: Int,
+    searchBarText: String,
+    onSearchBarFocus: () -> Unit = {},
+    onCancelClicked: () -> Unit = {},
+    onValueChanged: (String) -> Unit = {},
+    isFocused: Boolean,
+    onSearchClicked: (String, Boolean) -> Unit = {_, _ -> {}},
+    addToRecent: (String) -> Unit = {_ -> {}}
+    ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val focusManager = LocalFocusManager.current
+    val focusRequester = remember { FocusRequester() }
+    var textFieldLoaded by remember { mutableStateOf(false) }
 
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         OutlinedTextField(
-            value = searchQuery.value,
-            onValueChange = {
-                searchQuery.value = it.copy(selection = TextRange(it.text.length))
-            },
-            modifier = Modifier
-                .weight(1f)
-                .onFocusChanged { focusState ->
-                    if (focusState.isFocused) {
-                        onSearchBarFocusChange(true)
+            modifier = Modifier.onFocusChanged { focusState ->
+                if(focusState.isFocused && !isFocused) {
+                    onSearchBarFocus()
+                }
+            }.weight(1f)
+                .focusRequester(focusRequester)
+                .onGloballyPositioned { // Credit: https://stackoverflow.com/a/75104192
+                    if (!textFieldLoaded && isFocused) {
+                        focusRequester.requestFocus() // IMPORTANT
+                        textFieldLoaded = true // stop cyclic recompositions
                     }
                 },
+            value = searchBarText,
+            onValueChange = onValueChanged,
             placeholder = {
                 Text(
-                    "Search movie...",
+                    text = "Search movie by title...",
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
@@ -75,23 +85,7 @@ fun SearchBar(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             },
-            trailingIcon = {
-                Row {
-                    if (searchQuery.value.text.isNotEmpty()) {
-                        IconButton(
-                            onClick = {
-                                searchQuery.value = TextFieldValue("")
-                            }
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Clear,
-                                contentDescription = "Clear",
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            },
+
             shape = RoundedCornerShape(30.dp),
             colors = OutlinedTextFieldDefaults.colors(
                 unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.8f),
@@ -106,21 +100,26 @@ fun SearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    val isAdvancedSearch = currentTabIndex == 1
-                    onSearchQueryChange(searchQuery.value.text, isAdvancedSearch)
+                    if(searchBarText.isBlank()) return@KeyboardActions
+                    onSearchClicked(searchBarText, false)
+                    addToRecent(searchBarText)
                 }
             )
         )
 
-        if (isSearchBarFocused) {
+        if (isFocused) {
             TextButton(
+
                 onClick = {
+                    onCancelClicked()
+                    /*
                     keyboardController?.hide()
                     searchQuery.value = TextFieldValue("")
                     onSearchBarFocusChange(false)
                     focusManager.clearFocus()
-                    searchViewModel.searchType.value = false
-                    searchViewModel.selectedCategories.clear()
+                    searchContentViewModel.searchType.value = false
+                    searchContentViewModel.selectedCategories.clear()
+                     */
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
