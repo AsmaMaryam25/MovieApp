@@ -48,7 +48,7 @@ fun SearchBar(
     onSearchClicked: (String, Boolean) -> Unit = {_, _ -> {}},
     addToRecent: (String) -> Unit = {_ -> {}}
     ) {
-
+    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
 
@@ -100,6 +100,7 @@ fun SearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
+                    if(searchBarText.isBlank()) return@KeyboardActions
                     onSearchClicked(searchBarText, false)
                     addToRecent(searchBarText)
                 }

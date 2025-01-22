@@ -23,7 +23,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
 
     private val movieRepository = DataModule.movieRepository
     private val mutableSearchContentUIState = MutableStateFlow<SearchContentUIModel>(
-        SearchContentUIModel.Empty
+        SearchContentUIModel.NoResults
     )
     val searchContentUIState: StateFlow<SearchContentUIModel> = mutableSearchContentUIState
 
@@ -114,7 +114,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
 
 
         mutableSearchContentUIState.value = if (updatedMovies.isEmpty()) {
-            SearchContentUIModel.Empty
+            SearchContentUIModel.NoResults
         } else {
             SearchContentUIModel.Data(updatedMovies, 0)
         }
@@ -136,7 +136,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
             }
 
         mutableSearchContentUIState.value = if (updatedMovies.isEmpty()) {
-            SearchContentUIModel.Empty
+            SearchContentUIModel.NoResults
         } else {
             SearchContentUIModel.Data(updatedMovies, searchResults.totalPages)
         }
@@ -172,7 +172,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
         viewModelScope.launch {
             if (query.isBlank()) {
                 if (selectedCategories.isEmpty()) {
-                    mutableSearchContentUIState.value = SearchContentUIModel.Empty
+                    mutableSearchContentUIState.value = SearchContentUIModel.NoResults
                     return@launch
                 }
 

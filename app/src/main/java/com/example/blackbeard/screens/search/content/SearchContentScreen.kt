@@ -53,6 +53,7 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.TitleText
+import com.example.blackbeard.screens.search.NoResults
 import com.example.blackbeard.screens.search.content.SearchContentViewModel.SearchContentUIModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -95,7 +96,18 @@ fun SearchContentScreen(
             NoConnectionScreen(modifier)
         }
         SearchContentUIModel.NoResults -> {
-            // No results
+            Content(
+                modifier,
+                onSearchBarFocus,
+                emptyList(),
+                gridState,
+                posterWidth,
+                onMoviePosterClicked,
+                searchContentViewModel,
+                query,
+                isAdvancedSearch,
+                onBackButtonClicked = onBackButtonClicked
+            )
         }
         is SearchContentUIModel.Data -> {
             Content(
