@@ -134,7 +134,8 @@ private fun Content(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                onClick = onBackButtonClicked
+                modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
+                onClick = onBackButtonClicked,
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
@@ -142,6 +143,9 @@ private fun Content(
                 )
             }
             SearchBar(
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .padding(end = 8.dp),
                 isFocused = false,
                 onSearchBarFocus = onSearchBarFocus,
                 searchBarText = ""

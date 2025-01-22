@@ -1,6 +1,7 @@
 package com.example.blackbeard.screens.search.tab
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -8,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.blackbeard.components.SearchBar
 import com.example.blackbeard.screens.EmptyScreen
@@ -32,6 +34,7 @@ fun TabSearchScreen(
                 modifier = modifier
             ) {
                 SearchBar(
+                    modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
                     isFocused = true,
                     onCancelClicked = onCancelClicked,
                     onSearchClicked = onSearchClicked,

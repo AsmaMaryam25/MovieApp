@@ -59,6 +59,7 @@ fun PopularContentScreen(
         modifier = modifier
     ) {
         SearchBar(
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
             onSearchBarFocus = onSearchBarFocus,
             isFocused = false,
             searchBarText = ""
