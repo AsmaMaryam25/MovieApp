@@ -47,8 +47,7 @@ fun MainNavHost(
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
             FavoriteScreen(
-                modifier = Modifier
-                    .safeDrawingPadding()
+                modifier = modifier
                     .fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
@@ -88,8 +87,7 @@ fun MainNavHost(
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
             WatchlistScreen(
-                modifier = Modifier
-                    .safeDrawingPadding()
+                modifier = modifier
                     .fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
