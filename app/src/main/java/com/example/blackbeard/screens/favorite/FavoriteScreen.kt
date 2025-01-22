@@ -115,7 +115,7 @@ private fun FavoriteContent(
             modifier = modifier,
         ) {
             item {
-                Spacer(modifier = Modifier.size(50.dp))
+                Spacer(modifier = Modifier.size(70.dp))
             }
 
             items(favorites.size) { index ->
