@@ -13,6 +13,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.TextUnit
+import com.example.blackbeard.R
 
 const val DEFAULT_MINIMUM_TEXT_LINE = 3
 
@@ -49,9 +51,9 @@ fun ExpandableText(
     fontStyle: FontStyle? = null,
     text: String,
     collapsedMaxLine: Int = DEFAULT_MINIMUM_TEXT_LINE,
-    showMoreText: String = "... Show More",
+    showMoreText: String = "... "+ stringResource(id = R.string.show_more),
     showMoreStyle: SpanStyle = SpanStyle(fontWeight = FontWeight.W500),
-    showLessText: String = " Show Less",
+    showLessText: String = " "+ stringResource(id = R.string.show_less),
     showLessStyle: SpanStyle = showMoreStyle,
     textAlign: TextAlign? = null,
     fontSize: TextUnit,

@@ -103,5 +103,7 @@
     <string name="search_results">Search results</string>
     <!-- WatchlistScreen end -->
 
+    <string name="show_more">Show More</string>
+    <string name="show_less">Show Less</string>
 
 </resources>
