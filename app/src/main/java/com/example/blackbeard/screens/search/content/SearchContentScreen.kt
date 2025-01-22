@@ -144,7 +144,7 @@ private fun Content(
             SearchBar(
                 isFocused = false,
                 onSearchBarFocus = onSearchBarFocus,
-                searchBarText = ""
+                searchBarText = query
             )
         }
         if (searchMovies.isEmpty()) {
