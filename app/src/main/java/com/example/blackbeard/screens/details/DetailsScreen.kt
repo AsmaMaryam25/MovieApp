@@ -135,7 +135,9 @@ fun DetailsScreen(
                             fontWeight = FontWeight.Bold
                         ),
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     )
                 },
                 actions = {
