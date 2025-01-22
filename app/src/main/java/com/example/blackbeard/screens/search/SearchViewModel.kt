@@ -1,6 +1,5 @@
 package com.example.blackbeard.screens.search
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
@@ -20,13 +19,11 @@ import retrofit2.HttpException
 class SearchViewModel() : ViewModel() {
 
     private val movieRepository = DataModule.movieRepository
-    private val mutableSearchUIState = MutableStateFlow<SearchUIModel>(SearchUIModel.Empty)
+    private val mutableSearchUIState = MutableStateFlow<SearchUIModel>(SearchUIModel.Loading)
     val searchUIState: StateFlow<SearchUIModel> = mutableSearchUIState
 
     var popularMovies: List<CollectionMovie> = emptyList()
     val initialConnectivityFlow: Flow<Boolean> = isConnected
-
-    var searchType = mutableStateOf(false)
 
     private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
     val recentSearches: StateFlow<List<String>> = _recentSearches
@@ -36,8 +33,6 @@ class SearchViewModel() : ViewModel() {
     init {
         viewModelScope.launch {
             try {
-                searchType.value = false
-                mutableSearchUIState.value = SearchUIModel.Loading
 
                 val isInitiallyConnected = withTimeout(5000L) {
                     initialConnectivityFlow.first()
@@ -64,9 +59,9 @@ class SearchViewModel() : ViewModel() {
                         mutableSearchUIState.value = SearchUIModel.NoConnection
                     }
                 }
-            } catch (e: HttpException) {
+            } catch (_: HttpException) {
                 mutableSearchUIState.value = SearchUIModel.ApiError
-            } catch (e: Exception) {
+            } catch (_: Exception) {
                 mutableSearchUIState.value = SearchUIModel.NoConnection
 
                 initialConnectivityFlow.stateIn(
