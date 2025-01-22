@@ -41,7 +41,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -56,8 +58,8 @@ import kotlinx.serialization.json.Json
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SearchTabs(
-    recentSearches: List<String>,
-    onRecentSearchClick: (String) -> Unit,
+    recentSearches: List<TextFieldValue>,
+    onRecentSearchClick: (TextFieldValue) -> Unit,
     onClearRecentSearches: () -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
     onCategorySelected: (String, String, String, Boolean) -> Unit,
@@ -114,9 +116,9 @@ fun SearchTabs(
 
 @Composable
 private fun RecentSearchesTab(
-    recentSearches: List<String>,
+    recentSearches: List<TextFieldValue>,
     onClearRecentSearches: () -> Unit,
-    onRecentSearchClick: (String) -> Unit,
+    onRecentSearchClick: (TextFieldValue) -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
     onSearch: (String, Boolean) -> Unit
 ) {
@@ -140,7 +142,7 @@ private fun RecentSearchesTab(
             }
             LazyColumn {
                 items(reverseOrderOfSearches.size) { index ->
-                    val search = reverseOrderOfSearches[index]
+                    var search = reverseOrderOfSearches[index]
                     Row(
                         Modifier
                             .fillMaxWidth()
@@ -148,7 +150,7 @@ private fun RecentSearchesTab(
                             .clickable {
                                 onRecentSearchClick(search)
 
-                                onSearch(search, false)
+                                onSearch(search.text, false)
                             },
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -157,10 +159,10 @@ private fun RecentSearchesTab(
                             contentDescription = "Remove search",
                             modifier = Modifier
                                 .padding(end = 8.dp)
-                                .clickable { onRemoveRecentSearch(search) }
+                                .clickable { onRemoveRecentSearch(search.text) }
                         )
                         Text(
-                            text = search,
+                            text = search.text,
                             modifier = Modifier.weight(1f)
                         )
                         Icon(
@@ -170,6 +172,10 @@ private fun RecentSearchesTab(
                                 .padding(start = 8.dp)
                                 .clickable {
                                     onRecentSearchClick(search)
+                                    search = TextFieldValue(
+                                        text = search.text,
+                                        selection = TextRange(search.text.length)
+                                    )
                                 }
                         )
                     }

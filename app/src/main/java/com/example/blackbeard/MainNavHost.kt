@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -155,7 +156,7 @@ fun MainNavHost(
                 onSearchBarFocus = {
                     navController.navigate(Route.AdvancedSearchScreen)
                 },
-                query = backStackEntry.arguments?.getString("query")!!,
+                query = TextFieldValue(backStackEntry.arguments?.getString("query")!!),
                 isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
                 onBackButtonClicked = {
                     navController.popBackStack()

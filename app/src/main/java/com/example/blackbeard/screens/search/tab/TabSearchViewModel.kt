@@ -1,6 +1,7 @@
 package com.example.blackbeard.screens.search.tab
 
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.blackbeard.di.DataModule
@@ -18,8 +19,8 @@ class TabSearchViewModel(): ViewModel() {
 
     val selectedCategories = mutableStateMapOf<String, MutableMap<String, String>>()
 
-    private val _recentSearches = MutableStateFlow<List<String>>(emptyList())
-    val recentSearches: StateFlow<List<String>> = _recentSearches
+    private val _recentSearches = MutableStateFlow<List<TextFieldValue>>(emptyList())
+    val recentSearches: StateFlow<List<TextFieldValue>> = _recentSearches
 
     private val recentSearchRepository: RecentSearchRepository = DataModule.recentSearchRepository
 
@@ -27,8 +28,8 @@ class TabSearchViewModel(): ViewModel() {
         viewModelScope.launch {
             mutableTabSearchUIState.value = TabSearchUIModel.Initialized
 
-            recentSearchRepository.getRecentSearches().collect {
-                _recentSearches.value = it
+            recentSearchRepository.getRecentSearches().collect { recentSearches ->
+                _recentSearches.value = recentSearches.map { TextFieldValue(it) }
             }
         }
     }
