@@ -18,7 +18,7 @@ import com.example.blackbeard.screens.favorite.FavoriteScreen
 import com.example.blackbeard.screens.home.HomeScreen
 import com.example.blackbeard.screens.search.SearchScreen
 import com.example.blackbeard.screens.search.content.SearchContentScreen
-import com.example.blackbeard.screens.search.tab.AdvancedSearchScreen
+import com.example.blackbeard.screens.search.tab.TabSearchScreen
 import com.example.blackbeard.screens.watchlist.WatchlistScreen
 
 @Composable
@@ -133,7 +133,7 @@ fun MainNavHost(
         composable<Route.AdvancedSearchScreen> { backStackEntry ->
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
 
-            AdvancedSearchScreen(
+            TabSearchScreen(
                 modifier = modifier.fillMaxSize(),
                 onCancelClicked = {
                     navController.popBackStack()
@@ -156,7 +156,7 @@ fun MainNavHost(
                     navController.navigate(Route.AdvancedSearchScreen)
                 },
                 query = backStackEntry.arguments?.getString("query")!!,
-                isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
+                isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!
             )
         }
     }

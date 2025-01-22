@@ -123,6 +123,7 @@ private fun Content(
         SearchBar(
             isFocused = false,
             onSearchBarFocus = onSearchBarFocus,
+            searchBarText = ""
         )
         if (searchMovies.isEmpty()) {
             Box(
@@ -167,7 +168,7 @@ private fun Content(
                         Button(
                             onClick = {
                                 if(isAdvancedSearch) {
-                                    searchContentViewModel.discoverMovies(query, searchContentViewModel.currentPage.intValue + 1)
+                                    //searchContentViewModel.discoverMovies(query, searchContentViewModel.currentPage.intValue + 1)
                                 } else {
                                     searchContentViewModel.searchMovies(query, searchContentViewModel.currentPage.intValue + 1)
                                 }

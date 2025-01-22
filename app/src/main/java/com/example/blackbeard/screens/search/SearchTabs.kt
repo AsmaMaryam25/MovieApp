@@ -6,10 +6,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
@@ -18,16 +21,23 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.NorthWest
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.AlertDialogDefaults
+import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,6 +50,8 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.rememberPagerState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 @OptIn(ExperimentalPagerApi::class)
@@ -50,7 +62,8 @@ fun SearchTabs(
     onClearRecentSearches: () -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
     onCategorySelected: (String, String, String, Boolean) -> Unit,
-    selectedCategories: Map<String, Map<String, String>>
+    selectedCategories: Map<String, Map<String, String>>,
+    onSeeResultsClicked: (String, Boolean) -> Unit
 ) {
     val pagerState = rememberPagerState()
     val coroutineScope = rememberCoroutineScope()
@@ -90,7 +103,8 @@ fun SearchTabs(
                 1 -> {
                     AdvancedSearchTab(
                         selectedCategories,
-                        onCategorySelected
+                        onCategorySelected,
+                        onSeeResultsClicked
                     )
                 }
             }
@@ -222,11 +236,46 @@ fun TabContent(
 }
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AdvancedSearchTab(
     selectedCategories: Map<String, Map<String, String>>,
-    onCategorySelected: (String, String, String, Boolean) -> Unit
+    onCategorySelected: (String, String, String, Boolean) -> Unit,
+    onSeeResultsClicked: (String, Boolean) -> Unit
 ) {
+    val openDialog = remember { mutableStateOf(false) }
+
+    if(openDialog.value) {
+        BasicAlertDialog(
+            onDismissRequest = {
+                // Dismiss the dialog when the user clicks outside the dialog or on the back
+                // button. If you want to disable that functionality, simply use an empty
+                // onDismissRequest.
+                openDialog.value = false
+            }
+        ) {
+            Surface(
+                modifier = Modifier.wrapContentWidth().wrapContentHeight(),
+                shape = MaterialTheme.shapes.large,
+                tonalElevation = AlertDialogDefaults.TonalElevation
+            ) {
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "No advanced search options has been selected. Please select at least one option.",
+                    )
+                    Spacer(modifier = Modifier.height(24.dp))
+                    TextButton(
+                        onClick = { openDialog.value = false },
+                        modifier = Modifier.align(Alignment.End)
+                    ) {
+                        Text("Confirm")
+                    }
+                }
+            }
+        }
+
+    }
+
     val categories = mapOf(
         "Streaming Services" to mapOf(
             "Disney Plus" to "337",
@@ -318,7 +367,6 @@ private fun AdvancedSearchTab(
                 )
             }
         }
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -327,12 +375,14 @@ private fun AdvancedSearchTab(
                     shape = RoundedCornerShape(10)
                 )
                 .clickable {
-                    /*
-                    updateSearchType()
-                    searchContentViewModel.discoverMovies(
-                        searchQuery.value.text,
-                        1,
-                    )*/
+                    if(selectedCategories.isEmpty()) {
+                        openDialog.value = true
+                        return@clickable
+                    }
+                    onSeeResultsClicked(
+                        Json.encodeToString(selectedCategories),
+                        true
+                    )
                 }
                 .padding(16.dp),
             contentAlignment = Alignment.Center

@@ -1,7 +1,6 @@
 package com.example.blackbeard.screens.search.content
 
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,6 +16,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withTimeout
+import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 
 class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewModel(){
@@ -32,7 +32,8 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
         private set
 
     var totalPages = mutableStateOf<Int?>(null)
-    val selectedCategories = mutableStateMapOf<String, MutableMap<String, String>>()
+
+    val selectedCategories = (Json.decodeFromString(query) as Map<String, Map<String, String>>)
 
     init {
         viewModelScope.launch {
@@ -46,7 +47,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
                 if (!isAdvancedSearch && isInitiallyConnected) {
                     searchMovies(query, 1)
                 } else if (isAdvancedSearch && isInitiallyConnected) {
-                    discoverMovies(query, 1)
+                    discoverMovies(selectedCategories, 1)
                 } else {
                     mutableSearchContentUIState.value = SearchContentUIModel.NoConnection
                 }
@@ -59,7 +60,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
                     if (!isAdvancedSearch && isConnected) {
                         searchMovies(query, 1)
                     } else if (isAdvancedSearch && isConnected) {
-                        discoverMovies(query, 1)
+                        discoverMovies(selectedCategories, 1)
                     } else {
                         mutableSearchContentUIState.value = SearchContentUIModel.NoConnection
                     }
@@ -77,7 +78,7 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
                     if (!isAdvancedSearch && isConnected) {
                         searchMovies(query, 1)
                     } else if (isAdvancedSearch && isConnected) {
-                        discoverMovies(query, 1)
+                        discoverMovies(selectedCategories, 1)
                     } else {
                         mutableSearchContentUIState.value = SearchContentUIModel.NoConnection
                     }
@@ -164,10 +165,10 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
         }
     }
 
-    fun discoverMovies(query: String, pageNum: Int) {
+    fun discoverMovies(query: Map<String, Map<String, String>>, pageNum: Int) {
         viewModelScope.launch {
-            if (query.isBlank()) {
-                if (selectedCategories.isEmpty()) {
+            //if (query.isBlank()) {
+                if (query.isEmpty()) {
                     mutableSearchContentUIState.value = SearchContentUIModel.NoResults
                     currentPage.intValue = 1
                     totalPages.value = 0
@@ -183,23 +184,23 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
                 var withWatchProviders: String? = null
                 var withRuntimeGte: String? = null
 
-                if (selectedCategories["Runtime"] != null && selectedCategories["Runtime"]?.values?.isNotEmpty() == true) {
-                    withRuntimeGte = selectedCategories["Runtime"]?.values?.first()
+                if (query["Runtime"] != null && query["Runtime"]?.values?.isNotEmpty() == true) {
+                    withRuntimeGte = query["Runtime"]?.values?.first()
                 }
 
-                if (selectedCategories["Decade"] != null && selectedCategories["Decade"]?.values?.isNotEmpty() == true) {
-                    val decade = selectedCategories["Decade"]?.values?.first()
+                if (query["Decade"] != null && query["Decade"]?.values?.isNotEmpty() == true) {
+                    val decade = query["Decade"]?.values?.first()
                     releaseDateGte = "$decade-01-01"
                     releaseDateLte = (decade?.toInt()?.plus(9)).toString() + "-01-01"
                 }
 
-                if (selectedCategories["Popular Genres"] != null) {
-                    withGenres = selectedCategories["Popular Genres"]?.values?.joinToString(",")
+                if (query["Popular Genres"] != null) {
+                    withGenres = query["Popular Genres"]?.values?.joinToString(",")
                 }
 
-                if (selectedCategories["Streaming Services"] != null) {
+                if (query["Streaming Services"] != null) {
                     withWatchProviders =
-                        selectedCategories["Streaming Services"]?.values?.joinToString("|")
+                        query["Streaming Services"]?.values?.joinToString("|")
                 }
 
                 mutableSearchContentUIState.value = SearchContentUIModel.Loading
@@ -215,13 +216,15 @@ class SearchContentViewModel(query: String, isAdvancedSearch: Boolean): ViewMode
                 ).collect { searchResults ->
                     collectMovies(pageNum, searchResults, currentMovies)
                 }
-            } else {
+            //} else {
+            /*
                 if (selectedCategories.values.all { it.isEmpty() } || selectedCategories.isEmpty()) {
                     searchMovies(query, pageNum, false)
                 } else {
                     searchMovies(query, pageNum, true)
                 }
             }
+            */
 
         }
     }

@@ -60,6 +60,7 @@ fun PopularContentScreen(
         SearchBar(
             onSearchBarFocus = onSearchBarFocus,
             isFocused = false,
+            searchBarText = ""
         )
 
         if (collectionMovies.isEmpty()) {
