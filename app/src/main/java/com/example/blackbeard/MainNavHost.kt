@@ -135,7 +135,7 @@ fun MainNavHost(
             TabSearchScreen(
                 modifier = modifier.fillMaxSize(),
                 onCancelClicked = {
-                    navController.popBackStack()
+                    navController.navigate(Route.SearchScreen)
                 },
                 onSearchClicked = { query, isAdvanceSearch ->
                     navController.navigate(Route.SearchContentScreen(query = query, isAdvanceSearch = isAdvanceSearch))
