@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -46,6 +48,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import coil3.compose.AsyncImage
 import com.example.blackbeard.components.SearchBar
+import com.example.blackbeard.components.onDebounceClick
 import com.example.blackbeard.models.SearchMovie
 import com.example.blackbeard.screens.APIErrorScreen
 import com.example.blackbeard.screens.EmptyScreen
@@ -75,70 +78,7 @@ fun SearchContentScreen(
         }
     )
     val searchContentUIModel = searchContentViewModel.searchContentUIState.collectAsState().value
-
     val gridState = rememberLazyGridState()
-
-    when (searchContentUIModel) {
-        SearchContentUIModel.Empty -> {
-            EmptyScreen(modifier)
-        }
-
-        SearchContentUIModel.ApiError -> {
-            APIErrorScreen(modifier)
-        }
-
-        SearchContentUIModel.Loading -> {
-            LoadingScreen(modifier)
-        }
-        SearchContentUIModel.NoConnection -> {
-            NoConnectionScreen(modifier)
-        }
-        SearchContentUIModel.NoResults -> {
-            Content(
-                modifier,
-                onSearchBarFocus,
-                emptyList(),
-                gridState,
-                posterWidth,
-                onMoviePosterClicked,
-                searchContentViewModel,
-                query.text,
-                isAdvancedSearch,
-                onBackButtonClicked = onBackButtonClicked
-            )
-        }
-        is SearchContentUIModel.Data -> {
-            Content(
-                modifier,
-                onSearchBarFocus,
-                searchContentUIModel.searchMovies,
-                gridState,
-                posterWidth,
-                onMoviePosterClicked,
-                searchContentViewModel,
-                query.text,
-                isAdvancedSearch,
-                onBackButtonClicked = onBackButtonClicked
-            )
-        }
-    }
-}
-
-@Composable
-private fun Content(
-    modifier: Modifier,
-    onSearchBarFocus: () -> Unit,
-    searchMovies: List<SearchMovie>,
-    gridState: LazyGridState,
-    posterWidth: Dp,
-    onMoviePosterClicked: (String, Int) -> Unit,
-    searchContentViewModel: SearchContentViewModel,
-    query: String,
-    isAdvancedSearch: Boolean,
-    onBackButtonClicked: () -> Unit
-) {
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
 
     Column(
         modifier = modifier.fillMaxSize()
@@ -147,84 +87,143 @@ private fun Content(
             verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(
-                modifier = Modifier.padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
-                onClick = {
+                modifier = Modifier
+                    .padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
+                onClick = onDebounceClick {
                     onBackButtonClicked()
-                    isClickAble = false
-                    coroutineScope.launch {
-                        delay(1000)
-                        isClickAble = true
-                    }
-                },
+                }
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "Back button"
                 )
             }
-            SearchBar(
-                modifier = Modifier
-                    .padding(vertical = 16.dp)
-                    .padding(end = 8.dp),
-                isFocused = false,
-                onSearchBarFocus = onSearchBarFocus,
-                searchBarText = if(!isAdvancedSearch) { TextFieldValue(query) } else {  TextFieldValue("")  }
-            )
-        }
-        if (searchMovies.isEmpty()) {
-            Box(
-                modifier = Modifier.fillMaxSize()
-            ) {
-                Text(
-                    text = "No results found",
-                    fontSize = 30.sp,
-                    fontWeight = FontWeight.Bold,
+            if (searchContentUIModel is SearchContentUIModel.Data ||
+                searchContentUIModel is SearchContentUIModel.NoResults) {
+                SearchBar(
                     modifier = Modifier
-                        .padding(10.dp)
-                        .align(Alignment.Center)
+                        .padding(vertical = 16.dp)
+                        .padding(end = 8.dp),
+                    isFocused = false,
+                    onSearchBarFocus = onSearchBarFocus,
+                    searchBarText = if(!isAdvancedSearch) { TextFieldValue(query.text) } else {  TextFieldValue("")  },
                 )
             }
-        } else {
-            LazyVerticalGrid(
-                state = gridState,
-                columns = GridCells.Adaptive(posterWidth),
-                modifier = Modifier.fillMaxSize(),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Box(
-                        modifier = Modifier.fillMaxWidth(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TitleText(text = "Search Results")
-                    }
+        }
+        Box(
+            contentAlignment = Alignment.Center
+        ) {
+            when (searchContentUIModel) {
+                SearchContentUIModel.Empty -> {
+                    EmptyScreen(modifier)
                 }
-                items(searchMovies.size) { index ->
-                    CreateSearchPoster(
-                        posterWidth = posterWidth,
-                        onNavigateToDetailsScreen = onMoviePosterClicked,
-                        movie = searchMovies[index]
+
+                SearchContentUIModel.ApiError -> {
+                    APIErrorScreen(modifier)
+                }
+
+                SearchContentUIModel.Loading -> {
+                    LoadingScreen(modifier)
+                }
+
+                SearchContentUIModel.NoConnection -> {
+                    NoConnectionScreen(modifier)
+                }
+
+                SearchContentUIModel.NoResults -> {
+                    Content(
+                        modifier,
+                        emptyList(),
+                        gridState,
+                        posterWidth,
+                        onMoviePosterClicked,
+                        searchContentViewModel,
+                        query,
+                        isAdvancedSearch
                     )
                 }
 
-                item(span = { GridItemSpan(2) }) {
-                    if (searchContentViewModel.currentPage.intValue < (searchContentViewModel.totalPages.value
-                            ?: 0)
+                is SearchContentUIModel.Data -> {
+                    Content(
+                        modifier,
+                        searchContentUIModel.searchMovies,
+                        gridState,
+                        posterWidth,
+                        onMoviePosterClicked,
+                        searchContentViewModel,
+                        query,
+                        isAdvancedSearch
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun Content(
+    modifier: Modifier,
+    searchMovies: List<SearchMovie>,
+    gridState: LazyGridState,
+    posterWidth: Dp,
+    onMoviePosterClicked: (String, Int) -> Unit,
+    searchContentViewModel: SearchContentViewModel,
+    query: TextFieldValue,
+    isAdvancedSearch: Boolean
+) {
+    if (searchMovies.isEmpty()) {
+        Box(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Text(
+                text = "No results found",
+                fontSize = 30.sp,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .padding(10.dp)
+                    .align(Alignment.Center)
+            )
+        }
+    } else {
+        LazyVerticalGrid(
+            state = gridState,
+            columns = GridCells.Adaptive(posterWidth),
+            modifier = Modifier.fillMaxSize(),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Box(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    TitleText(text = "Search Results")
+                }
+            }
+            items(searchMovies.size) { index ->
+                CreateSearchPoster(
+                    posterWidth = posterWidth,
+                    onNavigateToDetailsScreen = onMoviePosterClicked,
+                    movie = searchMovies[index]
+                )
+            }
+
+            item(span = { GridItemSpan(2) }) {
+                if (searchContentViewModel.currentPage.intValue < (searchContentViewModel.totalPages.value
+                        ?: 0)
+                ) {
+                    Button(
+                        onClick = {
+                            if(isAdvancedSearch) {
+                                searchContentViewModel.discoverMovies(searchContentViewModel.selectedCategories, searchContentViewModel.currentPage.intValue + 1)
+                            } else {
+                                searchContentViewModel.searchMovies(query.text, searchContentViewModel.currentPage.intValue + 1)
+                            }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 10.dp),
                     ) {
-                        Button(
-                            onClick = {
-                                if(isAdvancedSearch) {
-                                    searchContentViewModel.discoverMovies(searchContentViewModel.selectedCategories, searchContentViewModel.currentPage.intValue + 1)
-                                } else {
-                                    searchContentViewModel.searchMovies(query, searchContentViewModel.currentPage.intValue + 1)
-                                }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 10.dp),
-                        ) {
-                            Text(text = "Load more")
-                        }
+                        Text(text = "Load more")
                     }
                 }
             }
@@ -239,8 +238,6 @@ private fun CreateSearchPoster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     movie: SearchMovie
 ) {
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier.padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -260,19 +257,12 @@ private fun CreateSearchPoster(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(RoundedCornerShape(30.dp))
-                    .clickable(enabled = isClickAble) {
-                        if (isClickAble) {
-                            onNavigateToDetailsScreen(
-                                movie.title,
-                                movie.id
-                            )
-                            isClickAble = false
-                            coroutineScope.launch {
-                                delay(1000)
-                                isClickAble = true
-                            }
-                        }
-                    },
+                    .clickable(onClick = onDebounceClick {
+                        onNavigateToDetailsScreen(
+                            movie.title,
+                            movie.id
+                        )
+                    }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }

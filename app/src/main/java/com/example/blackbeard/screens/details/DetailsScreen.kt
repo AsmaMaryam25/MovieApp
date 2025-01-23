@@ -80,6 +80,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
 import com.example.blackbeard.components.ExpandableText
+import com.example.blackbeard.components.onDebounceClick
 import com.example.blackbeard.models.AgeRating
 import com.example.blackbeard.models.Cast
 import com.example.blackbeard.models.Credits
@@ -103,7 +104,6 @@ import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.utils.TimeUtils
-import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.util.Locale
 import kotlin.math.floor
@@ -122,8 +122,6 @@ fun DetailsScreen(
     val context = LocalContext.current
     var videoLink by remember { mutableStateOf<String?>(null) }
     var title: String? by remember { mutableStateOf(null) }
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {
@@ -162,15 +160,8 @@ fun DetailsScreen(
                     }
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        if (isClickAble) {
-                            popBackStack()
-                            isClickAble = false
-                            coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                isClickAble = true
-                            }
-                        }
+                    IconButton(onClick = onDebounceClick {
+                        popBackStack()
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,

@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
+import com.example.blackbeard.components.onDebounceClick
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
@@ -141,8 +142,6 @@ fun CreateFavCard(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     favoriteMovie: MovieItem
 ) {
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
@@ -163,19 +162,12 @@ fun CreateFavCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(enabled = isClickAble) {
-                        if (isClickAble) {
-                            onNavigateToDetailsScreen(
-                                favoriteMovie.title,
-                                favoriteMovie.id.toInt()
-                            )
-                            isClickAble = false
-                            coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                isClickAble = true
-                            }
-                        }
-                    },
+                    .clickable(onClick = onDebounceClick {
+                        onNavigateToDetailsScreen(
+                            favoriteMovie.title,
+                            favoriteMovie.id.toInt()
+                        )
+                    }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }

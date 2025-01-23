@@ -31,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.blackbeard.R
+import com.example.blackbeard.components.onDebounceClick
 import com.example.blackbeard.di.DataModule
 import kotlinx.coroutines.launch
 
@@ -44,7 +45,6 @@ fun AppearanceScreen(
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5
     var switchIsOn = remember { mutableStateOf(isDarkTheme) }
     val coroutineScope = rememberCoroutineScope()
-    var isClickAble by remember { mutableStateOf(true) }
 
 
     Scaffold(
@@ -62,15 +62,8 @@ fun AppearanceScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        if (isClickAble) {
+                    IconButton(onClick = onDebounceClick {
                             popBackStack()
-                            isClickAble = false
-                            coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                isClickAble = true
-                            }
-                        }
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
