@@ -3,12 +3,14 @@ package com.example.blackbeard.screens.search.tab
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,11 +24,18 @@ fun TabSearchScreen(
     modifier: Modifier,
     onCancelClicked: () -> Unit,
     onSearchClicked: (String, Boolean) -> Unit,
-
+    query: String = ""
 ) {
     val tabSearchViewModel = viewModel<TabSearchViewModel>()
     val tabSearchUIModel = tabSearchViewModel.tabSearchUIState.collectAsState().value
-    var searchBarText : TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    var searchBarText : TextFieldValue by remember { mutableStateOf(TextFieldValue(
+        query,
+        TextRange(query.length)
+    )) }
+
+    LaunchedEffect(searchBarText) {
+
+    }
 
     when(tabSearchUIModel) {
         TabSearchViewModel.TabSearchUIModel.Empty -> EmptyScreen(modifier)

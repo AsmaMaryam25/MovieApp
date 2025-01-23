@@ -61,7 +61,7 @@ fun MainNavHost(
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
                 onSearchBarFocus = {
-                    navController.navigate(Route.AdvancedSearchScreen)
+                    navController.navigate(Route.AdvancedSearchScreen(""))
                 },
                 modifier = modifier.fillMaxSize()
             )
@@ -139,7 +139,8 @@ fun MainNavHost(
                 },
                 onSearchClicked = { query, isAdvanceSearch ->
                     navController.navigate(Route.SearchContentScreen(query = query, isAdvanceSearch = isAdvanceSearch))
-                }
+                },
+                query = backStackEntry.arguments?.getString("query")!!
             )
         }
 
@@ -151,13 +152,17 @@ fun MainNavHost(
                 onMoviePosterClicked = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
-                onSearchBarFocus = {
-                    navController.navigate(Route.AdvancedSearchScreen)
+                onSearchBarFocus = { query ->
+                    navController.navigate(Route.AdvancedSearchScreen(
+                        query = query
+                    ))
                 },
                 query = TextFieldValue(backStackEntry.arguments?.getString("query")!!),
                 isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
-                onBackButtonClicked = {
-                    navController.popBackStack()
+                onBackButtonClicked = { query ->
+                    navController.navigate(Route.AdvancedSearchScreen(
+                        query = query
+                    ))
                 }
             )
         }

@@ -32,19 +32,15 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SearchBar(
-    //onSearchQueryChange: (String, Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    //isSearchBarFocused: Boolean,
-    //currentTabIndex: Int,
     searchBarText: TextFieldValue,
-    onSearchBarFocus: () -> Unit = {},
+    onSearchBarFocus: (String) -> Unit = {},
     onCancelClicked: () -> Unit = {},
     onValueChanged: (TextFieldValue) -> Unit = {},
     isFocused: Boolean,
     onSearchClicked: (String, Boolean) -> Unit = { _, _ -> {}},
     addToRecent: (String) -> Unit = { _ -> {}}
     ) {
-    val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
     var textFieldLoaded by remember { mutableStateOf(false) }
 
@@ -56,7 +52,7 @@ fun SearchBar(
         OutlinedTextField(
             modifier = Modifier.onFocusChanged { focusState ->
                 if(focusState.isFocused && !isFocused) {
-                    onSearchBarFocus()
+                    onSearchBarFocus(searchBarText.text)
                 }
             }.weight(1f)
                 .focusRequester(focusRequester)
@@ -108,14 +104,6 @@ fun SearchBar(
 
                 onClick = onDebounceClick {
                     onCancelClicked()
-                    /*
-                    keyboardController?.hide()
-                    searchQuery.value = TextFieldValue("")
-                    onSearchBarFocusChange(false)
-                    focusManager.clearFocus()
-                    searchContentViewModel.searchType.value = false
-                    searchContentViewModel.selectedCategories.clear()
-                     */
                 },
                 modifier = Modifier.padding(start = 8.dp)
             ) {
