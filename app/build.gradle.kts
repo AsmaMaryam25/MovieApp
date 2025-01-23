@@ -9,7 +9,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.movieapp"
+    namespace = "com.example.blackbeard"
     compileSdk = 35
 
     defaultConfig {
@@ -20,7 +20,7 @@ android {
         // Set the TMDB_API key in BuildConfig
         buildConfigField("String", "TMDB_API", "\"${properties["TMDB_API"]}\"")
 
-        applicationId = "com.example.movieapp"
+        applicationId = "com.example.blackbeard"
         minSdk = 30
         targetSdk = 35
         versionCode = 1
@@ -42,6 +42,9 @@ android {
             )
         }
     }
+
+    testOptions.unitTests.all { it.useJUnitPlatform() }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -69,6 +72,8 @@ dependencies {
     implementation(libs.activityCompose)
     implementation(libs.datastorePreferences)
 
+    implementation(libs.uiToolingPreview)
+
     implementation(platform(libs.composeBom))
     implementation(libs.composeUi)
     implementation(libs.composeUiGraphics)
@@ -85,6 +90,15 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.coilCompose)
     implementation(libs.coilNetworkOkhttp)
+    implementation(libs.firebaseInstallations)
+    implementation (libs.runtimeLivedata)
+
+    testImplementation(libs.junitJupiter)
+    testRuntimeOnly(libs.junitPlatformLauncher)
+    testImplementation(libs.mockitoCore)
+    testImplementation(libs.mockitoKotlin)
+    androidTestImplementation(libs.mockitoAndroid)
+    testImplementation(libs.kotlinxCoroutinesTest)
 
     debugImplementation(libs.composeUiTooling)
     debugImplementation(libs.composeUiTestManifest)

@@ -1,5 +1,8 @@
 [versions]
 firebaseBom = "33.6.0"
+firebaseInstallations = "18.0.0"
+junitJupiter = "5.7.1"
+kotlinxCoroutinesTest = "1.10.1"
 materialIconsExtended = "1.7.5"
 accompanistPager = "0.24.13-rc"
 lifecycleViewModelCompose = "2.8.7"
@@ -9,6 +12,9 @@ activityCompose = "1.9.3"
 datastorePreferences = "1.1.1"
 composeBom = "2024.11.00"
 kotlinxSerializationJson = "1.7.3"
+mockitoAndroid = "5.5.0"
+mockitoCore = "5.15.2"
+mockitoKotlin = "5.1.0"
 retrofitConverterKotlinxSerialization = "2.11.0"
 navigationCompose = "2.8.4"
 navigationRuntimeKtx = "2.8.4"
@@ -17,11 +23,17 @@ coilCompose = "3.0.1"
 coilNetworkOkhttp = "3.0.1"
 kotlin = "2.0.21"
 agp = "8.1.4"
+runtimeLivedata = "1.7.6"
+uiToolingPreview = "1.7.6"
 
 [libraries]
 firebaseAnalytics = { module = "com.google.firebase:firebase-analytics" }
 firebaseBom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebaseFirestoreKtx = { module = "com.google.firebase:firebase-firestore-ktx" }
+firebaseInstallations = { module = "com.google.firebase:firebase-installations", version.ref = "firebaseInstallations" }
+junitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junitJupiter" }
+junitPlatformLauncher = { module = "org.junit.platform:junit-platform-launcher" }
+kotlinxCoroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 materialIconsExtended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 accompanistPager = { group = "com.google.accompanist", name = "accompanist-pager", version.ref = "accompanistPager" }
 lifecycleViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycleViewModelCompose" }
@@ -35,6 +47,9 @@ composeUiGraphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 composeUiToolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 material3 = { group = "androidx.compose.material3", name = "material3" }
 kotlinxSerializationJson = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+mockitoAndroid = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
+mockitoCore = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockitoKotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
 retrofitConverterKotlinxSerialization = { group = "com.squareup.retrofit2", name = "converter-kotlinx-serialization", version.ref = "retrofitConverterKotlinxSerialization" }
 navigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 navigationRuntimeKtx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
@@ -43,6 +58,8 @@ coilCompose = { group = "io.coil-kt.coil3", name = "coil-compose", version.ref =
 coilNetworkOkhttp = { group = "io.coil-kt.coil3", name = "coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 composeUiTooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 composeUiTestManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
+runtimeLivedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
+uiToolingPreview = { module = "androidx.compose.ui:ui-tooling-preview", version.ref = "uiToolingPreview" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
