@@ -27,7 +27,7 @@ sealed class Route(val title: String) {
     data object AppearanceScreen : Route("Appearance")
 
     @Serializable
-    data object AdvancedSearchScreen : Route("Advanced Search")
+    data class AdvancedSearchScreen(val query: String) : Route("Advanced Search")
 
     @Serializable
     data class DetailsScreen(val name: String, val movieId: Int) : Route(name)

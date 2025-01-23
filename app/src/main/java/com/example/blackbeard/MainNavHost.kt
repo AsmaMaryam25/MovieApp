@@ -26,6 +26,7 @@ import com.example.blackbeard.screens.watchlist.WatchlistScreen
 fun MainNavHost(
     navController: NavHostController,
     onRouteChanged: (Route) -> Unit,
+    onShowBottomBar: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -33,8 +34,11 @@ fun MainNavHost(
         startDestination = Route.HomeScreen,
         modifier = Modifier.fillMaxSize()
     ) {
-        composable<Route.HomeScreen> {
-            LaunchedEffect(Unit) { onRouteChanged(it.toRoute<Route.HomeScreen>()) }
+        composable<Route.HomeScreen> { backStackEntry ->
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.HomeScreen>())
+                onShowBottomBar(true)
+            }
 
             HomeScreen(
                 onNavigateToDetailsScreen = { name, movieId ->
@@ -45,7 +49,10 @@ fun MainNavHost(
         }
 
         composable<Route.FavoriteScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>())
+                onShowBottomBar(true)
+            }
 
             FavoriteScreen(
                 modifier = modifier
@@ -56,12 +63,16 @@ fun MainNavHost(
         }
 
         composable<Route.SearchScreen> {
+            LaunchedEffect(Unit) {
+                onShowBottomBar(true)
+            }
+
             SearchScreen(
                 onMoviePosterClicked = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
                 onSearchBarFocus = {
-                    navController.navigate(Route.AdvancedSearchScreen)
+                    navController.navigate(Route.AdvancedSearchScreen(""))
                 },
                 modifier = modifier.fillMaxSize()
             )
@@ -69,7 +80,10 @@ fun MainNavHost(
 
 
         composable<Route.SettingsScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.SettingsScreen>())
+                onShowBottomBar(true)
+            }
 
             SettingsScreen(
                 onNavigateToAboutScreen = {
@@ -85,7 +99,10 @@ fun MainNavHost(
         }
 
         composable<Route.WatchlistScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>())
+                onShowBottomBar(true)
+            }
 
             WatchlistScreen(
                 modifier = modifier
@@ -96,7 +113,10 @@ fun MainNavHost(
         }
 
         composable<Route.AboutScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.AboutScreen>())
+                onShowBottomBar(true)
+            }
             AboutScreen(
                 //showTopBar = showTopBar,
                 modifier = Modifier
@@ -107,7 +127,10 @@ fun MainNavHost(
         }
 
         composable<Route.AppearanceScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.AppearanceScreen>())
+                onShowBottomBar(true)
+            }
 
             AppearanceScreen(
                 //showTopBar = showTopBar,
@@ -119,7 +142,10 @@ fun MainNavHost(
         }
 
         composable<Route.DetailsScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.DetailsScreen>())
+                onShowBottomBar(false)
+            }
             DetailsScreen(
                 movieId = backStackEntry.arguments?.getInt("movieId")!!,
                 modifier = Modifier
@@ -130,34 +156,45 @@ fun MainNavHost(
         }
 
         composable<Route.AdvancedSearchScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.AdvancedSearchScreen>())
+                onShowBottomBar(false)
+            }
 
             TabSearchScreen(
                 modifier = modifier.fillMaxSize(),
                 onCancelClicked = {
-                    navController.popBackStack()
+                    navController.navigate(Route.SearchScreen)
                 },
                 onSearchClicked = { query, isAdvanceSearch ->
                     navController.navigate(Route.SearchContentScreen(query = query, isAdvanceSearch = isAdvanceSearch))
-                }
+                },
+                query = backStackEntry.arguments?.getString("query")!!
             )
         }
 
         composable<Route.SearchContentScreen> { backStackEntry ->
-            LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.SearchContentScreen>()) }
+            LaunchedEffect(Unit) {
+                onRouteChanged(backStackEntry.toRoute<Route.SearchContentScreen>())
+                onShowBottomBar(false)
+            }
 
             SearchContentScreen(
                 modifier = modifier.fillMaxSize(),
                 onMoviePosterClicked = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
-                onSearchBarFocus = {
-                    navController.navigate(Route.AdvancedSearchScreen)
+                onSearchBarFocus = { query ->
+                    navController.navigate(Route.AdvancedSearchScreen(
+                        query = query
+                    ))
                 },
                 query = TextFieldValue(backStackEntry.arguments?.getString("query")!!),
                 isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
-                onBackButtonClicked = {
-                    navController.popBackStack()
+                onBackButtonClicked = { query ->
+                    navController.navigate(Route.AdvancedSearchScreen(
+                        query = query
+                    ))
                 }
             )
         }

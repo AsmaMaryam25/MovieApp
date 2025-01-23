@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,18 +19,12 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -56,18 +49,16 @@ import com.example.blackbeard.screens.LoadingScreen
 import com.example.blackbeard.screens.NoConnectionScreen
 import com.example.blackbeard.screens.home.TitleText
 import com.example.blackbeard.screens.search.content.SearchContentViewModel.SearchContentUIModel
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @Composable
 fun SearchContentScreen(
     modifier: Modifier,
     onMoviePosterClicked: (String, Int) -> Unit,
-    onSearchBarFocus: () -> Unit,
+    onSearchBarFocus: (String) -> Unit,
     query: TextFieldValue,
     isAdvancedSearch: Boolean,
-    onBackButtonClicked: () -> Unit
+    onBackButtonClicked: (String) -> Unit
 ) {
     val posterWidth = 170.dp
     val searchContentViewModel: SearchContentViewModel = viewModel(
@@ -90,7 +81,7 @@ fun SearchContentScreen(
                 modifier = Modifier
                     .padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
                 onClick = onDebounceClick {
-                    onBackButtonClicked()
+                    onBackButtonClicked(query.text)
                 }
             ) {
                 Icon(
