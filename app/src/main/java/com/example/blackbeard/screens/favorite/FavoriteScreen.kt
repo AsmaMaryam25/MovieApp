@@ -180,7 +180,7 @@ fun CreateFavCard(
                 textAlign = TextAlign.Center
             ),
             fontWeight = FontWeight.Bold,
-            modifier = if (favoriteMovie.rating != 69.0) {
+            modifier = if (favoriteMovie.rating != -1.0) {
                 modifier
                     .padding(vertical = 40.dp)
                     .weight(1f)
@@ -202,7 +202,7 @@ fun CreateFavCard(
                     }
             }
         )
-        if (favoriteMovie.rating != 69.0) {
+        if (favoriteMovie.rating != -1.0) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier.weight(0.5f)
