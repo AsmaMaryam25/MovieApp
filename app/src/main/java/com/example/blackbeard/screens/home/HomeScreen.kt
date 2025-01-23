@@ -46,6 +46,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
+import com.example.blackbeard.components.onDebounceClick
 import com.example.blackbeard.models.CollectionMovie
 import com.example.blackbeard.models.Genre
 import com.example.blackbeard.screens.APIErrorScreen
@@ -159,9 +160,6 @@ private fun CreatePoster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     collectionMovie: CollectionMovie
 ) {
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
-
     Column(
         Modifier.width(300.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -178,19 +176,14 @@ private fun CreatePoster(
                 contentDescription = null,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable(enabled = isClickAble) {
-                        if (isClickAble) {
+                    .clickable(
+                        onClick = onDebounceClick {
                             onNavigateToDetailsScreen(
                                 collectionMovie.title,
                                 collectionMovie.id
                             )
-                            isClickAble = false
-                            coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                isClickAble = true
-                            }
                         }
-                    },
+                    ),
                 placeholder = ColorPainter(Color.Gray)
             )
         }

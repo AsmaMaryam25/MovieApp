@@ -241,8 +241,6 @@ private fun CreateSearchPoster(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     movie: SearchMovie
 ) {
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
     Column(
         modifier = modifier.padding(10.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -262,19 +260,12 @@ private fun CreateSearchPoster(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(RoundedCornerShape(30.dp))
-                    .clickable(enabled = isClickAble) {
-                        if (isClickAble) {
-                            onNavigateToDetailsScreen(
-                                movie.title,
-                                movie.id
-                            )
-                            isClickAble = false
-                            coroutineScope.launch {
-                                delay(1000)
-                                isClickAble = true
-                            }
-                        }
-                    },
+                    .clickable(onClick = onDebounceClick {
+                        onNavigateToDetailsScreen(
+                            movie.title,
+                            movie.id
+                        )
+                    }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }

@@ -122,8 +122,6 @@ fun DetailsScreen(
     val context = LocalContext.current
     var videoLink by remember { mutableStateOf<String?>(null) }
     var title: String? by remember { mutableStateOf(null) }
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         topBar = {

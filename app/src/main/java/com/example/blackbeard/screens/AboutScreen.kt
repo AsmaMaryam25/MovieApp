@@ -27,12 +27,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.sp
 import com.example.blackbeard.R
+import com.example.blackbeard.components.onDebounceClick
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AboutScreen(modifier: Modifier = Modifier, popBackStack: () -> Unit) {
-    var isClickAble by remember { mutableStateOf(true) }
     val coroutineScope = rememberCoroutineScope()
     Scaffold(
         modifier = modifier,
@@ -49,15 +49,8 @@ fun AboutScreen(modifier: Modifier = Modifier, popBackStack: () -> Unit) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        if (isClickAble) {
-                            popBackStack()
-                            isClickAble = false
-                            coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                isClickAble = true
-                            }
-                        }
+                    IconButton(onClick = onDebounceClick {
+                        popBackStack()
                     }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,

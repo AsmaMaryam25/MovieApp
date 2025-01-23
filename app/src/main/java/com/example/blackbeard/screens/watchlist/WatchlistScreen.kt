@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import com.example.blackbeard.R
+import com.example.blackbeard.components.onDebounceClick
 import com.example.blackbeard.data.model.MovieItem
 import com.example.blackbeard.screens.EmptyScreen
 import com.example.blackbeard.screens.LoadingScreen
@@ -139,9 +140,6 @@ fun CreateWatchlistCard(
     onNavigateToDetailsScreen: (String, Int) -> Unit,
     watchlistMovie: MovieItem
 ) {
-    var isClickAble by remember { mutableStateOf(true) }
-    val coroutineScope = rememberCoroutineScope()
-
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         verticalAlignment = Alignment.CenterVertically,
@@ -162,19 +160,12 @@ fun CreateWatchlistCard(
                     .width(posterWidth)
                     .aspectRatio(2 / 3f)
                     .clip(shape = RoundedCornerShape(30.dp))
-                    .clickable(enabled = isClickAble) {
-                        if (isClickAble) {
-                            onNavigateToDetailsScreen(
-                                watchlistMovie.title,
-                                watchlistMovie.id.toInt()
-                            )
-                            isClickAble = false
-                            coroutineScope.launch {
-                                kotlinx.coroutines.delay(1000)
-                                isClickAble = true
-                            }
-                        }
-                    },
+                    .clickable(onClick = onDebounceClick {
+                        onNavigateToDetailsScreen(
+                            watchlistMovie.title,
+                            watchlistMovie.id.toInt()
+                        )
+                    }),
                 placeholder = ColorPainter(Color.Gray)
             )
         }
