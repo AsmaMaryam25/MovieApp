@@ -28,14 +28,12 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.blackbeard.di.DataModule
 import com.example.blackbeard.models.NavItem
@@ -58,7 +56,6 @@ class MainActivity : ComponentActivity() {
     }
 
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         ConnectivityObserver.initialize(this)
@@ -77,22 +74,13 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     val navController = rememberNavController()
-                    var canNavigateBack by remember { mutableStateOf(false) }
+                    var showBottomBar by remember { mutableStateOf(true) }
                     var currentScreenTitle by remember { mutableStateOf("") }
-                    var isNavigationBarAction by remember { mutableStateOf(false) }
                     var selectedItem by remember { mutableStateOf(navItemList[0].label) }
-                    var videoLink by remember { mutableStateOf<String?>(null) }
-
-                    LaunchedEffect(navController.currentBackStackEntryAsState().value) {
-                        if (!isNavigationBarAction) {
-                            canNavigateBack = navController.previousBackStackEntry != null
-                        }
-                        isNavigationBarAction = false
-                    }
 
                     Scaffold(
                         bottomBar = {
-                            if (!canNavigateBack) {
+                            if (showBottomBar) {
                                 NavigationBar(
                                     containerColor = MaterialTheme.colorScheme.surface,
                                     contentColor = MaterialTheme.colorScheme.onSurface
@@ -110,8 +98,6 @@ class MainActivity : ComponentActivity() {
                                             },
                                             selected = selectedItem == navItem.label,
                                             onClick = {
-                                                isNavigationBarAction = true
-                                                canNavigateBack = false
                                                 selectedItem = navItem.label
                                                 navItemList.clear()
                                                 navItemList.addAll(
@@ -178,36 +164,12 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             }
-                        },
-                        /*topBar = {
-                                TopAppBar(
-                                    title = {
-                                        Text(
-                                            text = currentScreenTitle,
-                                            style = MaterialTheme.typography.titleLarge.copy(
-                                                fontWeight = FontWeight.Bold
-                                            ),
-                                            modifier = Modifier.fillMaxWidth(),
-                                        )
-                                    },
-                                    navigationIcon = {
-                                        if (canNavigateBack) {
-                                            IconButton(onClick = {
-                                                navController.popBackStack()
-                                            }) {
-                                                Icon(
-                                                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                                    contentDescription = null
-                                                )
-                                            }
-                                        }
-                                    }
-                                )
-                        }*/
+                        }
                     ) {
                         MainNavHost(
                             navController = navController,
                             onRouteChanged = { route -> currentScreenTitle = route.title },
+                            onShowBottomBar = { flag -> showBottomBar = flag },
                             modifier = Modifier.padding(it),
                         )
                     }
