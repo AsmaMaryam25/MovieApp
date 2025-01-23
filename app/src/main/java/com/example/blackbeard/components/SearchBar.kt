@@ -110,7 +110,7 @@ fun SearchBar(
         if (isFocused) {
             TextButton(
 
-                onClick = {
+                onClick = onDebounceClick {
                     onCancelClicked()
                     /*
                     keyboardController?.hide()
