@@ -24,7 +24,8 @@ fun TabSearchScreen(
     modifier: Modifier,
     onCancelClicked: () -> Unit,
     onSearchClicked: (String, Boolean) -> Unit,
-    query: String = ""
+    query: String = "",
+    isAdvancedSearch: Boolean
 ) {
     val tabSearchViewModel = viewModel<TabSearchViewModel>()
     val tabSearchUIModel = tabSearchViewModel.tabSearchUIState.collectAsState().value
@@ -69,7 +70,8 @@ fun TabSearchScreen(
                         }
                     },
                     selectedCategories = tabSearchViewModel.selectedCategories,
-                    onSearch = onSearchClicked
+                    onSearch = onSearchClicked,
+                    isAdvancedSearch = isAdvancedSearch
                 )
             }
         }

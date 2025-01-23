@@ -55,7 +55,7 @@ import com.example.blackbeard.screens.search.content.SearchContentViewModel.Sear
 fun SearchContentScreen(
     modifier: Modifier,
     onMoviePosterClicked: (String, Int) -> Unit,
-    onSearchBarFocus: (String) -> Unit,
+    onSearchBarFocus: (String, Boolean) -> Unit,
     query: TextFieldValue,
     isAdvancedSearch: Boolean,
     onBackButtonClicked: (String, Boolean) -> Unit
@@ -96,7 +96,7 @@ fun SearchContentScreen(
                         .padding(vertical = 16.dp)
                         .padding(end = 8.dp),
                     isFocused = false,
-                    onSearchBarFocus = onSearchBarFocus,
+                    onSearchBarFocus = { onSearchBarFocus(it, isAdvancedSearch) } ,
                     searchBarText = if(!isAdvancedSearch) { TextFieldValue(query.text) } else {  TextFieldValue("")  },
                 )
             }

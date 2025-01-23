@@ -56,7 +56,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchScreen(
     modifier: Modifier = Modifier,
-    onSearchBarFocus: (String) -> Unit,
+    onSearchBarFocus: () -> Unit,
     onMoviePosterClicked: (String, Int) -> Unit
 ) {
 
@@ -88,7 +88,7 @@ fun SearchScreen(
 
 @Composable
 private fun PopularContentScreen(
-    onSearchBarFocus: (String) -> Unit,
+    onSearchBarFocus: () -> Unit,
     onMoviePosterClicked: (String, Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -104,7 +104,7 @@ private fun PopularContentScreen(
     ) {
         SearchBar(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
-            onSearchBarFocus = onSearchBarFocus,
+            onSearchBarFocus = { onSearchBarFocus() },
             isFocused = false,
             searchBarText = TextFieldValue("")
         )

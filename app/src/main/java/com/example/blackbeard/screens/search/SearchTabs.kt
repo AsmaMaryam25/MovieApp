@@ -64,9 +64,10 @@ fun SearchTabs(
     onRemoveRecentSearch: (String) -> Unit,
     onCategorySelected: (String, String, String, Boolean) -> Unit,
     selectedCategories: Map<String, Map<String, String>>,
-    onSearch: (String, Boolean) -> Unit
+    onSearch: (String, Boolean) -> Unit,
+    isAdvancedSearch: Boolean
 ) {
-    val pagerState = rememberPagerState()
+    val pagerState = rememberPagerState(initialPage = if(isAdvancedSearch) 1 else 0)
     val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
 
