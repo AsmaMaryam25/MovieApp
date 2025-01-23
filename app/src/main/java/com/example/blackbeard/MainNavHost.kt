@@ -191,9 +191,9 @@ fun MainNavHost(
                 },
                 query = TextFieldValue(backStackEntry.arguments?.getString("query")!!),
                 isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
-                onBackButtonClicked = { query ->
+                onBackButtonClicked = { query, isAdvancedSearch ->
                     navController.navigate(Route.AdvancedSearchScreen(
-                        query = query
+                        query = if(!isAdvancedSearch) query else ""
                     ))
                 }
             )

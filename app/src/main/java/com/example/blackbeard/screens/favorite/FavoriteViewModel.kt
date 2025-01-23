@@ -52,7 +52,7 @@ class FavoriteViewModel : ViewModel() {
                     rating = if (isInitiallyConnected) {
                         movieRepository.getAverageRating(movieItem.id)
                     } else {
-                        69.0
+                        -1.0
                     }
                 )
             }
