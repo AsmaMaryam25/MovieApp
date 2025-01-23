@@ -38,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -64,7 +65,7 @@ fun SearchContentScreen(
     modifier: Modifier,
     onMoviePosterClicked: (String, Int) -> Unit,
     onSearchBarFocus: () -> Unit,
-    query: String,
+    query: TextFieldValue,
     isAdvancedSearch: Boolean,
     onBackButtonClicked: () -> Unit
 ) {
@@ -72,7 +73,7 @@ fun SearchContentScreen(
     val searchContentViewModel: SearchContentViewModel = viewModel(
         factory = viewModelFactory {
             initializer {
-                SearchContentViewModel(query, isAdvancedSearch)
+                SearchContentViewModel(query.text, isAdvancedSearch)
             }
         }
     )
@@ -105,11 +106,7 @@ fun SearchContentScreen(
                         .padding(end = 8.dp),
                     isFocused = false,
                     onSearchBarFocus = onSearchBarFocus,
-                    searchBarText = if (!isAdvancedSearch) {
-                        query
-                    } else {
-                        ""
-                    },
+                    searchBarText = if(!isAdvancedSearch) { TextFieldValue(query.text) } else {  TextFieldValue("")  },
                 )
             }
         }
@@ -171,7 +168,7 @@ private fun Content(
     posterWidth: Dp,
     onMoviePosterClicked: (String, Int) -> Unit,
     searchContentViewModel: SearchContentViewModel,
-    query: String,
+    query: TextFieldValue,
     isAdvancedSearch: Boolean
 ) {
     if (searchMovies.isEmpty()) {
@@ -219,7 +216,7 @@ private fun Content(
                             if(isAdvancedSearch) {
                                 searchContentViewModel.discoverMovies(searchContentViewModel.selectedCategories, searchContentViewModel.currentPage.intValue + 1)
                             } else {
-                                searchContentViewModel.searchMovies(query, searchContentViewModel.currentPage.intValue + 1)
+                                searchContentViewModel.searchMovies(query.text, searchContentViewModel.currentPage.intValue + 1)
                             }
                         },
                         modifier = Modifier

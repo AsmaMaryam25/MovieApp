@@ -15,24 +15,20 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.platform.LocalTextInputService
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
 
 @Composable
 fun SearchBar(
@@ -40,13 +36,13 @@ fun SearchBar(
     modifier: Modifier = Modifier,
     //isSearchBarFocused: Boolean,
     //currentTabIndex: Int,
-    searchBarText: String,
+    searchBarText: TextFieldValue,
     onSearchBarFocus: () -> Unit = {},
     onCancelClicked: () -> Unit = {},
-    onValueChanged: (String) -> Unit = {},
+    onValueChanged: (TextFieldValue) -> Unit = {},
     isFocused: Boolean,
-    onSearchClicked: (String, Boolean) -> Unit = {_, _ -> {}},
-    addToRecent: (String) -> Unit = {_ -> {}}
+    onSearchClicked: (String, Boolean) -> Unit = { _, _ -> {}},
+    addToRecent: (String) -> Unit = { _ -> {}}
     ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     val focusRequester = remember { FocusRequester() }
@@ -100,9 +96,9 @@ fun SearchBar(
             keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             keyboardActions = KeyboardActions(
                 onSearch = {
-                    if(searchBarText.isBlank()) return@KeyboardActions
-                    onSearchClicked(searchBarText, false)
-                    addToRecent(searchBarText)
+                    if(searchBarText.text.isBlank()) return@KeyboardActions
+                    onSearchClicked(searchBarText.text, false)
+                    addToRecent(searchBarText.text)
                 }
             )
         )

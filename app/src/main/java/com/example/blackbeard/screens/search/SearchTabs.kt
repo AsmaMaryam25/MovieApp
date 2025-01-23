@@ -41,7 +41,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
@@ -56,8 +58,8 @@ import kotlinx.serialization.json.Json
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun SearchTabs(
-    recentSearches: List<String>,
-    onRecentSearchClick: (String) -> Unit,
+    recentSearches: List<TextFieldValue>,
+    onRecentSearchClick: (TextFieldValue) -> Unit,
     onClearRecentSearches: () -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
     onCategorySelected: (String, String, String, Boolean) -> Unit,
@@ -114,9 +116,9 @@ fun SearchTabs(
 
 @Composable
 private fun RecentSearchesTab(
-    recentSearches: List<String>,
+    recentSearches: List<TextFieldValue>,
     onClearRecentSearches: () -> Unit,
-    onRecentSearchClick: (String) -> Unit,
+    onRecentSearchClick: (TextFieldValue) -> Unit,
     onRemoveRecentSearch: (String) -> Unit,
     onSearch: (String, Boolean) -> Unit
 ) {
@@ -140,13 +142,14 @@ private fun RecentSearchesTab(
             }
             LazyColumn {
                 items(reverseOrderOfSearches.size) { index ->
-                    val search = reverseOrderOfSearches[index]
+                    val search = reverseOrderOfSearches[index].text
+                    var searchQuery = TextFieldValue(search)
                     Row(
                         Modifier
                             .fillMaxWidth()
                             .padding(8.dp)
                             .clickable {
-                                onRecentSearchClick(search)
+                                onRecentSearchClick(searchQuery)
 
                                 onSearch(search, false)
                             },
@@ -169,7 +172,12 @@ private fun RecentSearchesTab(
                             modifier = Modifier
                                 .padding(start = 8.dp)
                                 .clickable {
-                                    onRecentSearchClick(search)
+                                    onRecentSearchClick(
+                                        TextFieldValue(
+                                            search,
+                                            TextRange(search.length)
+                                        )
+                                    )
                                 }
                         )
                     }
@@ -342,10 +350,10 @@ private fun AdvancedSearchTab(
             "1900's" to "1900"
         ),
         "Runtime" to mapOf(
-            "180+" to "180",
-            "120+" to "120",
-            "90+" to "90",
-            "60+" to "60",
+            "3h+" to "180",
+            "2h+" to "120",
+            "1h 30m+" to "90",
+            "1h+" to "60",
         ),
     )
 

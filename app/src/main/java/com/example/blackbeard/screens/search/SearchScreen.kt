@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -105,7 +106,7 @@ private fun PopularContentScreen(
             modifier = Modifier.padding(vertical = 16.dp, horizontal = 16.dp),
             onSearchBarFocus = onSearchBarFocus,
             isFocused = false,
-            searchBarText = ""
+            searchBarText = TextFieldValue("")
         )
 
         if (collectionMovies.isEmpty()) {

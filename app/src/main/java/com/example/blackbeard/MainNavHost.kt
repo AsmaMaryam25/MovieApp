@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -47,8 +48,7 @@ fun MainNavHost(
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.FavoriteScreen>()) }
 
             FavoriteScreen(
-                modifier = Modifier
-                    .safeDrawingPadding()
+                modifier = modifier
                     .fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
@@ -88,8 +88,7 @@ fun MainNavHost(
             LaunchedEffect(Unit) { onRouteChanged(backStackEntry.toRoute<Route.WatchlistScreen>()) }
 
             WatchlistScreen(
-                modifier = Modifier
-                    .safeDrawingPadding()
+                modifier = modifier
                     .fillMaxSize(),
                 onNavigateToDetailsScreen = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
@@ -155,7 +154,7 @@ fun MainNavHost(
                 onSearchBarFocus = {
                     navController.navigate(Route.AdvancedSearchScreen)
                 },
-                query = backStackEntry.arguments?.getString("query")!!,
+                query = TextFieldValue(backStackEntry.arguments?.getString("query")!!),
                 isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
                 onBackButtonClicked = {
                     navController.popBackStack()

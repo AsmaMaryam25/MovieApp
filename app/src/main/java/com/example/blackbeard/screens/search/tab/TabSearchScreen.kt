@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.blackbeard.components.SearchBar
@@ -20,11 +21,12 @@ import com.example.blackbeard.screens.search.SearchTabs
 fun TabSearchScreen(
     modifier: Modifier,
     onCancelClicked: () -> Unit,
-    onSearchClicked: (String, Boolean) -> Unit
+    onSearchClicked: (String, Boolean) -> Unit,
+
 ) {
     val tabSearchViewModel = viewModel<TabSearchViewModel>()
     val tabSearchUIModel = tabSearchViewModel.tabSearchUIState.collectAsState().value
-    var searchBarText by remember { mutableStateOf("") }
+    var searchBarText : TextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
 
     when(tabSearchUIModel) {
         TabSearchViewModel.TabSearchUIModel.Empty -> EmptyScreen(modifier)
@@ -38,7 +40,7 @@ fun TabSearchScreen(
                     isFocused = true,
                     onCancelClicked = onCancelClicked,
                     onSearchClicked = onSearchClicked,
-                    addToRecent = {query -> tabSearchViewModel.addRecentSearch(query)},
+                    addToRecent = { query -> tabSearchViewModel.addRecentSearch(query)},
                     searchBarText = searchBarText,
                     onValueChanged = { searchBarText = it }
                 )

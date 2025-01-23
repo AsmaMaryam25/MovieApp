@@ -17,10 +17,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -36,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -77,7 +76,6 @@ fun FavoriteScreen(
             }
             )
         },
-        modifier = modifier
     ) {
 
         when (favoriteUIModel) {
@@ -85,7 +83,7 @@ fun FavoriteScreen(
             FavoriteUIModel.Loading -> LoadingScreen(modifier.padding(it))
             is FavoriteUIModel.Data -> FavoriteContent(
                 onNavigateToDetailsScreen,
-                modifier.padding(it),
+                modifier.fillMaxSize(),
                 favoriteUIModel.favorites,
             )
         }
@@ -99,9 +97,9 @@ private fun FavoriteContent(
     favorites: List<MovieItem>,
 ) {
     val posterWidth = 140.dp
-    if(favorites.isEmpty()) {
+    if (favorites.isEmpty()) {
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = modifier,
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -115,25 +113,23 @@ private fun FavoriteContent(
         }
     } else {
         LazyColumn(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier,
         ) {
-            if (favorites.isEmpty()) {
-                item {
+            item {
+                Spacer(modifier = Modifier.size(70.dp))
+            }
 
-                }
-            } else {
-                items(favorites.size) { index ->
-                    CreateFavCard(
-                        posterWidth,
-                        onNavigateToDetailsScreen = onNavigateToDetailsScreen,
-                        favoriteMovie = favorites[index]
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 20.dp)
-                    )
-                }
+            items(favorites.size) { index ->
+                CreateFavCard(
+                    posterWidth,
+                    onNavigateToDetailsScreen = onNavigateToDetailsScreen,
+                    favoriteMovie = favorites[index]
+                )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 20.dp)
+                )
             }
         }
     }
