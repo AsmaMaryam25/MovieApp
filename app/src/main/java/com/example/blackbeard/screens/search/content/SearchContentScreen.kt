@@ -58,7 +58,7 @@ fun SearchContentScreen(
     onSearchBarFocus: (String) -> Unit,
     query: TextFieldValue,
     isAdvancedSearch: Boolean,
-    onBackButtonClicked: (String) -> Unit
+    onBackButtonClicked: (String, Boolean) -> Unit
 ) {
     val posterWidth = 170.dp
     val searchContentViewModel: SearchContentViewModel = viewModel(
@@ -81,7 +81,7 @@ fun SearchContentScreen(
                 modifier = Modifier
                     .padding(start = 4.dp, top = 4.dp, bottom = 4.dp),
                 onClick = onDebounceClick {
-                    onBackButtonClicked(query.text)
+                    onBackButtonClicked(query.text, isAdvancedSearch)
                 }
             ) {
                 Icon(
