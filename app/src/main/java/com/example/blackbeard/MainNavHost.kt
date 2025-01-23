@@ -72,7 +72,10 @@ fun MainNavHost(
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
                 onSearchBarFocus = {
-                    navController.navigate(Route.AdvancedSearchScreen(""))
+                    navController.navigate(Route.AdvancedSearchScreen(
+                        "",
+                        false
+                    ))
                 },
                 modifier = modifier.fillMaxSize()
             )
@@ -169,7 +172,8 @@ fun MainNavHost(
                 onSearchClicked = { query, isAdvanceSearch ->
                     navController.navigate(Route.SearchContentScreen(query = query, isAdvanceSearch = isAdvanceSearch))
                 },
-                query = backStackEntry.arguments?.getString("query")!!
+                query = backStackEntry.arguments?.getString("query")!!,
+                isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!
             )
         }
 
@@ -184,16 +188,18 @@ fun MainNavHost(
                 onMoviePosterClicked = { name, movieId ->
                     navController.navigate(Route.DetailsScreen(name = name, movieId = movieId))
                 },
-                onSearchBarFocus = { query ->
+                onSearchBarFocus = { query, isAdvancedSearch ->
                     navController.navigate(Route.AdvancedSearchScreen(
-                        query = query
+                        query = query,
+                        isAdvanceSearch = isAdvancedSearch
                     ))
                 },
                 query = TextFieldValue(backStackEntry.arguments?.getString("query")!!),
                 isAdvancedSearch = backStackEntry.arguments?.getBoolean("isAdvanceSearch")!!,
                 onBackButtonClicked = { query, isAdvancedSearch ->
                     navController.navigate(Route.AdvancedSearchScreen(
-                        query = if(!isAdvancedSearch) query else ""
+                        query = if(!isAdvancedSearch) query else "",
+                        isAdvanceSearch = isAdvancedSearch
                     ))
                 }
             )
